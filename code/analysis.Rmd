@@ -149,6 +149,8 @@ res_mv <- rma.mv(
 print(res_mv)
 forest(res_mv)
 funnel(res_mv, main = "Standard Error")
+egger=regtest(x=res_mv$yi, vi=res_mv$vi, sei=res_mv$sei,model='lm',predictor='sei')
+print(egger)
 
 # # Saving the forest plot
 # pdf("forest.pdf", width = 12, height = 12)
@@ -169,6 +171,7 @@ res_age <- rma.mv(
 )
 print(res_age)
 forest(res_age)
+funnel(res_age, main = "Standard Error")
 
 # Meta-regression with gender
 res_gender <- rma.mv(
@@ -180,7 +183,7 @@ res_gender <- rma.mv(
 )
 print(res_gender)
 forest(res_gender)
-funnel(res_age, main = "Standard Error")
+funnel(res_gender, main = "Standard Error")
 
 # Meta-regression with age, gender, and their interaction
 res_full <- rma.mv(
