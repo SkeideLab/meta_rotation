@@ -148,6 +148,7 @@ res_mv <- rma.mv(
 )
 print(res_mv)
 forest(res_mv)
+funnel(res_mv, main = "Standard Error")
 
 # # Saving the forest plot
 # pdf("forest.pdf", width = 12, height = 12)
@@ -179,6 +180,7 @@ res_gender <- rma.mv(
 )
 print(res_gender)
 forest(res_gender)
+funnel(res_age, main = "Standard Error")
 
 # Meta-regression with age, gender, and their interaction
 res_full <- rma.mv(
@@ -190,6 +192,7 @@ res_full <- rma.mv(
 )
 print(res_full)
 forest(res_full)
+funnel(res_full, main = "Standard Error")
 ```
 
 # Methods
