@@ -97,11 +97,11 @@ included %>%
 
 # Overview of the different effect sizes
 dat %>%
-  select(id, group, yi_type, d, d_z_t, d_z_diff, d_av, d_nov_pref, ri) %>%
+  select(id, group, yi_type, yi, d, d_z_t, d_z_diff, d_av, d_nov_pref, ri) %>%
   print(n = Inf)
 
 # Correlations between dependent samples
-summary(included$r)
+summary(dat$ri)
 ```
 
 Actual meta-analysis:
@@ -113,20 +113,20 @@ r_assumed <- 0.5
 dat %>%
   mutate(
     ni = sample_size,
-    sei = sqrt(((2 * (1 - r_assumed)) / ni) + (yi^2 / (2 * ni)))
+    sei = sqrt(((2 * (1 - r_assumed)) / ni) + (yi^2 / (2 * ni))),
+    age_months = age_mean / 30.417
   ) %>%
-  select(id, group, ni, yi, sei) -> dat_r
+  select(id, group, age_months, female_percent, ni, yi, sei) %>%
+  # Compute sampling variance from standard errors
+  escalc(yi = yi, sei = sei, ni = ni, data = .) %>%
+  tibble() -> dat_r
 
 # Create vector of experiment IDs for plotting
 experiment_ids <- with(dat_r, paste(id, group, sep = ", "))
 
-# Add sampling variance based standard error
-escalc(vi = vi, sei = sei, ni = ni, data = dat_r)
-
 # # Two-level model
 # res <- rma(
-#   yi = yi,
-#   sei = sei,
+#   yi, vi,
 #   data = dat_r,
 #   slab = experiment_ids
 # )
@@ -135,8 +135,7 @@ escalc(vi = vi, sei = sei, ni = ni, data = dat_r)
 
 # Three-level model
 res_mv <- rma.mv(
-  yi = yi,
-  sei = sei,
+  yi, vi,
   random = ~ group | id,
   data = dat_r,
   slab = experiment_ids
@@ -149,33 +148,42 @@ forest(res_mv)
 # forest(res_mv)
 # dev.off()
 
-# Profile likelihodd plots
-profile(res_mv, sigma2 = 1)
-profile(res_mv, sigma2 = 2)
+# # Profile likelihodd plots
+# profile(res_mv, sigma2 = 1)
+# profile(res_mv, sigma2 = 2)
 
-# # Meta-regression with age
-# res_age <- rma.mv(
-#   yi, vi,
-#   mods = ~age_mean, random = ~ group | id, data = dat, slab = slab
-# )
-# print(res_age)
-# forest(res_age)
+# Meta-regression with age
+res_age <- rma.mv(
+  yi, vi,
+  mods = ~age_months,
+  random = ~ group | id,
+  data = dat_r,
+  slab = experiment_ids
+)
+print(res_age)
+forest(res_age)
 
-# # Meta-regression with gender
-# res_gender <- rma.mv(
-#   yi, vi,
-#   mods = ~female_percent, random = ~ group | id, data = dat, slab = slab
-# )
-# print(res_gender)
-# forest(res_gender)
+# Meta-regression with gender
+res_gender <- rma.mv(
+  yi, vi,
+  mods = ~female_percent,
+  random = ~ group | id,
+  data = dat_r,
+  slab = experiment_ids
+)
+print(res_gender)
+forest(res_gender)
 
-# # Meta-regression with age, gender, and their interaction
-# res_full <- rma.mv(
-#   yi, vi,
-#   mods = ~age_mean * female_percent, random = ~ group | id, data = dat, slab = slab
-# )
-# print(res_full)
-# forest(res_full)
+# Meta-regression with age, gender, and their interaction
+res_full <- rma.mv(
+  yi, vi,
+  mods = ~ age_months * female_percent,
+  random = ~ group | id,
+  data = dat_r,
+  slab = experiment_ids
+)
+print(res_full)
+forest(res_full)
 ```
 
 # Methods
