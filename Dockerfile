@@ -7,9 +7,14 @@ ENV RETICULATE_MINICONDA_ENABLED="FALSE"
 USER root
 
 RUN \
+    # Install system packages
+    apt-get update \
+    && apt-get install -y --no-install-recommends clang \
     # Install R packages from MRAN
-    install2.r --error --skipinstalled \
+    && install2.r --error --skipinstalled \
+    bayestestR \
     bayesmeta \
+    brms \
     cowplot \
     ggridges \
     googledrive \
@@ -23,6 +28,12 @@ RUN \
     MetBrewer \
     psych \
     styler \
+    # Install cmdstandr from GitHub
+    && installGithub.r stan-dev/cmdstanr@a2a97d9 \
+    && mkdir -p "$HOME/.cmdstanr" \
+    && Rscript -e "cmdstanr::install_cmdstan(dir = '$HOME/.cmdstanr')" \
+    && echo "options(mc.cores = parallel::detectCores())" >> "$HOME/.Rprofile" \
+    && echo "options(brms.backend = 'cmdstanr')" >> "$HOME/.Rprofile" \
     # Install Python packages
     && pip3 install --no-cache-dir \
     radian \
@@ -30,39 +41,39 @@ RUN \
     && tlmgr update --self \
     && tlmgr install \
     amsmath \
-    auxhook \
-    bigintcalc \
-    bitset \
-    etexcmds \
-    etoolbox \
-    euenc \
-    fancyvrb \
-    fontspec \
-    framed \
-    geometry \
-    gettitlestring \
-    hycolor \
-    hyperref \
-    iftex \
-    infwarerr \
-    intcalc \
-    kvdefinekeys \
-    kvoptions \
-    kvsetkeys \
-    latex-amsmath-dev \
-    letltxmacro \
-    ltxcmds \
-    pdfescape \
-    pdftexcmds \
-    refcount \
-    rerunfilecheck \
-    stringenc \
-    tipa \
-    unicode-math \
-    uniquecounter \
-    xcolor \
-    xunicode \
-    zapfding \
+    # auxhook \
+    # bigintcalc \
+    # bitset \
+    # etexcmds \
+    # etoolbox \
+    # euenc \
+    # fancyvrb \
+    # fontspec \
+    # framed \
+    # geometry \
+    # gettitlestring \
+    # hycolor \
+    # hyperref \
+    # iftex \
+    # infwarerr \
+    # intcalc \
+    # kvdefinekeys \
+    # kvoptions \
+    # kvsetkeys \
+    # latex-amsmath-dev \
+    # letltxmacro \
+    # ltxcmds \
+    # pdfescape \
+    # pdftexcmds \
+    # refcount \
+    # rerunfilecheck \
+    # stringenc \
+    # tipa \
+    # unicode-math \
+    # uniquecounter \
+    # xcolor \
+    # xunicode \
+    # zapfding \
     # Make sure R Markdown documents get knitted from the project directory
     && echo "knitr::opts_knit\$set(root.dir = getwd())" >> "$HOME/.Rprofile" \
     # Enable plotting via `httpgd` in VS Code
