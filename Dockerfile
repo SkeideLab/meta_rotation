@@ -16,6 +16,7 @@ RUN \
     bayesmeta \
     brms \
     cowplot \
+    git2r \
     ggridges \
     googledrive \
     here \
@@ -41,39 +42,39 @@ RUN \
     && tlmgr update --self \
     && tlmgr install \
     amsmath \
-    # auxhook \
-    # bigintcalc \
-    # bitset \
-    # etexcmds \
-    # etoolbox \
-    # euenc \
-    # fancyvrb \
-    # fontspec \
-    # framed \
-    # geometry \
-    # gettitlestring \
-    # hycolor \
-    # hyperref \
-    # iftex \
-    # infwarerr \
-    # intcalc \
-    # kvdefinekeys \
-    # kvoptions \
-    # kvsetkeys \
-    # latex-amsmath-dev \
-    # letltxmacro \
-    # ltxcmds \
-    # pdfescape \
-    # pdftexcmds \
-    # refcount \
-    # rerunfilecheck \
-    # stringenc \
-    # tipa \
-    # unicode-math \
-    # uniquecounter \
-    # xcolor \
-    # xunicode \
-    # zapfding \
+    auxhook \
+    bigintcalc \
+    bitset \
+    etexcmds \
+    etoolbox \
+    euenc \
+    fancyvrb \
+    fontspec \
+    framed \
+    geometry \
+    gettitlestring \
+    hycolor \
+    hyperref \
+    iftex \
+    infwarerr \
+    intcalc \
+    kvdefinekeys \
+    kvoptions \
+    kvsetkeys \
+    latex-amsmath-dev \
+    letltxmacro \
+    ltxcmds \
+    pdfescape \
+    pdftexcmds \
+    refcount \
+    rerunfilecheck \
+    stringenc \
+    tipa \
+    unicode-math \
+    uniquecounter \
+    xcolor \
+    xunicode \
+    zapfding \
     # Make sure R Markdown documents get knitted from the project directory
     && echo "knitr::opts_knit\$set(root.dir = getwd())" >> "$HOME/.Rprofile" \
     # Enable plotting via `httpgd` in VS Code
