@@ -14,6 +14,7 @@ library(ggridges)
 library(tidyverse)
 library(magrittr)
 library(metafor)
+library(brms)
 
 # Global chunk options
 knitr::opts_chunk$set(
@@ -190,6 +191,48 @@ res_full <- rma.mv(
 )
 print(res_full)
 forest(res_full)
+```
+
+```{r, brms, echo=TRUE}
+# Specify priors
+priors <- c(
+  prior(normal(0, 1), class = "Intercept"),
+  prior(exponential(1), class = "sd")
+)
+
+# Run Bayesian multilevel model
+res_brm <- brm(
+  yi | se(sei) ~ 1 + (1 | group / id),
+  data = dat_r,
+  prior = priors,
+  cores = 4,
+  chains = 4,
+  iter = 2000,
+  sample_prior = TRUE,
+  save_pars = save_pars(all = TRUE)
+)
+summary(res_brm)
+
+# Sensitivity analysis
+list(
+  "ic_uninformative" = c(
+    prior(uniform(-3, 3), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  "ic_informative" = c(
+    prior(normal(0, 0.2), class = "Intercept"),
+    prior(exponential(1), class = "sd")
+  ),
+  "sigma_uninformative" = c(
+    prior(normal(0, 1), class = "Intercept"),
+    prior(uniform(0, 5), class = "sd")
+  ),
+  "sigma_informative" = c(
+    prior(normal(0, 1), class = "Intercept"),
+    prior(exponential(0.1), class = "sd")
+  )
+) %>%
+  map(function(priors) update(res_brm, prior = priors)) -> res_sens
 ```
 
 # Methods
