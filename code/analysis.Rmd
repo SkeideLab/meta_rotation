@@ -392,3 +392,68 @@ included %>%
     text = element_text(family = "Helvetica", size = 10)
   )
 ```
+
+```{r, simulation}
+generate_exp <- function(id,
+                         n_boys = 1e3,
+                         n_girls = 1e3,
+                         mean_diff_boys = 0,
+                         mean_diff_girls = 2,
+                         sd_diff_boys = 4,
+                         sd_diff_girls = 4) {
+
+  # Create randomly sampled data for boys and girls
+  # Each element is the mean looking time difference for one infant
+  boys <- rnorm(n_boys, mean_diff_boys, sd_diff_boys)
+  girls <- rnorm(n_girls, mean_diff_girls, sd_diff_girls)
+
+  # Compute separate effect sizes for the two split gender groups
+  d_boys <- mean(boys) / sd(boys)
+  d_girls <- mean(girls) / sd(girls)
+
+  # Compute common effect size for the mixed gender group
+  infants <- c(boys, girls)
+  n_infants <- length(infants)
+  d_infants <- mean(infants) / sd(infants)
+
+  # Return all results for this experiment as a list
+  return(list(
+    id = id,
+    n_boys = n_boys,
+    n_girls = n_girls,
+    n_infants = n_infants,
+    d_boys = d_boys,
+    d_girls = d_girls,
+    d_infants = d_infants
+  ))
+}
+
+# Generate random experiments
+n_boys <- 1e3
+n_girls <- 1e3
+n_exps <- 100
+ids <- paste0("exp_", 1:n_exps)
+dat <- lapply(ids, generate_exp, n_boys, n_girls)
+dat <- do.call(rbind.data.frame, dat)
+
+### MIXED EXPERIMENTS ONLY ###
+
+# Compute sampling variance of the effect size for each study; see
+# https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/effects.html#w-group-smd
+r_assumed <- .5
+dat$v_d_infants <- with( # Sampling variances of the effect sizes
+  dat, ((2 * (1 - r_assumed)) / n_infants) + (d_infants^2 / (2 * n_infants))
+)
+
+# Fit 3 level meta-analysis
+res_full <- metafor::rma.mv(
+  d_infants, v_d_infants,
+  random = ~ id | id,
+  data = dat,
+  slab = id
+)
+
+# Check results
+summary(res_full)
+```
+
