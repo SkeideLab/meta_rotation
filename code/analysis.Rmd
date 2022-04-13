@@ -394,8 +394,7 @@ included %>%
 ```
 
 ```{r, simulation}
-generate_exp <- function(id,
-                         n_boys = 1e3,
+generate_exp <- function(n_boys = 1e3,
                          n_girls = 1e3,
                          mean_diff_boys = 0,
                          mean_diff_girls = 2,
@@ -418,7 +417,6 @@ generate_exp <- function(id,
 
   # Return all results for this experiment as a list
   return(list(
-    id = id,
     n_boys = n_boys,
     n_girls = n_girls,
     n_infants = n_infants,
@@ -432,9 +430,9 @@ generate_exp <- function(id,
 n_boys <- 1e3
 n_girls <- 1e3
 n_exps <- 100
-ids <- paste0("exp_", 1:n_exps)
-dat <- lapply(ids, generate_exp, n_boys, n_girls)
+dat <- replicate(n_exps, generate_exp(n_boys, n_girls), simplify = FALSE)
 dat <- do.call(rbind.data.frame, dat)
+dat$id <- paste0("exp_", 1:n_exps)
 
 ### MIXED EXPERIMENTS ONLY ###
 
@@ -448,12 +446,82 @@ dat$v_d_infants <- with( # Sampling variances of the effect sizes
 # Fit 3 level meta-analysis
 res_full <- metafor::rma.mv(
   d_infants, v_d_infants,
-  random = ~ id | id,
+  # random = ~ id | id,
   data = dat,
   slab = id
 )
 
 # Check results
 summary(res_full)
+
+### SPLIT EXPERIMENTS ONLY ###
+
+# Put effect sizes for boys and girls into separate rows
+dat_split <- tidyr::pivot_longer(
+  dat,
+  cols = c(d_boys, d_girls),
+  names_to = "gender",
+  values_to = "d_gender"
+)
+
+# Compute sampling variance of the gender-specific effect size
+dat_split$v_d_gender <- with(
+  dat_split, ((2 * (1 - r_assumed)) / n_girls) + (d_gender^2 / (2 * n_girls))
+)
+
+# Use rma.mv to compute MA on d_gender and v_d_gender values
+
+# Repeat 100 times with generate_meta
+
+# Compare mixed gender and split gender MAs
+# Same distribution of meta-analytic effect size?
+# Same variance / standard error?
+# Is the difference significant?
+
+### MIXED/SPLIT GENDER ANALYSIS ###
+
+# Make a percentage of study use mixed vs. split and choose randomly
+# Use different percentages
+# Make split vs. mixed dependent on the observed gender difference
+# Note for this we need to draw study specific effect sizes from a distribution
+
+### MAKE IT MORE REALISTIC ###
+
+# Make sample sizes per study different
+
+# Automate
+generate_meta <- function(n_exps, n_boys, n_girls) {
+
+  # Generate random experiments
+  dat <- replicate(n_exps, generate_exp(n_boys, n_girls), simplify = FALSE)
+  dat <- do.call(rbind.data.frame, dat)
+  dat$id <- paste0("exp_", 1:n_exps)
+
+  # Compute sampling variance of the effect size for each study; see
+  # https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/effects.html#w-group-smd
+  r_assumed <- .5
+  dat$v_d_infants <- with( # Sampling variances of the effect sizes
+    dat, ((2 * (1 - r_assumed)) / n_infants) + (d_infants^2 / (2 * n_infants))
+  )
+
+  # Fit meta-analysis
+  res_full <- metafor::rma.mv(
+    d_infants, v_d_infants,
+    # random = ~ id | id,
+    data = dat,
+    slab = id
+  )
+
+  # Return coefficients table
+  summ <- summary(res_full)
+  return(coef(summ))
+}
+
+n_metas <- 100
+metas <- replicate(n_metas, generate_meta(100, 100, 100), simplify = FALSE)
+metas <- do.call(rbind.data.frame, metas)
+metas$id <- paste0("meta_", 1:n_metas)
+
+mean(metas$estimate)
 ```
 
