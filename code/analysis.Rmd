@@ -104,7 +104,9 @@ included %>%
 
 # Overview of the different effect sizes
 dat %>%
-  select(id, group, yi_type, yi, d, d_z_t, d_z_diff, d_av, d_nov_pref, ri) %>%
+  select(
+    article, group, yi_type, yi, d, d_z_t, d_z_diff, d_av, d_nov_pref, ri
+  ) %>%
   print(n = Inf)
 
 # Correlations between dependent samples
@@ -123,13 +125,13 @@ dat %>%
     sei = sqrt(((2 * (1 - r_assumed)) / ni) + (yi^2 / (2 * ni))),
     age_months = age_mean / 30.417
   ) %>%
-  select(id, group, age_months, female_percent, ni, yi, sei) %>%
+  select(article, group, age_months, female_percent, ni, yi, sei) %>%
   # Compute sampling variance from standard errors
   escalc(yi = yi, sei = sei, ni = ni, data = .) %>%
   tibble() -> dat_r
 
 # Create vector of experiment IDs for plotting
-experiment_ids <- with(dat_r, paste(id, group, sep = ", "))
+experiment_ids <- with(dat_r, paste(article, group, sep = ", "))
 
 # # Two-level model
 # res <- rma(
@@ -143,7 +145,7 @@ experiment_ids <- with(dat_r, paste(id, group, sep = ", "))
 # Three-level model
 res_mv <- rma.mv(
   yi, vi,
-  random = ~ group | id,
+  random = ~ group | article,
   data = dat_r,
   slab = experiment_ids
 )
@@ -163,7 +165,7 @@ forest(res_mv)
 res_age <- rma.mv(
   yi, vi,
   mods = ~age_months,
-  random = ~ group | id,
+  random = ~ group | article,
   data = dat_r,
   slab = experiment_ids
 )
@@ -174,7 +176,7 @@ forest(res_age)
 res_gender <- rma.mv(
   yi, vi,
   mods = ~female_percent,
-  random = ~ group | id,
+  random = ~ group | article,
   data = dat_r,
   slab = experiment_ids
 )
@@ -185,7 +187,7 @@ forest(res_gender)
 res_full <- rma.mv(
   yi, vi,
   mods = ~ age_months * female_percent,
-  random = ~ group | id,
+  random = ~ group | article,
   data = dat_r,
   slab = experiment_ids
 )
@@ -202,7 +204,7 @@ priors <- c(
 
 # Run Bayesian multilevel model
 res_brm <- brm(
-  yi | se(sei) ~ 1 + (1 | group / id),
+  yi | se(sei) ~ 1 + (1 | group / article),
   data = dat_r,
   prior = priors,
   cores = 4,
@@ -306,7 +308,7 @@ sum(screening$code_final == 7)
 Total number of articles (according to `included` table):
 
 ```{r}
-length(unique(included$id))
+length(unique(included$article))
 ```
 
 Total number of experiments:
@@ -348,7 +350,7 @@ included %>%
   uncount(1e4) %>%
   mutate(
     group_text = if_else(is.na(group), "NA", group),
-    id_group = str_c(id, ", ", group_text),
+    id_group = str_c(article, ", ", group_text),
     id_group_ordered = fct_reorder(id_group, age_mean, .desc = TRUE),
     age_sd = if_else(!is.na(age_sd), age_sd, 10.),
     days = rnorm(n(), age_mean, age_sd),
@@ -432,7 +434,7 @@ n_girls <- 1e3
 n_exps <- 100
 dat <- replicate(n_exps, generate_exp(n_boys, n_girls), simplify = FALSE)
 dat <- do.call(rbind.data.frame, dat)
-dat$id <- paste0("exp_", 1:n_exps)
+dat$article <- paste0("exp_", 1:n_exps)
 
 ### MIXED EXPERIMENTS ONLY ###
 
@@ -446,9 +448,9 @@ dat$v_d_infants <- with( # Sampling variances of the effect sizes
 # Fit 3 level meta-analysis
 res_full <- metafor::rma.mv(
   d_infants, v_d_infants,
-  # random = ~ id | id,
+  # random = ~ article | article,
   data = dat,
-  slab = id
+  slab = article
 )
 
 # Check results
@@ -495,7 +497,7 @@ generate_meta <- function(n_exps, n_boys, n_girls) {
   # Generate random experiments
   dat <- replicate(n_exps, generate_exp(n_boys, n_girls), simplify = FALSE)
   dat <- do.call(rbind.data.frame, dat)
-  dat$id <- paste0("exp_", 1:n_exps)
+  dat$article <- paste0("exp_", 1:n_exps)
 
   # Compute sampling variance of the effect size for each study; see
   # https://bookdown.org/MathiasHarrer/Doing_Meta_Analysis_in_R/effects.html#w-group-smd
@@ -507,9 +509,9 @@ generate_meta <- function(n_exps, n_boys, n_girls) {
   # Fit meta-analysis
   res_full <- metafor::rma.mv(
     d_infants, v_d_infants,
-    # random = ~ id | id,
+    # random = ~ article | article,
     data = dat,
-    slab = id
+    slab = article
   )
 
   # Return coefficients table
@@ -520,7 +522,7 @@ generate_meta <- function(n_exps, n_boys, n_girls) {
 n_metas <- 100
 metas <- replicate(n_metas, generate_meta(100, 100, 100), simplify = FALSE)
 metas <- do.call(rbind.data.frame, metas)
-metas$id <- paste0("meta_", 1:n_metas)
+metas$article <- paste0("meta_", 1:n_metas)
 
 mean(metas$estimate)
 ```
