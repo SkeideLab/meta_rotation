@@ -156,8 +156,8 @@ forest(res_mv)
 # dev.off()
 
 # # Profile likelihodd plots
-# profile(res_mv, sigma2 = 1)
-# profile(res_mv, sigma2 = 2)
+# profile(res_mv, tau2 = 1)
+# profile(res_mv, rho = 1)
 
 # Meta-regression with age
 res_age <- rma.mv(
