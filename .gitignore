@@ -3,3 +3,4 @@
 *.tex
 *.xlsx
 .DS_Store
+/results/
