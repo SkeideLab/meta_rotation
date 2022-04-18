@@ -98,16 +98,36 @@ included %>%
     sd_z = mean_diff / d_z,
     # Compute correlation based on sd_z and condition SDs
     ri = (sd_z^2 - sd_novel^2 - sd_familiar^2) / (-2 * sd_novel * sd_familiar)
-  ) %>%
-  # Exclude experiments with redundant samples, missing stats, or age > 2 years
-  filter(!redundant & !is.na(yi) & age_mean < 730) -> dat
+  ) -> dat
 
 # Overview of the different effect sizes
 dat %>%
   select(
-    article, group, yi_type, yi, d, d_z_t, d_z_diff, d_av, d_nov_pref, ri
+    article,
+    group,
+    gender_split,
+    yi_type,
+    yi,
+    d,
+    d_z_t,
+    d_z_diff,
+    d_av,
+    d_nov_pref,
+    ri
   ) %>%
   print(n = Inf)
+
+# Show number of experiments per gender grouping strategy
+table(dat$gender_split)
+
+# Extract mixed/split experiments only
+dat_mixed <- filter(dat, gender_split %in% c("mixed", "mixed_only"))
+dat_split <- filter(dat, gender_split %in% c("split", "split_only"))
+
+# Extract both strategies combined (but excluding any redundant experiments)
+dat_both <- filter(
+  dat, gender_split %in% c("mixed", "mixed_only", "split_only")
+)
 
 # Correlations between dependent samples
 summary(dat$ri)
@@ -119,7 +139,7 @@ Actual meta-analysis:
 # Compute standard error of Cohen's d based on assumed correlation
 # This will need a sensitivity analysis
 r_assumed <- 0.5
-dat %>%
+dat_both %>%
   mutate(
     ni = sample_size,
     sei = sqrt(((2 * (1 - r_assumed)) / ni) + (yi^2 / (2 * ni))),
