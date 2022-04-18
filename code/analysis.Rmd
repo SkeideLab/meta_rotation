@@ -145,7 +145,7 @@ experiment_ids <- with(dat_r, paste(article, group, sep = ", "))
 # Three-level model
 res_mv <- rma.mv(
   yi, vi,
-  random = ~ group | article,
+  random = ~ 1 | article / group,
   data = dat_r,
   slab = experiment_ids
 )
@@ -197,16 +197,16 @@ forest(res_full)
 
 ```{r, brms, echo=TRUE}
 # Specify priors
-priors <- c(
-  prior(normal(0, 1), class = "Intercept"),
-  prior(exponential(1), class = "sd")
+prior_c <- c(
+  set_prior("normal(0, 1)", class = "Intercept"),
+  set_prior("cauchy(0, 0.3)", class = "sd")
 )
 
 # Run Bayesian multilevel model
 res_brm <- brm(
-  yi | se(sei) ~ 1 + (1 | group / article),
+  yi | se(sei) ~ 1 + (1 | article / group),
   data = dat_r,
-  prior = priors,
+  prior = prior_c,
   cores = 4,
   chains = 4,
   iter = 2000,
