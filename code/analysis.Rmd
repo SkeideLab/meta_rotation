@@ -124,42 +124,46 @@ dat %>%
   ) %>%
   print(n = Inf)
 
+# Get empirical estimate of the correlation between dependent samples
+summary(dat$ri)
+
+# Compute standard error of Cohen's d based on assumed correlation
+# This will need a sensitivity analysis
+r_assumed <- 0.5
+dat %>%
+  mutate(
+    ni = sample_size,
+    vi = ((2 * (1 - r_assumed)) / ni) + (yi^2 / (2 * ni)),
+    sei = sqrt(vi),
+    age_months = age_mean / 30.417,
+    age_months_c = age_months - mean(age_months, na.rm = TRUE)
+  ) %>%
+  filter(!is.na(yi)) %>%
+  select(
+    article, group, gender_split, age_months_c, female_percent, yi, ri, vi, sei
+  ) -> dat_r
+
 # Show number of experiments per gender grouping strategy
-table(dat$gender_split)
+table(dat_r$gender_split)
 
 # Extract mixed/split experiments only
-dat_mixed <- filter(dat, gender_split %in% c("mixed", "mixed_only"))
-dat_split <- filter(dat, gender_split %in% c("split", "split_only"))
+dat_mixed <- filter(dat_r, gender_split %in% c("mixed", "mixed_only"))
+dat_split <- filter(dat_r, gender_split %in% c("split", "split_only"))
 
-# Extract both strategies combined (but excluding any redundant experiments)
-dat_both <- filter(
-  dat, gender_split %in% c("mixed", "mixed_only", "split_only")
+# Combine both strategies, preferring mixed experiments
+dat_both_mixed <- filter(
+  dat_r, gender_split %in% c("mixed", "mixed_only", "split_only")
 )
 
-# Correlations between dependent samples
-summary(dat$ri)
+# Combine both strategies, preferring mixed experiments
+dat_both_split <- filter(
+  dat_r, gender_split %in% c("split", "mixed_only", "split_only")
+)
 ```
 
 Actual meta-analysis:
 
 ```{r, compute_meta, echo=TRUE}
-# Compute standard error of Cohen's d based on assumed correlation
-# This will need a sensitivity analysis
-r_assumed <- 0.5
-dat_both %>%
-  mutate(
-    ni = sample_size,
-    sei = sqrt(((2 * (1 - r_assumed)) / ni) + (yi^2 / (2 * ni))),
-    age_months = age_mean / 30.417
-  ) %>%
-  select(article, group, age_months, female_percent, ni, yi, sei) %>%
-  # Compute sampling variance from standard errors
-  escalc(yi = yi, sei = sei, ni = ni, data = .) %>%
-  tibble() -> dat_r
-
-# Create vector of experiment IDs for plotting
-experiment_ids <- with(dat_r, paste(article, group, sep = ", "))
-
 # # Two-level model
 # res <- rma(
 #   yi, vi,
@@ -173,53 +177,52 @@ experiment_ids <- with(dat_r, paste(article, group, sep = ", "))
 res_mv <- rma.mv(
   yi, vi,
   random = ~ 1 | article / group,
-  data = dat_r,
-  slab = experiment_ids
+  data = dat_both_mixed,
+  slab = paste(article, group, sep = ", ")
 )
 print(res_mv)
-forest(res_mv)
+# forest(res_mv)
 
 # # Saving the forest plot
 # pdf("forest.pdf", width = 12, height = 12)
 # forest(res_mv)
 # dev.off()
 
-# # Profile likelihodd plots
-# profile(res_mv, tau2 = 1)
-# profile(res_mv, rho = 1)
+# # Profile likelihodd plots for checking that REML has converged
+# profile(res_mv)
 
 # Meta-regression with age
 res_age <- rma.mv(
   yi, vi,
-  mods = ~age_months,
-  random = ~ group | article,
-  data = dat_r,
-  slab = experiment_ids
+  mods = ~age_months_c,
+  random = ~ 1 | article / group,
+  data = dat_both_mixed,
+  slab = paste(article, group, sep = ", ")
 )
 print(res_age)
-forest(res_age)
+# forest(res_age)
 
 # Meta-regression with gender
 res_gender <- rma.mv(
   yi, vi,
   mods = ~female_percent,
-  random = ~ group | article,
-  data = dat_r,
-  slab = experiment_ids
+  random = ~ 1 | article / group,
+  data = dat_both_mixed,
+  slab = paste(article, group, sep = ", ")
 )
 print(res_gender)
-forest(res_gender)
+# forest(res_gender)
 
 # Meta-regression with age, gender, and their interaction
 res_full <- rma.mv(
   yi, vi,
-  mods = ~ age_months * female_percent,
-  random = ~ group | article,
-  data = dat_r,
-  slab = experiment_ids
+  mods = ~ age_months_c * female_percent,
+  random = ~ 1 | article / group,
+  data = dat_both_mixed,
+  slab = paste(article, group, sep = ", ")
 )
 print(res_full)
-forest(res_full)
+# forest(res_full)
 ```
 
 ```{r, brms, echo=TRUE}
@@ -229,10 +232,10 @@ prior_c <- c(
   set_prior("cauchy(0, 0.3)", class = "sd")
 )
 
-# Run Bayesian multilevel model
-res_brm <- brm(
+# Run prior predictive simulation
+res_prior <- brm(
   yi | se(sei) ~ 1 + (1 | article / group),
-  data = dat_r,
+  data = dat_both_mixed,
   prior = prior_c,
   cores = 4,
   chains = 4,
