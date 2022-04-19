@@ -24,9 +24,7 @@ knitr::opts_chunk$set(
   fig.width = 7.5,
   out.width = "100%"
 )
-```
 
-```{r, get_data}
 # Directory paths
 data_dir <- here("data")
 
@@ -49,9 +47,11 @@ Effect sizes of individual experiments:
 # Add columns to the table of included experiments
 included %>%
   mutate(
+
     # Convert mean sample age from days to months and center
     age_months = age_mean / 30.417,
     age_months_c = age_months - mean(age_months, na.rm = TRUE),
+
     # Add difference between condition means
     mean_diff = case_when(
       !is.na(mean_diff) ~ mean_diff,
@@ -69,6 +69,7 @@ included %>%
     d_av = mean_diff / sd_av,
     # Add d from one-sample t test of novelty preference scores
     d_nov_pref = (nov_pref - 0.5) / sd_nov_pref,
+
     # Choose one type of outcome variable for each experiment
     di = case_when(
       # 1. If d was reported directed
@@ -97,18 +98,18 @@ included %>%
       factor(levels = c(
         "d", "d_z_t", "d_z_f", "d_z_diff", "d_av", "d_nov_pref", "none"
       )),
-    # Find studies with any value of d_z (from t test, ANOVA, or mean_diff)
-    d_z = case_when(
-      !is.na(d_z_t) ~ d_z_t,
-      !is.na(d_z_f) ~ d_z_f,
-      !is.na(d_z_diff) ~ d_z_diff
-    ),
+
     # Apply small sample correction using Hedges' exact method
     # See http://dx.doi.org/10.20982/tqmp.14.4.p242
     df = 2 * (sample_size - 1),
     j = exp(lgamma(df / 2) - log(sqrt(df / 2)) - lgamma((df - 1) / 2)),
     gi = di * j,
     # Compute empirical correlation based on sd_z and condition SDs
+    d_z = case_when(
+      !is.na(d_z_t) ~ d_z_t,
+      !is.na(d_z_f) ~ d_z_f,
+      !is.na(d_z_diff) ~ d_z_diff
+    ),
     sd_z = mean_diff / d_z,
     ri = (sd_z^2 - sd_novel^2 - sd_familiar^2) / (-2 * sd_novel * sd_familiar)
   ) -> dat
