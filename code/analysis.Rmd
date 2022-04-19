@@ -56,6 +56,8 @@ included %>%
     ),
     # Add d_z from paired t test of condition means (Rosenthal, 1991)
     d_z_t = t / sqrt(sample_size),
+    # Add d_z from ANOVA F value via conversion to a t value
+    d_z_f = sqrt(f) / sqrt(sample_size) * sign_f,
     # Add d_z from mean and standard deviation of the difference
     d_z_diff = mean_diff / sd_diff,
     # Add d_av from mean difference and standard devations (assumes r = 0)
@@ -70,28 +72,32 @@ included %>%
       !is.na(d) ~ d,
       # 2. If a paired sample t test was reported
       !is.na(d_z_t) ~ d_z_t,
-      # 3. If the difference between means and its SD were reported
+      # 3. If ANOVA was reported
+      !is.na(d_z_f) ~ d_z_f,
+      # 4. If the difference between means and its SD were reported
       !is.na(d_z_diff) ~ d_z_diff,
-      # 4. If the individual condition means and their SDs were reported
+      # 5. If the individual condition means and their SDs were reported
       !is.na(d_av) ~ d_av,
-      # 5. If a novelty preference score and its SD were reported
+      # 6. If a novelty preference score and its SD were reported
       !is.na(d_nov_pref) ~ d_nov_pref
     ),
     # Keep track which type of outcome measure was chosen for each article
     yi_type = case_when(
       !is.na(d) ~ "d",
       !is.na(d_z_t) ~ "d_z_t",
+      !is.na(d_z_f) ~ "d_z_f",
       !is.na(d_z_diff) ~ "d_z_diff",
       !is.na(d_av) ~ "d_av",
       !is.na(d_nov_pref) ~ "d_nov_pref",
       TRUE ~ "none"
     ) %>%
       factor(levels = c(
-        "d", "d_z_t", "d_z_diff", "d_av", "d_nov_pref", "none"
+        "d", "d_z_t", "d_z_f", "d_z_diff", "d_av", "d_nov_pref", "none"
       )),
-    # Find studies with any value of d_z (from t test or mean / SD of the diff.)
+    # Find studies with any value of d_z (from t test, ANOVA, or mean_diff)
     d_z = case_when(
       !is.na(d_z_t) ~ d_z_t,
+      !is.na(d_z_f) ~ d_z_f,
       !is.na(d_z_diff) ~ d_z_diff
     ),
     # Compute SD of the difference based on d_z
@@ -113,6 +119,7 @@ dat %>%
     d_z_diff,
     d_av,
     d_nov_pref,
+    d_z_f,
     ri
   ) %>%
   print(n = Inf)
