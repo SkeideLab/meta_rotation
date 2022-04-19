@@ -237,34 +237,42 @@ res_prior <- brm(
   yi | se(sei) ~ 1 + (1 | article / group),
   data = dat_both_mixed,
   prior = prior_c,
-  cores = 4,
+  sample_prior = "only",
+  save_pars = save_pars(all = TRUE),
   chains = 4,
   iter = 2000,
-  sample_prior = TRUE,
-  save_pars = save_pars(all = TRUE)
+  cores = 4,
+  control = list(adapt_delta = 0.99)
 )
+summary(res_prior)
+# plot(res_prior)
+
+# Run Bayesian multilevel model
+res_brm <- update(res_prior, sample_prior = FALSE)
 summary(res_brm)
+# plot(res_brm)
 
 # Sensitivity analysis
 list(
-  "ic_uninformative" = c(
-    prior(uniform(-3, 3), class = "Intercept"),
-    prior(exponential(1), class = "sd")
+  "interept_uninformative" = c(
+    set_prior("uniform(-3, 3)", class = "Intercept"),
+    set_prior("cauchy(0, 0.3)", class = "sd")
   ),
-  "ic_informative" = c(
-    prior(normal(0, 0.2), class = "Intercept"),
-    prior(exponential(1), class = "sd")
+  "interept_informative" = c(
+    set_prior("normal(0, 0.2)", class = "Intercept"),
+    set_prior("cauchy(0, 0.3)", class = "sd")
   ),
-  "sigma_uninformative" = c(
-    prior(normal(0, 1), class = "Intercept"),
-    prior(uniform(0, 5), class = "sd")
+  "sd_uninformative" = c(
+    set_prior("normal(0, 1)", class = "Intercept"),
+    set_prior("uniform(0, 10)", class = "sd", ub = 10)
   ),
-  "sigma_informative" = c(
-    prior(normal(0, 1), class = "Intercept"),
-    prior(exponential(0.1), class = "sd")
+  "sd_informative" = c(
+    set_prior("normal(0, 1)", class = "Intercept"),
+    set_prior("student_t(10, 0, 0.2)", class = "sd")
   )
 ) %>%
-  map(function(priors) update(res_brm, prior = priors)) -> res_sens
+  map(function(prior_sens) update(res_brm, prior = prior_sens)) -> res_sens
+map(res_sens, summary)
 ```
 
 # Methods
