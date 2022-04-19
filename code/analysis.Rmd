@@ -49,6 +49,9 @@ Effect sizes of individual experiments:
 # Add columns to the table of included experiments
 included %>%
   mutate(
+    # Convert mean sample age from days to months and center
+    age_months = age_mean / 30.417,
+    age_months_c = age_months - mean(age_months, na.rm = TRUE),
     # Add difference between condition means
     mean_diff = case_when(
       !is.na(mean_diff) ~ mean_diff,
@@ -60,14 +63,14 @@ included %>%
     d_z_f = sqrt(f) / sqrt(sample_size) * sign_f,
     # Add d_z from mean and standard deviation of the difference
     d_z_diff = mean_diff / sd_diff,
-    # Add d_av from mean difference and standard devations (assumes r = 0)
+    # Add d_av from mean difference and standard devations (assumes r = 0.5)
     # (Cumming, 2012)
     sd_av = (sd_novel + sd_familiar) / 2,
     d_av = mean_diff / sd_av,
     # Add d from one-sample t test of novelty preference scores
     d_nov_pref = (nov_pref - 0.5) / sd_nov_pref,
     # Choose one type of outcome variable for each experiment
-    yi = case_when(
+    di = case_when(
       # 1. If d was reported directed
       !is.na(d) ~ d,
       # 2. If a paired sample t test was reported
@@ -82,7 +85,7 @@ included %>%
       !is.na(d_nov_pref) ~ d_nov_pref
     ),
     # Keep track which type of outcome measure was chosen for each article
-    yi_type = case_when(
+    di_type = case_when(
       !is.na(d) ~ "d",
       !is.na(d_z_t) ~ "d_z_t",
       !is.na(d_z_f) ~ "d_z_f",
@@ -100,9 +103,13 @@ included %>%
       !is.na(d_z_f) ~ d_z_f,
       !is.na(d_z_diff) ~ d_z_diff
     ),
-    # Compute SD of the difference based on d_z
+    # Apply small sample correction using Hedges' exact method
+    # See http://dx.doi.org/10.20982/tqmp.14.4.p242
+    df = 2 * (sample_size - 1),
+    j = exp(lgamma(df / 2) - log(sqrt(df / 2)) - lgamma((df - 1) / 2)),
+    gi = di * j,
+    # Compute empirical correlation based on sd_z and condition SDs
     sd_z = mean_diff / d_z,
-    # Compute correlation based on sd_z and condition SDs
     ri = (sd_z^2 - sd_novel^2 - sd_familiar^2) / (-2 * sd_novel * sd_familiar)
   ) -> dat
 
@@ -112,14 +119,15 @@ dat %>%
     article,
     group,
     gender_split,
-    yi_type,
-    yi,
+    gi,
+    di,
+    di_type,
     d,
     d_z_t,
+    d_z_f,
     d_z_diff,
     d_av,
     d_nov_pref,
-    d_z_f,
     ri
   ) %>%
   print(n = Inf)
@@ -133,14 +141,12 @@ r_assumed <- 0.5
 dat %>%
   mutate(
     ni = sample_size,
-    vi = ((2 * (1 - r_assumed)) / ni) + (yi^2 / (2 * ni)),
-    sei = sqrt(vi),
-    age_months = age_mean / 30.417,
-    age_months_c = age_months - mean(age_months, na.rm = TRUE)
+    vi = ((2 * (1 - r_assumed)) / ni) + (gi^2 / (2 * ni)),
+    sei = sqrt(vi)
   ) %>%
-  filter(!is.na(yi)) %>%
+  filter(!is.na(gi)) %>%
   select(
-    article, group, gender_split, age_months_c, female_percent, yi, ri, vi, sei
+    article, group, gender_split, gi, ni, vi, sei, age_months_c, female_percent
   ) -> dat_r
 
 # Show number of experiments per gender grouping strategy
@@ -165,35 +171,35 @@ Actual meta-analysis:
 
 ```{r, compute_meta, echo=TRUE}
 # # Two-level model
-# res <- rma(
-#   yi, vi,
+# res_rma <- rma(
+#   gi, vi,
 #   data = dat_r,
 #   slab = experiment_ids
 # )
-# print(res)
-# forest(res)
+# print(res_rma)
+# forest(res_rma)
 
 # Three-level model
-res_mv <- rma.mv(
-  yi, vi,
+res_ml <- rma.mv(
+  gi, vi,
   random = ~ 1 | article / group,
   data = dat_both_mixed,
   slab = paste(article, group, sep = ", ")
 )
-print(res_mv)
-# forest(res_mv)
+print(res_ml)
+# forest(res_ml)
 
 # # Saving the forest plot
 # pdf("forest.pdf", width = 12, height = 12)
-# forest(res_mv)
+# forest(res_ml)
 # dev.off()
 
 # # Profile likelihodd plots for checking that REML has converged
-# profile(res_mv)
+# profile(res_ml)
 
 # Meta-regression with age
 res_age <- rma.mv(
-  yi, vi,
+  gi, vi,
   mods = ~age_months_c,
   random = ~ 1 | article / group,
   data = dat_both_mixed,
@@ -204,7 +210,7 @@ print(res_age)
 
 # Meta-regression with gender
 res_gender <- rma.mv(
-  yi, vi,
+  gi, vi,
   mods = ~female_percent,
   random = ~ 1 | article / group,
   data = dat_both_mixed,
@@ -215,7 +221,7 @@ print(res_gender)
 
 # Meta-regression with age, gender, and their interaction
 res_full <- rma.mv(
-  yi, vi,
+  gi, vi,
   mods = ~ age_months_c * female_percent,
   random = ~ 1 | article / group,
   data = dat_both_mixed,
@@ -234,7 +240,7 @@ prior_c <- c(
 
 # Run prior predictive simulation
 res_prior <- brm(
-  yi | se(sei) ~ 1 + (1 | article / group),
+  gi | se(sei) ~ 1 + (1 | article / group),
   data = dat_both_mixed,
   prior = prior_c,
   sample_prior = "only",
@@ -364,7 +370,7 @@ nrow(filter(included, !redundant))
 Number of experiments per type of effect size:
 
 ```{r}
-table(included$yi_type)
+table(included$di_type)
 ```
 
 Total number of infants across experiments:
