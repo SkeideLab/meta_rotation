@@ -48,9 +48,19 @@ Effect sizes of individual experiments:
 included %>%
   mutate(
 
+    # Add unique experiment identifier
+    experiment = str_c(article, group, seq = ", "),
+
+    # Convert gender to a categorical variable
+    gender = case_when(
+      female_percent == 1.0 ~ "female",
+      female_percent == 0.0 ~ "male",
+      !is.na(female_percent) ~ "mixed"
+    ) %>% factor(levels = c("mixed", "female", "male")),
+
     # Convert mean sample age from days to months and center
     age_months = age_mean / 30.417,
-    age_months_c = age_months - mean(age_months, na.rm = TRUE),
+    age = age_months - mean(age_months, na.rm = TRUE),
 
     # Add difference between condition means
     mean_diff = case_when(
@@ -147,7 +157,16 @@ dat %>%
   ) %>%
   filter(!is.na(gi)) %>%
   select(
-    article, group, gender_split, gi, ni, vi, sei, age_months_c, female_percent
+    article,
+    group,
+    experiment,
+    gender_split,
+    gi,
+    ni,
+    vi,
+    sei,
+    gender,
+    age
   ) -> dat_r
 
 # Show number of experiments per gender grouping strategy
@@ -171,62 +190,56 @@ dat_both_split <- filter(
 Actual meta-analysis:
 
 ```{r, compute_meta, echo=TRUE}
-# # Two-level model
-# res_rma <- rma(
-#   gi, vi,
-#   data = dat_r,
-#   slab = experiment_ids
-# )
-# print(res_rma)
-# forest(res_rma)
-
 # Three-level model
 res_ml <- rma.mv(
   gi, vi,
-  random = ~ 1 | article / group,
+  random = ~ 1 | article / experiment,
   data = dat_both_mixed,
-  slab = paste(article, group, sep = ", ")
+  slab = experiment
 )
 print(res_ml)
 # forest(res_ml)
 
-# # Saving the forest plot
-# pdf("forest.pdf", width = 12, height = 12)
-# forest(res_ml)
-# dev.off()
-
 # # Profile likelihodd plots for checking that REML has converged
 # profile(res_ml)
 
-# Meta-regression with age
-res_age <- rma.mv(
-  gi, vi,
-  mods = ~age_months_c,
-  random = ~ 1 | article / group,
-  data = dat_both_mixed,
-  slab = paste(article, group, sep = ", ")
-)
-print(res_age)
-# forest(res_age)
+# Apply sliding difference contrast coding for the gender categories
+# This means that the Intercept will be the grand mean (i.e., the average across
+# studies) whereas the betas will test female vs. mixed and male vs. female
+(contrasts(dat_both_mixed$gender) <- MASS::contr.sdif(3))
 
 # Meta-regression with gender
 res_gender <- rma.mv(
   gi, vi,
-  mods = ~female_percent,
-  random = ~ 1 | article / group,
+  mods = ~ gender - 1,
+  random = ~ 1 | article / experiment,
   data = dat_both_mixed,
-  slab = paste(article, group, sep = ", ")
+  slab = experiment
 )
 print(res_gender)
 # forest(res_gender)
 
-# Meta-regression with age, gender, and their interaction
+# Pairwise comparison between the gender groups
+anova(res_gender, X = rbind(c(-1, 1, 0), c(-1, 0, 1), c(0, -1, 1)))
+
+# Meta-regression with age
+res_age <- rma.mv(
+  gi, vi,
+  mods = ~age,
+  random = ~ 1 | article / experiment,
+  data = dat_both_mixed,
+  slab = experiment
+)
+print(res_age)
+# forest(res_age)
+
+# Meta-regression with gender, age, and their interaction
 res_full <- rma.mv(
   gi, vi,
-  mods = ~ age_months_c * female_percent,
-  random = ~ 1 | article / group,
+  mods = ~ gender * age,
+  random = ~ 1 | article / experiment,
   data = dat_both_mixed,
-  slab = paste(article, group, sep = ", ")
+  slab = experiment
 )
 print(res_full)
 # forest(res_full)
@@ -241,7 +254,7 @@ prior_c <- c(
 
 # Run prior predictive simulation
 res_prior <- brm(
-  gi | se(sei) ~ 1 + (1 | article / group),
+  gi | se(sei) ~ 1 + (1 | article / experiment),
   data = dat_both_mixed,
   prior = prior_c,
   sample_prior = "only",
@@ -258,8 +271,11 @@ summary(res_prior)
 res_brm <- update(res_prior, sample_prior = FALSE)
 summary(res_brm)
 # plot(res_brm)
+```
 
-# Sensitivity analysis
+
+```{r, prior_sens, eval=FALSE}
+# Prior sensitivity analysis
 list(
   "interept_uninformative" = c(
     set_prior("uniform(-3, 3)", class = "Intercept"),
