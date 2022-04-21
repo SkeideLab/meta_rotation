@@ -15,6 +15,7 @@ library(tidyverse)
 library(magrittr)
 library(metafor)
 library(brms)
+library(tidybayes)
 
 # Global chunk options
 knitr::opts_chunk$set(
@@ -27,6 +28,7 @@ knitr::opts_chunk$set(
 
 # Directory paths
 data_dir <- here("data")
+figures_dir <- here("results/figures")
 
 # Download literature search spreadsheet from Google Drive
 excel_url <- "https://docs.google.com/spreadsheets/d/1xnC0NlQYTXavXaeqQidhi7UKb1pCGAl9Ry3h3Uz3mi0"
@@ -273,6 +275,94 @@ summary(res_brm)
 # plot(res_brm)
 ```
 
+```{r, fig2}
+# Forest plot inputs
+level <- 0.05
+ndraws <- 1000
+dat_plot <- dat_both_mixed
+res_plot <- res_ml
+res_plot_brm <- res_brm
+
+# Helper function for printing confidence intervals
+print_num <- function(x) format(round(x, 2), trim = TRUE, nsmall = 2)
+print_ci <- function(est, lb, ub) {
+  paste0(print_num(est), " [", print_num(lb), ", ", print_num(ub), "]")
+}
+
+# Get draws from the Bayesian posterior distribution
+draws <- epred_draws(res_brm, dat_plot, ndraws = ndraws)
+meta_draws <- spread_draws(res_brm, b_Intercept, ndraws = ndraws) %>%
+  mutate(article = "Three-level model", experiment = "zzz") # For the last line
+
+# Create forest plot
+dat_plot %>%
+  # Compute frequentist confidence intervals
+  mutate(
+    ci_lb = gi - qnorm(level / 2, lower.tail = FALSE) * sqrt(vi),
+    ci_ub = gi + qnorm(level / 2, lower.tail = FALSE) * sqrt(vi),
+    fontface = "plain" # For study labels and confidence interval
+  ) %>%
+  # Add meta-analytic effect size + CI
+  bind_rows(list(
+    article = "Three-level model",
+    group = "",
+    experiment = "zzz", # Just so it's displayed as the last line
+    gi = res_plot$b,
+    ci_lb = res_plot$ci.lb,
+    ci_ub = res_plot$ci.ub,
+    fontface = "bold"
+  )) %>%
+  # Format effect size + CI for printing them on the plot
+  mutate(ci_print = print_ci(gi, ci_lb, ci_ub)) %>%
+  # Reverse order of experiments so they are plotted alphabetically
+  mutate(experiment = forcats::fct_rev(factor(experiment))) %>%
+  arrange(experiment) %>%
+  # Show article labels only for the first experiment per article
+  mutate(
+    article = if_else(article == lead(article, default = ""), "", article)
+  ) %>%
+  # Prepare plot
+  ggplot(aes(x = gi, y = experiment)) +
+  geom_vline(xintercept = seq(-1, 2, 1), size = 0.8, color = "grey90") +
+  geom_vline(xintercept = seq(-1.5, 2.5, 1), size = 0.4, color = "grey90") +
+  # Add article and group labels as text to the left
+  geom_text(aes(x = -5.6, label = article, fontface = fontface), hjust = 0) +
+  geom_text(aes(x = -3.1, label = group, fontface = fontface), hjust = 0) +
+  # Add experiment specific effect size + CI as text to the right
+  geom_text(aes(x = 4.4, label = ci_print, fontface = fontface), hjust = 1) +
+  # Add Bayesian highest posterior density interval in the background
+  stat_interval(aes(x = .epred), draws, point_interval = "mean_hdi") +
+  stat_interval(aes(x = b_Intercept), meta_draws, point_interval = "mean_hdi") +
+  # Add study specific effect size + CIs on top
+  geom_errorbar(aes(xmin = ci_lb, xmax = ci_ub)) +
+  geom_point(aes(size = ni), shape = 15) + # Or (1 / vi)?
+  # Add meta-analytic effect size as a line
+  annotate("segment", x = res_plot$b, xend = res_plot$b, y = 0.7, yend = 1.3) +
+  # Styling
+  coord_cartesian(expand = FALSE) +
+  scale_x_continuous(breaks = seq(-1.5, 2.5, 0.5)) +
+  scale_color_grey(
+    start = 0.9, end = 0.6,
+    labels = as_mapper(~ scales::percent(as.numeric(.x)))
+  ) +
+  labs(
+    x = expression("Hedges'" ~ italic("g")),
+    size = "Sample size",
+    color = "Bayesian HPDI"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    axis.title.x = element_text(hjust = 0.584),
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid = element_blank(),
+    text = element_text(family = "Helvetica")
+  )
+
+# Save the plot
+ggsave(here(figures_dir, "forest.pdf"), width = 9, height = 13)
+```
 
 ```{r, prior_sens, eval=FALSE}
 # Prior sensitivity analysis

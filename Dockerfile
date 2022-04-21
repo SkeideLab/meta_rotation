@@ -32,6 +32,7 @@ RUN \
     MetBrewer \
     psych \
     styler \
+    tidybayes \
     # Install cmdstandr from GitHub
     && installGithub.r stan-dev/cmdstanr@a2a97d9 \
     && mkdir -p "$HOME/.cmdstanr" \
