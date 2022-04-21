@@ -113,9 +113,10 @@ included %>%
 
     # Apply small sample correction using Hedges' exact method
     # See http://dx.doi.org/10.20982/tqmp.14.4.p242
-    df = 2 * (sample_size - 1),
-    j = exp(lgamma(df / 2) - log(sqrt(df / 2)) - lgamma((df - 1) / 2)),
-    gi = di * j,
+    dfi = 2 * (sample_size - 1),
+    ji = exp(lgamma(dfi / 2) - log(sqrt(dfi / 2)) - lgamma((dfi - 1) / 2)),
+    gi = di * ji,
+
     # Compute empirical correlation based on sd_z and condition SDs
     d_z = case_when(
       !is.na(d_z_t) ~ d_z_t,
@@ -149,12 +150,14 @@ dat %>%
 summary(dat$ri)
 
 # Compute standard error of Cohen's d based on assumed correlation
-# This will need a sensitivity analysis
+# See Hedges' formula on p. 253 in http://dx.doi.org/10.20982/tqmp.14.4.p242
+# This will need a sensitivity analysis regarding the values of `r_assumed`
 r_assumed <- 0.5
 dat %>%
   mutate(
     ni = sample_size,
-    vi = ((2 * (1 - r_assumed)) / ni) + (gi^2 / (2 * ni)),
+    vi = (dfi / (dfi - 2)) * ((2 * (1 - r_assumed)) / ni) *
+      (1 + gi^2 * (ni / (2 * (1 - r_assumed)))) - (gi^2 / ji^2),
     sei = sqrt(vi)
   ) %>%
   filter(!is.na(gi)) %>%
