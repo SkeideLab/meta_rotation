@@ -336,22 +336,26 @@ dat_plot %>%
   # Add Bayesian highest posterior density interval in the background
   stat_interval(aes(x = .epred), draws, point_interval = "mean_hdi") +
   stat_interval(aes(x = b_Intercept), meta_draws, point_interval = "mean_hdi") +
-  # Add study specific effect size + CIs on top
-  geom_errorbar(aes(xmin = ci_lb, xmax = ci_ub)) +
-  geom_point(aes(size = ni), shape = 15) + # Or (1 / vi)?
-  # Add meta-analytic effect size as a line
-  annotate("segment", x = res_plot$b, xend = res_plot$b, y = 0.7, yend = 1.3) +
-  # Styling
-  coord_cartesian(expand = FALSE) +
-  scale_x_continuous(breaks = seq(-1.5, 2.5, 0.5)) +
   scale_color_grey(
     start = 0.9, end = 0.6,
     labels = as_mapper(~ scales::percent(as.numeric(.x)))
   ) +
+  labs(color = "Bayesian\nHPDI") +
+  # Add study specific effect size + CIs on top
+  ggnewscale::new_scale_color() +
+  geom_errorbar(aes(xmin = ci_lb, xmax = ci_ub, color = gender)) +
+  geom_point(aes(size = ni, color = gender), shape = 15) + # Or (1 / vi)?
+  scale_color_brewer(palette = "Dark2", na.translate = FALSE) +
+  # Add meta-analytic effect size as a line
+  annotate("segment", x = res_plot$b, xend = res_plot$b, y = 0.7, yend = 1.3) +
+  annotate("errorbar", xmin = res_plot$ci.lb, xmax = res_plot$ci.ub, y = 1.0) +
+  # Styling
+  coord_cartesian(expand = FALSE) +
+  scale_x_continuous(breaks = seq(-1.5, 2.5, 0.5)) +
   labs(
     x = expression("Hedges'" ~ italic("g")),
-    size = "Sample size",
-    color = "Bayesian HPDI"
+    size = "Sample\nsize",
+    color = "Gender"
   ) +
   theme_minimal() +
   theme(
@@ -359,6 +363,7 @@ dat_plot %>%
     axis.title.x = element_text(hjust = 0.584),
     axis.title.y = element_blank(),
     axis.text.y = element_blank(),
+    legend.title = element_text(hjust = 0.5),
     panel.grid = element_blank(),
     text = element_text(family = "Helvetica")
   )
