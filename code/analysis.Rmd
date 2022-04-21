@@ -75,9 +75,9 @@ included %>%
     d_z_f = sqrt(f) / sqrt(sample_size) * sign_f,
     # Add d_z from mean and standard deviation of the difference
     d_z_diff = mean_diff / sd_diff,
-    # Add d_av from mean difference and standard devations (assumes r = 0.5)
-    # (Cumming, 2012)
-    sd_av = (sd_novel + sd_familiar) / 2,
+    # Add d_av from mean difference and standard devations
+    # See http://dx.doi.org/10.20982/tqmp.14.4.p242
+    sd_av = sqrt((sd_novel^2 + sd_familiar^2) / 2),
     d_av = mean_diff / sd_av,
     # Add d from one-sample t test of novelty preference scores
     d_nov_pref = (nov_pref - 0.5) / sd_nov_pref,
