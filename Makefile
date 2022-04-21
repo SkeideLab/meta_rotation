@@ -19,6 +19,10 @@ all: code/analysis.pdf
 code/analysis.pdf:
 	$(run) Rscript -e "rmarkdown::render(input = 'code/analysis.Rmd')"
 
+# Auto-format the document
+style:
+	$(run) Rscript -e "styler::style_file('code/analysis.Rmd')"
+
 # Run an interactive RStudio session with Docker
 interactive:
 	docker run --rm --volume $(PROJECT_DIR):$(REMOTE_DIR) \
