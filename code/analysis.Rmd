@@ -57,7 +57,7 @@ included %>%
     gender = case_when(
       female_percent == 1.0 ~ "female",
       female_percent == 0.0 ~ "male",
-      !is.na(female_percent) ~ "mixed"
+      TRUE ~ "mixed"
     ) %>% factor(levels = c("mixed", "female", "male")),
 
     # Convert mean sample age from days to months and center
