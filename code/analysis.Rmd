@@ -149,7 +149,7 @@ res_mv <- rma.mv(
 print(res_mv)
 forest(res_mv)
 funnel(res_mv, main = "Standard Error")
-egger=regtest(x=res_mv$yi, vi=res_mv$vi, sei=res_mv$sei,model='lm',predictor='sei')
+egger <- regtest(x = res_mv$yi, vi = res_mv$vi, sei = res_mv$sei, model = "lm", predictor = "sei")
 print(egger)
 
 # # Saving the forest plot
@@ -198,6 +198,21 @@ forest(res_full)
 funnel(res_full, main = "Standard Error")
 ```
 
+```{r,  echo=TRUE}
+library(bootstrap)
+
+theta <- function(x, dat_r) {
+  rma.mv(
+    yi, vi,
+    mods = ~age_months,
+    random = ~ group | id,
+    data = dat_r[x, ],
+    slab = experiment_ids[x]
+  )
+}
+
+res_jk <- jackknife(1:nrow(dat_r), theta, dat_r)
+```
 # Methods
 
 ## Information sources and search strategy
