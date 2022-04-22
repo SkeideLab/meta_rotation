@@ -160,7 +160,10 @@ dat_all %>%
     vi,
     sei,
     female_percent,
-    age_mean
+    age_mean,
+    age_sd,
+    age_min,
+    age_max
   ) -> dat_all_r
 
 # Show number of experiments per gender grouping strategy
@@ -188,19 +191,19 @@ dat_select <- dat_both_mixed
 dat_select %>%
   mutate(
 
-  # Gender as a categorical variable
-  gender = case_when(
-    female_percent == 1.0 ~ "female",
-    female_percent == 0.0 ~ "male",
-    TRUE ~ "mixed"
-  ) %>% factor(levels = c("mixed", "female", "male")),
+    # Gender as a categorical variable
+    gender = case_when(
+      female_percent == 1.0 ~ "Female",
+      female_percent == 0.0 ~ "Male",
+      TRUE ~ "Mixed"
+    ) %>% factor(levels = c("Mixed", "Female", "Male")),
 
-  # Mean sample age in months, centered around the mean
-  age = age_mean / 30.417,
-  age = age - mean(age, na.rm = TRUE),
-  .keep = "unused"
-
-) -> dat
+    # Mean sample age in months, centered around the mean
+    age = age_mean / 30.417,
+    age_c = age - mean(age, na.rm = TRUE),
+    age_sd = age_sd / 30.417,
+    .keep = "unused"
+  ) -> dat
 ```
 
 ```{r, meta_analysis}
@@ -362,7 +365,7 @@ anova(res_gender, X = rbind(c(-1, 1, 0), c(-1, 0, 1), c(0, -1, 1)))
 # Meta-regression with age
 res_age <- rma.mv(
   gi, vi,
-  mods = ~age,
+  mods = ~age_c,
   random = ~ 1 | article / experiment,
   data = dat,
   slab = experiment
@@ -373,13 +376,45 @@ print(res_age)
 # Meta-regression with gender, age, and their interaction
 res_full <- rma.mv(
   gi, vi,
-  mods = ~ gender * age,
+  mods = ~ gender * age_c,
   random = ~ 1 | article / experiment,
   data = dat,
   slab = experiment
 )
 print(res_full)
 # forest(res_full)
+```
+
+```{r, fig_regression}
+# Plot regression with gender and age
+alph <- 0.7
+dat %>%
+  ggplot(aes(x = age, y = gi, color = gender)) +
+  # Data points
+  # geom_errorbar(aes(xmin = age - age_sd, xmax = age + age_sd), alpha = alph) +
+  # geom_errorbar(aes(ymin = gi - sei, ymax = gi + sei), alpha = alph) +
+  geom_point(aes(size = ni), shape = 16, alpha = alph) +
+  # Regression lines - currently not reflecting the meta-analytic model
+  geom_smooth(method = lm, formula = y ~ x, alpha = .1) +
+  # Styling
+  scale_x_continuous(limits = c(3, 16), breaks = seq(4, 16, 2)) +
+  scale_y_continuous(limits = c(-1.3, 2.5), breaks = seq(-1, 2.5, 0.5)) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    x = "Age (months)",
+    y = expression("Hedges'" ~ italic("g")),
+    color = "Gender",
+    size = "Sample size"
+  ) +
+  theme_bw() +
+  theme(
+    panel.border = element_rect(size = 1),
+    panel.grid = element_line(color = "grey90"),
+    text = element_text(family = "Helvetica"),
+  )
+
+# Save the plot
+ggsave(here(figures_dir, "regression.pdf"), width = 7, height = 4)
 ```
 
 # Methods
