@@ -33,8 +33,11 @@ RUN \
     psych \
     styler \
     tidybayes \
-    # Install cmdstandr from GitHub
-    && installGithub.r stan-dev/cmdstanr@a2a97d9 \
+    # Install R packages from GitHub
+    && installGithub.r \
+    stan-dev/cmdstanr@a2a97d9 \
+    MathiasHarrer/dmetar@3e7e309 \
+    # Build CmdStanR
     && mkdir -p "$HOME/.cmdstanr" \
     && Rscript -e "cmdstanr::install_cmdstan(dir = '$HOME/.cmdstanr')" \
     # Install Python packages

@@ -217,6 +217,14 @@ res_ml <- rma.mv(
 print(res_ml)
 # forest(res_ml)
 
+# Check heterogeneity
+(i2 <- dmetar::var.comp(res_ml))
+# plot(i2)
+
+# Check share of variance at each level of the model
+round(res_ml$sigma2[1] / sum(res_ml$sigma2), 3) # Between-article (ICC)
+round(res_ml$sigma2[2] / sum(res_ml$sigma2), 3) # Within-article (between-exp.)
+
 # # Profile likelihodd plots for checking that REML has converged
 # profile(res_ml)
 ```
