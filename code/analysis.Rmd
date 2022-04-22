@@ -125,10 +125,10 @@ included %>%
     ),
     sd_z = mean_diff / d_z,
     ri = (sd_z^2 - sd_novel^2 - sd_familiar^2) / (-2 * sd_novel * sd_familiar)
-  ) -> dat
+  ) -> dat_all
 
 # Overview of the different effect sizes
-dat %>%
+dat_all %>%
   select(
     article,
     group,
@@ -147,13 +147,13 @@ dat %>%
   print(n = Inf)
 
 # Get empirical estimate of the correlation between dependent samples
-summary(dat$ri)
+summary(dat_all$ri)
 
 # Compute standard error of Cohen's d based on assumed correlation
 # See Hedges' formula on p. 253 in http://dx.doi.org/10.20982/tqmp.14.4.p242
 # This will need a sensitivity analysis regarding the values of `r_assumed`
 r_assumed <- 0.5
-dat %>%
+dat_all %>%
   mutate(
     ni = sample_size,
     vi = (dfi / (dfi - 2)) * ((2 * (1 - r_assumed)) / ni) *
@@ -172,24 +172,28 @@ dat %>%
     sei,
     gender,
     age
-  ) -> dat_r
+  ) -> dat_all_r
 
 # Show number of experiments per gender grouping strategy
-table(dat_r$gender_split)
+table(dat_all_r$gender_split)
 
-# Extract mixed/split experiments only
-dat_mixed <- filter(dat_r, gender_split %in% c("mixed", "mixed_only"))
-dat_split <- filter(dat_r, gender_split %in% c("split", "split_only"))
+# Extract split or mixed experiments only
+dat_split <- filter(dat_all_r, gender_split %in% c("split", "split_only"))
+dat_mixed <- filter(dat_all_r, gender_split %in% c("mixed", "mixed_only"))
+
+# Combine both strategies, preferring split experiments
+dat_both_split <- filter(
+  dat_all_r, gender_split %in% c("split", "mixed_only", "split_only")
+)
 
 # Combine both strategies, preferring mixed experiments
 dat_both_mixed <- filter(
-  dat_r, gender_split %in% c("mixed", "mixed_only", "split_only")
+  dat_all_r, gender_split %in% c("mixed", "mixed_only", "split_only")
 )
 
-# Combine both strategies, preferring mixed experiments
-dat_both_split <- filter(
-  dat_r, gender_split %in% c("split", "mixed_only", "split_only")
-)
+# We go ahead with the last solution as to use the maximum amount of information
+# while not biasing the gender results
+dat <- dat_both_mixed
 ```
 
 Actual meta-analysis:
@@ -199,7 +203,7 @@ Actual meta-analysis:
 res_ml <- rma.mv(
   gi, vi,
   random = ~ 1 | article / experiment,
-  data = dat_both_mixed,
+  data = dat,
   slab = experiment
 )
 print(res_ml)
@@ -211,14 +215,14 @@ print(res_ml)
 # Apply sliding difference contrast coding for the gender categories
 # This means that the Intercept will be the grand mean (i.e., the average across
 # studies) whereas the betas will test female vs. mixed and male vs. female
-(contrasts(dat_both_mixed$gender) <- MASS::contr.sdif(3))
+(contrasts(dat$gender) <- MASS::contr.sdif(3))
 
 # Meta-regression with gender
 res_gender <- rma.mv(
   gi, vi,
   mods = ~ gender - 1,
   random = ~ 1 | article / experiment,
-  data = dat_both_mixed,
+  data = dat,
   slab = experiment
 )
 print(res_gender)
@@ -232,7 +236,7 @@ res_age <- rma.mv(
   gi, vi,
   mods = ~age,
   random = ~ 1 | article / experiment,
-  data = dat_both_mixed,
+  data = dat,
   slab = experiment
 )
 print(res_age)
@@ -243,7 +247,7 @@ res_full <- rma.mv(
   gi, vi,
   mods = ~ gender * age,
   random = ~ 1 | article / experiment,
-  data = dat_both_mixed,
+  data = dat,
   slab = experiment
 )
 print(res_full)
@@ -260,12 +264,12 @@ prior_c <- c(
 # Run prior predictive simulation
 res_prior <- brm(
   gi | se(sei) ~ 1 + (1 | article / experiment),
-  data = dat_both_mixed,
+  data = dat,
   prior = prior_c,
   sample_prior = "only",
   save_pars = save_pars(all = TRUE),
   chains = 4,
-  iter = 2000,
+  iter = 10000,
   cores = 4,
   control = list(adapt_delta = 0.99)
 )
@@ -278,13 +282,10 @@ summary(res_brm)
 # plot(res_brm)
 ```
 
-```{r, fig2}
+```{r, fig_forest}
 # Forest plot inputs
 level <- 0.05
 ndraws <- 1000
-dat_plot <- dat_both_mixed
-res_plot <- res_ml
-res_plot_brm <- res_brm
 
 # Helper function for printing confidence intervals
 print_num <- function(x) format(round(x, 2), trim = TRUE, nsmall = 2)
@@ -293,12 +294,12 @@ print_ci <- function(est, lb, ub) {
 }
 
 # Get draws from the Bayesian posterior distribution
-draws <- epred_draws(res_brm, dat_plot, ndraws = ndraws)
+draws <- epred_draws(res_brm, dat, ndraws = ndraws)
 meta_draws <- spread_draws(res_brm, b_Intercept, ndraws = ndraws) %>%
   mutate(article = "Three-level model", experiment = "zzz") # For the last line
 
 # Create forest plot
-dat_plot %>%
+dat %>%
   # Compute frequentist confidence intervals
   mutate(
     ci_lb = gi - qnorm(level / 2, lower.tail = FALSE) * sqrt(vi),
@@ -310,9 +311,9 @@ dat_plot %>%
     article = "Three-level model",
     group = "",
     experiment = "zzz", # Just so it's displayed as the last line
-    gi = res_plot$b,
-    ci_lb = res_plot$ci.lb,
-    ci_ub = res_plot$ci.ub,
+    gi = res_ml$b,
+    ci_lb = res_ml$ci.lb,
+    ci_ub = res_ml$ci.ub,
     fontface = "bold"
   )) %>%
   # Format effect size + CI for printing them on the plot
@@ -347,8 +348,8 @@ dat_plot %>%
   geom_point(aes(size = ni, color = gender), shape = 15) + # Or (1 / vi)?
   scale_color_brewer(palette = "Dark2", na.translate = FALSE) +
   # Add meta-analytic effect size as a line
-  annotate("segment", x = res_plot$b, xend = res_plot$b, y = 0.7, yend = 1.3) +
-  annotate("errorbar", xmin = res_plot$ci.lb, xmax = res_plot$ci.ub, y = 1.0) +
+  annotate("segment", x = res_ml$b, xend = res_ml$b, y = 0.7, yend = 1.3) +
+  annotate("errorbar", xmin = res_ml$ci.lb, xmax = res_ml$ci.ub, y = 1.0) +
   # Styling
   coord_cartesian(expand = FALSE) +
   scale_x_continuous(breaks = seq(-1.5, 2.5, 0.5)) +
