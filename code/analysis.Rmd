@@ -202,6 +202,7 @@ res_ml <- rma.mv(
   data = dat_both_mixed,
   slab = experiment
 )
+
 print(res_ml)
 # forest(res_ml)
 
@@ -222,6 +223,7 @@ res_gender <- rma.mv(
   slab = experiment
 )
 print(res_gender)
+
 # forest(res_gender)
 
 # Pairwise comparison between the gender groups
@@ -237,6 +239,7 @@ res_age <- rma.mv(
 )
 print(res_age)
 # forest(res_age)
+
 
 # Meta-regression with gender, age, and their interaction
 res_full <- rma.mv(
@@ -394,8 +397,24 @@ list(
 ) %>%
   map(function(prior_sens) update(res_brm, prior = prior_sens)) -> res_sens
 map(res_sens, summary)
+
 ```
 
+```{r,  echo=TRUE}
+library(bootstrap)
+
+theta <- function(x, dat_r) {
+  rma.mv(
+    yi, vi,
+    mods = ~age_months,
+    random = ~ group | id,
+    data = dat_r[x, ],
+    slab = experiment_ids[x]
+  )
+}
+
+res_jk <- jackknife(1:nrow(dat_r), theta, dat_r)
+```
 # Methods
 
 ## Information sources and search strategy
