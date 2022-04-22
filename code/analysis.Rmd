@@ -19,7 +19,7 @@ library(tidybayes)
 
 # Global chunk options
 knitr::opts_chunk$set(
-  echo = FALSE,
+  echo = TRUE,
   message = FALSE,
   fig.height = 10,
   fig.width = 7.5,
@@ -43,26 +43,15 @@ included <- readxl::read_excel(excel_file, sheet = "included", na = "NA")
 
 # Results
 
-Effect sizes of individual experiments:
+## Mental rotation ability
 
-```{r, compute_effects, echo=TRUE}
+```{r, prepare_effect_sizes}
 # Add columns to the table of included experiments
 included %>%
   mutate(
 
     # Add unique experiment identifier
     experiment = str_c(article, group, seq = ", "),
-
-    # Convert gender to a categorical variable
-    gender = case_when(
-      female_percent == 1.0 ~ "female",
-      female_percent == 0.0 ~ "male",
-      TRUE ~ "mixed"
-    ) %>% factor(levels = c("mixed", "female", "male")),
-
-    # Convert mean sample age from days to months and center
-    age_months = age_mean / 30.417,
-    age = age_months - mean(age_months, na.rm = TRUE),
 
     # Add difference between condition means
     mean_diff = case_when(
@@ -170,8 +159,8 @@ dat_all %>%
     ni,
     vi,
     sei,
-    gender,
-    age
+    female_percent,
+    age_mean
   ) -> dat_all_r
 
 # Show number of experiments per gender grouping strategy
@@ -193,12 +182,28 @@ dat_both_mixed <- filter(
 
 # We go ahead with the last solution as to use the maximum amount of information
 # while not biasing the gender results
-dat <- dat_both_mixed
+dat_select <- dat_both_mixed
+
+# Recode predictor variables for meta-regression and plotting
+dat_select %>%
+  mutate(
+
+  # Gender as a categorical variable
+  gender = case_when(
+    female_percent == 1.0 ~ "female",
+    female_percent == 0.0 ~ "male",
+    TRUE ~ "mixed"
+  ) %>% factor(levels = c("mixed", "female", "male")),
+
+  # Mean sample age in months, centered around the mean
+  age = age_mean / 30.417,
+  age = age - mean(age, na.rm = TRUE),
+  .keep = "unused"
+
+) -> dat
 ```
 
-Actual meta-analysis:
-
-```{r, compute_meta, echo=TRUE}
+```{r, meta_analysis}
 # Three-level model
 res_ml <- rma.mv(
   gi, vi,
@@ -211,50 +216,9 @@ print(res_ml)
 
 # # Profile likelihodd plots for checking that REML has converged
 # profile(res_ml)
-
-# Apply sliding difference contrast coding for the gender categories
-# This means that the Intercept will be the grand mean (i.e., the average across
-# studies) whereas the betas will test female vs. mixed and male vs. female
-(contrasts(dat$gender) <- MASS::contr.sdif(3))
-
-# Meta-regression with gender
-res_gender <- rma.mv(
-  gi, vi,
-  mods = ~ gender - 1,
-  random = ~ 1 | article / experiment,
-  data = dat,
-  slab = experiment
-)
-print(res_gender)
-# forest(res_gender)
-
-# Pairwise comparison between the gender groups
-anova(res_gender, X = rbind(c(-1, 1, 0), c(-1, 0, 1), c(0, -1, 1)))
-
-# Meta-regression with age
-res_age <- rma.mv(
-  gi, vi,
-  mods = ~age,
-  random = ~ 1 | article / experiment,
-  data = dat,
-  slab = experiment
-)
-print(res_age)
-# forest(res_age)
-
-# Meta-regression with gender, age, and their interaction
-res_full <- rma.mv(
-  gi, vi,
-  mods = ~ gender * age,
-  random = ~ 1 | article / experiment,
-  data = dat,
-  slab = experiment
-)
-print(res_full)
-# forest(res_full)
 ```
 
-```{r, brms, echo=TRUE}
+```{r, meta_analysis_bayes}
 # Specify priors
 prior_c <- c(
   set_prior("normal(0, 1)", class = "Intercept"),
@@ -373,28 +337,49 @@ dat %>%
 ggsave(here(figures_dir, "forest.pdf"), width = 9, height = 13)
 ```
 
-```{r, prior_sens, eval=FALSE}
-# Prior sensitivity analysis
-list(
-  "interept_uninformative" = c(
-    set_prior("uniform(-3, 3)", class = "Intercept"),
-    set_prior("cauchy(0, 0.3)", class = "sd")
-  ),
-  "interept_informative" = c(
-    set_prior("normal(0, 0.2)", class = "Intercept"),
-    set_prior("cauchy(0, 0.3)", class = "sd")
-  ),
-  "sd_uninformative" = c(
-    set_prior("normal(0, 1)", class = "Intercept"),
-    set_prior("uniform(0, 10)", class = "sd", ub = 10)
-  ),
-  "sd_informative" = c(
-    set_prior("normal(0, 1)", class = "Intercept"),
-    set_prior("student_t(10, 0, 0.2)", class = "sd")
-  )
-) %>%
-  map(function(prior_sens) update(res_brm, prior = prior_sens)) -> res_sens
-map(res_sens, summary)
+## Moderator variables
+
+```{r, meta_regression}
+# Apply sliding difference contrast coding for the gender categories
+# This means that the Intercept will be the grand mean (i.e., the average across
+# studies) whereas the betas will test female vs. mixed and male vs. female
+(contrasts(dat$gender) <- MASS::contr.sdif(3))
+
+# Meta-regression with gender
+res_gender <- rma.mv(
+  gi, vi,
+  mods = ~ gender - 1,
+  random = ~ 1 | article / experiment,
+  data = dat,
+  slab = experiment
+)
+print(res_gender)
+# forest(res_gender)
+
+# Pairwise comparison between the gender groups
+anova(res_gender, X = rbind(c(-1, 1, 0), c(-1, 0, 1), c(0, -1, 1)))
+
+# Meta-regression with age
+res_age <- rma.mv(
+  gi, vi,
+  mods = ~age,
+  random = ~ 1 | article / experiment,
+  data = dat,
+  slab = experiment
+)
+print(res_age)
+# forest(res_age)
+
+# Meta-regression with gender, age, and their interaction
+res_full <- rma.mv(
+  gi, vi,
+  mods = ~ gender * age,
+  random = ~ 1 | article / experiment,
+  data = dat,
+  slab = experiment
+)
+print(res_full)
+# forest(res_full)
 ```
 
 # Methods
@@ -687,3 +672,28 @@ metas$article <- paste0("meta_", 1:n_metas)
 mean(metas$estimate)
 ```
 
+# Supplementary information
+
+```{r, prior_sens}
+# Prior sensitivity analysis
+list(
+  "interept_uninformative" = c(
+    set_prior("uniform(-3, 3)", class = "Intercept"),
+    set_prior("cauchy(0, 0.3)", class = "sd")
+  ),
+  "interept_informative" = c(
+    set_prior("normal(0, 0.2)", class = "Intercept"),
+    set_prior("cauchy(0, 0.3)", class = "sd")
+  ),
+  "sd_uninformative" = c(
+    set_prior("normal(0, 1)", class = "Intercept"),
+    set_prior("uniform(0, 10)", class = "sd", ub = 10)
+  ),
+  "sd_informative" = c(
+    set_prior("normal(0, 1)", class = "Intercept"),
+    set_prior("student_t(10, 0, 0.2)", class = "sd")
+  )
+) %>%
+  map(function(prior_sens) update(res_brm, prior = prior_sens)) -> res_sens
+map(res_sens, summary)
+```
