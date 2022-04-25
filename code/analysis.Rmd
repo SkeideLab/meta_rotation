@@ -153,6 +153,7 @@ dat_all %>%
   select(
     article,
     group,
+    group_long,
     experiment,
     gender_split,
     gi,
@@ -275,13 +276,15 @@ dat %>%
   ) %>%
   # Prepare plotting canvas
   ggplot(aes(x = gi, y = experiment_f)) +
-  geom_vline(xintercept = seq(-1, 2, 1), size = 0.8, color = "grey90") +
-  geom_vline(xintercept = seq(-1.5, 2.5, 1), size = 0.4, color = "grey90") +
+  geom_vline(xintercept = seq(-3, 3, 1), size = 0.8, color = "grey90") +
+  geom_vline(xintercept = seq(-2.5, 2.5, 1), size = 0.4, color = "grey90") +
   # Add article and group labels as text on the left
-  geom_text(aes(x = -5.6, label = article), hjust = 0) +
-  geom_text(aes(x = -3.1, label = group), hjust = 0) +
+  geom_text(aes(x = -9.9, label = article), hjust = 0) +
+  geom_text(aes(x = -7.1, label = group_long), hjust = 0) +
   # Add experiment-specific effect sizes and CIs as text on the right
-  geom_text(aes(x = 4.4, label = ci_print), hjust = 1) +
+  geom_text(aes(x = 3.7, label = print_num(gi)), hjust = 1) +
+  geom_text(aes(x = 4.4, label = print_num(ci_lb)), hjust = 1) +
+  geom_text(aes(x = 5.1, label = print_num(ci_ub)), hjust = 1) +
   # Add Bayesian highest posterior density intervals for each experiment
   stat_interval(aes(x = .epred), draws, point_interval = "mean_hdi") +
   scale_color_grey(
@@ -299,22 +302,15 @@ dat %>%
   ) +
   annotate(
     "text",
-    x = -5.6,
+    x = c(-9.9, 3.7, 4.4, 5.1),
     y = -0.5,
-    label = "Three-level model",
-    hjust = 0,
-    fontface = "bold"
-  ) +
-  annotate(
-    "text",
-    x = 4.4,
-    y = -0.5,
-    label = print_ci(
-      meta_effect_size$Estimate,
-      meta_effect_size$`l-95% CI`,
-      meta_effect_size$`u-95% CI`
+    label = c(
+      "Three-level model",
+      print_num(meta_effect_size$Estimate),
+      print_num(meta_effect_size$`l-95% CI`),
+      print_num(meta_effect_size$`u-95% CI`)
     ),
-    hjust = 1,
+    hjust = c(0, 1, 1, 1),
     fontface = "bold"
   ) +
   # Add headers for each of the for columns
@@ -328,34 +324,39 @@ dat %>%
   ) +
   annotate(
     "text",
-    x = c(-5.6, -3.1, 0, 4.4),
+    x = c(-9.9, -7.1, 0, 3.7, 4.4, 5.1),
     y = n_experiments + 1.5,
     label = c(
-      "Article", "Experiment", "Effect size plot", "Effect size statistic"
+      "Article",
+      "Experiment",
+      "Effect size plot",
+      "Effect size",
+      "Lower",
+      "Upper"
     ),
-    hjust = c(0, 0, 0.5, 1),
+    hjust = c(0, 0, 0.5, 1, 1, 1),
     fontface = "bold"
   ) +
   # Styling
   coord_cartesian(ylim = c(-1.5, n_experiments + 2), expand = FALSE) +
-  scale_x_continuous(breaks = seq(-1.5, 2.5, 0.5)) +
+  scale_x_continuous(breaks = seq(-3, 3, 0.5)) +
   labs(
     x = expression("Hedges'" ~ italic("g")),
     size = "Sample size",
     color = "Bayesian HPDI"
   ) +
   theme_minimal() +
-  theme(
-    legend.position = "bottom",
-    axis.title.x = element_text(hjust = 0.565),
-    axis.title.y = element_blank(),
-    axis.text.y = element_blank(),
-    panel.grid = element_blank(),
-    text = element_text(family = "Helvetica")
-  )
+    theme(
+      legend.position = "bottom",
+      axis.title.x = element_text(hjust = 0.67),
+      axis.title.y = element_blank(),
+      axis.text.y = element_blank(),
+      panel.grid = element_blank(),
+      text = element_text(family = "Helvetica")
+    )
 
 # Save the plot
-ggsave(here(figures_dir, "forest.pdf"), width = 9, height = 13)
+ggsave(here(figures_dir, "forest.pdf"), width = 12, height = 14)
 ```
 
 ## Moderator variables
