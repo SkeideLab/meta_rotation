@@ -51,7 +51,7 @@ included %>%
   mutate(
 
     # Add unique experiment identifier
-    experiment = str_c(article, group, seq = ", "),
+    experiment = str_c(year, article, group, seq = ", "),
 
     # Add difference between condition means
     mean_diff = case_when(
