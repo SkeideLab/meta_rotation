@@ -376,10 +376,10 @@ dat %>%
     `Stimulus type` = str_to_sentence(stimuli_presentation),
     `Stimulus dimensions` = stimuli_dimensions
   ) %>%
-write_csv(
-  file = here(tables_dir, "within_experiments.csv"),
-  na = "n/a"
-)
+  write_csv(
+    file = here(tables_dir, "within_experiments.csv"),
+    na = "n/a"
+  )
 ```
 
 ## Moderator variables
@@ -390,13 +390,11 @@ dat %>%
   mutate(
 
     # Gender as a categorical (factor) variable
-    gender_f = case_when(
+    gender = case_when(
       female_percent == 1.0 ~ "Female",
       female_percent == 0.0 ~ "Male",
       TRUE ~ "Mixed"
     ) %>% factor(levels = c("Mixed", "Female", "Male")),
-    # Re-code as contrast for the meta-regression model
-    gender = recode(gender_f, "Mixed" = 0, "Female" = -0.5, "Male" = 0.5),
 
     # Mean sample age in years, centered around the mean
     age = age_mean / 365.25,
@@ -404,11 +402,23 @@ dat %>%
     age_sd = age_sd / 365.25,
 
     # Task type as a categorical (factor) variale
-    task_f = factor(task, levels = c("Habituation", "VoE")),
-    # Re-code as contrast for the meta-regression model
-    task = recode(task_f, "Habituation" = -0.5, "VoE" = 0.5),
-    .keep = "unused"
+    task = factor(task, levels = c("Habituation", "VoE")),
+
+    # Combine gender and task into one column for plotting
+    gender_task = factor(
+      str_c(gender, task, sep = ", "),
+      levels = c(
+        "Female, Habituation",
+        "Male, Habituation",
+        "Mixed, Habituation",
+        "Mixed, VoE"
+      )
+    )
   ) -> dat_reg
+
+# Set numerical contrasts for factor variables
+contrasts(dat_reg$gender) <- MASS::contr.sdif(3)
+contrasts(dat_reg$task) <- MASS::contr.sdif(2)
 
 # Meta-regression with gender, age, and task
 res_reg <- rma.mv(
@@ -452,35 +462,96 @@ summary(res_brm_reg)
 ```
 
 ```{r, fig_regression}
-# Plot regression with gender and age
-alph <- 0.7
+# Get draws from the posterior distribution
+draws_reg <- epred_draws(
+  res_brm_reg,
+  dat_reg,
+  ndraws = n_draws,
+  re_formula = NA
+)
+
+# Use colors as proposed in https://arxiv.org/abs/2107.02270
+habi_colors <- c(
+  "Female, Habituation" = "#5790fc",
+  "Male, Habituation" = "#f89c20",
+  "Mixed, Habituation" = "#e42536"
+)
+voe_colors <- c("Mixed, VoE" = "#964a8b")
+
+# Regression plot
 dat_reg %>%
-  ggplot(aes(x = age * 12, y = gi, color = gender_f)) +
-  # Data points
-  # geom_errorbar(aes(xmin = age - age_sd, xmax = age + age_sd), alpha = alph) +
-  # geom_errorbar(aes(ymin = gi - sei, ymax = gi + sei), alpha = alph) +
-  geom_point(aes(size = ni), shape = 16, alpha = alph) +
-  # Regression lines - currently not reflecting the meta-analytic model
-  geom_smooth(method = lm, formula = y ~ x, alpha = .1) +
+  ggplot(aes(x = age * 12, y = gi)) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+
+  # Regression lines and HPDIs - Habituation tasks
+  stat_lineribbon(
+    aes(y = .epred, color = gender_task),
+    data = draws_reg,
+    alpha = .4,
+    point_interval = "mean_hdi"
+  ) +
+  # Individual study effect sizes - Habituation tasks
+  geom_point(aes(color = gender_task, size = ni), shape = 0) +
+  scale_color_manual(
+    values = habituation_colors,
+    breaks = names(habi_colors),
+    labels = c("Females", "Males", "Mixed gender"),
+    na.value = NA
+  ) +
+  guides(color = guide_legend(
+    title = "Habituation tasks",
+    override.aes = list(fill = NA),
+    order = 1
+  )) +
+
+  # Regression lines and HPDIs - VoE tasks
+  ggnewscale::new_scale_color() +
+  stat_lineribbon(
+    aes(y = .epred, color = gender_task),
+    data = draws_reg,
+    alpha = .4,
+    fill = NA,
+    point_interval = "mean_hdi"
+  ) +
+  # Individual study effect sizes - VoE tasks
+  geom_point(aes(color = gender_task, size = ni), shape = 0) +
+  scale_color_manual(
+    values = voe_colors,
+    breaks = names(voe_colors),
+    labels = c("Mixed gender"),
+    na.value = NA
+  ) +
+  guides(
+    color = guide_legend(
+      title = "Violation of\nexpectation tasks"
+    ),
+    order = 2
+  ) +
+
   # Styling
-  scale_x_continuous(limits = c(3, 16), breaks = seq(4, 16, 2)) +
-  scale_y_continuous(limits = c(-1.3, 2.5), breaks = seq(-1, 2.5, 0.5)) +
-  scale_color_brewer(palette = "Dark2") +
+  coord_cartesian(expand = FALSE) +
+  scale_x_continuous(limits = c(2.9, 16.1), breaks = seq(3, 16, 1)) +
+  scale_y_continuous(limits = c(-1.2, 2.2), breaks = seq(-1, 2, 0.5)) +
+  scale_fill_grey(
+    start = 0.9, end = 0.7,
+    labels = as_mapper(~ scales::percent(as.numeric(.x)))
+  ) +
   labs(
     x = "Age (months)",
     y = expression("Hedges'" ~ italic("g")),
-    color = "Gender",
+    fill = "Bayesian HPDI",
     size = "Sample size"
   ) +
   theme_bw() +
   theme(
+    legend.key = element_blank(),
     panel.border = element_rect(size = 1),
-    panel.grid = element_line(color = "grey90"),
+    panel.grid = element_blank(), # element_line(color = "grey90"),
     text = element_text(family = "Helvetica"),
   )
 
 # Save the plot
-ggsave(here(figures_dir, "regression.pdf"), width = 7, height = 4)
+ggsave(here(figures_dir, "regression.pdf"), width = 8, height = 5)
 ```
 
 # Methods
