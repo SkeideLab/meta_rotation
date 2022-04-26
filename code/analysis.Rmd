@@ -351,38 +351,31 @@ ggsave(here(figures_dir, "forest.pdf"), width = 12, height = 14)
 
 ```{r, tab_within}
 # Helper functions to re-format age in years and/or months
-format_days_years <- function(days) {
-  days_per_year <- 365.25
+format_days_months <- function(days) {
   days_per_month <- 30.417
-  years <- days %/% days_per_year
-  months <- round((days - years * days_per_year) / days_per_month)
-  str <- paste0(as.character(years), "y ", as.character(months), "m")
-  str[is.na(days)] <- NA
-  return(str)
-}
-format_days_months <- function(days, digits = 1) {
-  days_per_month <- 30.417
-  months <- days / days_per_month
-  str <- format(round(months, digits), trim = TRUE, nsmall = digits)
-  str <- paste0(str, "m")
+  months <- days %/% days_per_month
+  days_left <- round(days - months * days_per_month)
+  str <- paste0(as.character(months), "m ", as.character(days_left), "d")
   str[is.na(days)] <- NA
   return(str)
 }
 
 # Save within-analysis table of experiments
 dat %>%
+  mutate(
+    age_mean = format_days_months(age_mean),
+    age_sd = str_c(as.character(round(age_sd)), "d"),
+  ) %>%
   transmute(
     Article = if_else(article == lag(article, default = ""), "", article),
     Experiment = group_long,
     `Sample size` = sample_size,
     `Females` = round(female_percent * sample_size),
-    `Mean age^a` = format_days_years(age_mean),
-    SD = format_days_months(age_sd),
+    Age = str_c(age_mean, "±", age_sd, sep = " "),
     Task = task,
     `Stimulus type` = str_to_sentence(stimuli_presentation),
     `Stimulus dimensions` = stimuli_dimensions
   ) %>%
-  print(n = Inf)
 write_csv(
   file = here(tables_dir, "within_experiments.csv"),
   na = "n/a"
