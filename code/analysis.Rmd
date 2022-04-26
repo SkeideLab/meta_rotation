@@ -29,6 +29,7 @@ knitr::opts_chunk$set(
 # Directory paths
 data_dir <- here("data")
 figures_dir <- here("results/figures")
+tables_dir <- here("results/tables")
 
 # Download literature search spreadsheet from Google Drive
 excel_url <- "https://docs.google.com/spreadsheets/d/1xnC0NlQYTXavXaeqQidhi7UKb1pCGAl9Ry3h3Uz3mi0"
@@ -114,7 +115,9 @@ included %>%
     ),
     sd_z = mean_diff / d_z,
     ri = (sd_z^2 - sd_novel^2 - sd_familiar^2) / (-2 * sd_novel * sd_familiar)
-  ) -> dat_all
+  ) %>%
+  # Order rows by experiment ID
+  arrange(experiment) -> dat_all
 
 # Overview of the different effect sizes
 dat_all %>%
@@ -149,24 +152,7 @@ dat_all %>%
       (1 + gi^2 * (ni / (2 * (1 - r_assumed)))) - (gi^2 / ji^2),
     sei = sqrt(vi)
   ) %>%
-  filter(!is.na(gi)) %>%
-  select(
-    article,
-    group,
-    group_long,
-    experiment,
-    gender_split,
-    gi,
-    ni,
-    vi,
-    sei,
-    female_percent,
-    age_mean,
-    age_sd,
-    age_min,
-    age_max,
-    task
-  ) -> dat_all_r
+  filter(!is.na(gi)) -> dat_all_r
 
 # Show number of experiments per gender grouping strategy
 table(dat_all_r$gender_split)
@@ -248,7 +234,11 @@ n_draws <- 10000
 n_experiments <- length(unique(dat$experiment))
 
 # Helper functions for printing confidence intervals
-print_num <- function(x) format(round(x, 2), trim = TRUE, nsmall = 2)
+print_num <- function(x, digits = 2) {
+  x <- format(round(x, digits), trim = TRUE, nsmall = digits)
+  x[x == "NA"] <- NA
+  return(x)
+}
 print_ci <- function(est, lb, ub) {
   paste0(print_num(est), " [", print_num(lb), ", ", print_num(ub), "]")
 }
@@ -346,17 +336,57 @@ dat %>%
     color = "Bayesian HPDI"
   ) +
   theme_minimal() +
-    theme(
-      legend.position = "bottom",
-      axis.title.x = element_text(hjust = 0.67),
-      axis.title.y = element_blank(),
-      axis.text.y = element_blank(),
-      panel.grid = element_blank(),
-      text = element_text(family = "Helvetica")
-    )
+  theme(
+    legend.position = "bottom",
+    axis.title.x = element_text(hjust = 0.67),
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    panel.grid = element_blank(),
+    text = element_text(family = "Helvetica")
+  )
 
 # Save the plot
 ggsave(here(figures_dir, "forest.pdf"), width = 12, height = 14)
+```
+
+```{r, tab_within}
+# Helper functions to re-format age in years and/or months
+format_days_years <- function(days) {
+  days_per_year <- 365.25
+  days_per_month <- 30.417
+  years <- days %/% days_per_year
+  months <- round((days - years * days_per_year) / days_per_month)
+  str <- paste0(as.character(years), "y ", as.character(months), "m")
+  str[is.na(days)] <- NA
+  return(str)
+}
+format_days_months <- function(days, digits = 1) {
+  days_per_month <- 30.417
+  months <- days / days_per_month
+  str <- format(round(months, digits), trim = TRUE, nsmall = digits)
+  str <- paste0(str, "m")
+  str[is.na(days)] <- NA
+  return(str)
+}
+
+# Save within-analysis table of experiments
+dat %>%
+  transmute(
+    Article = if_else(article == lag(article, default = ""), "", article),
+    Experiment = group_long,
+    `Sample size` = sample_size,
+    `Females` = round(female_percent * sample_size),
+    `Mean age^a` = format_days_years(age_mean),
+    SD = format_days_months(age_sd),
+    Task = task,
+    `Stimulus type` = str_to_sentence(stimuli_presentation),
+    `Stimulus dimensions` = stimuli_dimensions
+  ) %>%
+  print(n = Inf)
+write_csv(
+  file = here(tables_dir, "within_experiments.csv"),
+  na = "n/a"
+)
 ```
 
 ## Moderator variables
