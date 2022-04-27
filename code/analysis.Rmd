@@ -486,17 +486,12 @@ voe_colors <- c("Mixed, VoE" = "#964a8b")
 dat_reg %>%
   ggplot(aes(x = age * 12, y = gi)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-  # Regression lines - Habituation tasks
-  geom_lineribbon(
-    aes(y = .epred, ymin = .lower, ymax = .upper, color = gender_task),
-    data = draws_reg_hdi,
-    fill = NA
-  ) +
-  # Bayesian HPDIs - Habituation tasks
-  geom_ribbon(
-    aes(ymin = .lower, ymax = .upper, color = gender_task),
-    data = draws_reg_hdi,
-    fill = NA
+  # Regression lines and HPDIs - Habituation tasks
+  stat_lineribbon(
+    aes(y = .epred, color = gender_task),
+    data = draws_reg,
+    alpha = .4,
+    point_interval = "mean_hdi"
   ) +
   # Individual study effect sizes - Habituation tasks
   geom_point(aes(color = gender_task, size = ni), shape = 0) +
@@ -511,18 +506,14 @@ dat_reg %>%
     override.aes = list(fill = NA),
     order = 1
   )) +
+  # Regression lines and HPDIs - VoE tasks
   ggnewscale::new_scale_color() +
-  # Regression lines - VoE tasks
-  geom_lineribbon(
-    aes(y = .epred, ymin = .lower, ymax = .upper, color = gender_task),
-    data = draws_reg_hdi,
-    fill = NA
-  ) +
-  # Bayesian HPDIs - VoE tasks
-  geom_ribbon(
-    aes(ymin = .lower, ymax = .upper, color = gender_task),
-    data = draws_reg_hdi,
-    fill = NA
+  stat_lineribbon(
+    aes(y = .epred, color = gender_task),
+    data = draws_reg,
+    alpha = .4,
+    fill = NA,
+    point_interval = "mean_hdi"
   ) +
   # Individual study effect sizes - VoE tasks
   geom_point(aes(color = gender_task, size = ni), shape = 0) +
@@ -542,6 +533,10 @@ dat_reg %>%
   coord_cartesian(expand = FALSE) +
   scale_x_continuous(limits = c(2.9, 16.1), breaks = seq(3, 16, 1)) +
   scale_y_continuous(limits = c(-1.2, 2.2), breaks = seq(-1, 2, 0.5)) +
+  scale_fill_grey(
+    start = 0.9, end = 0.7,
+    labels = as_mapper(~ scales::percent(as.numeric(.x)))
+  ) +
   labs(
     x = "Age (months)",
     y = expression("Hedges'" ~ italic("g")),
@@ -578,7 +573,8 @@ draws_reg_coef %>%
   ) +
   theme_bw() +
   theme(
-    axis.text.y  = element_text(hjust = 1),
+    panel.grid = element_blank(),
+    axis.text.y = element_text(hjust = 1),
     panel.border = element_rect(size = 1)
   ) -> plot_coef
 
@@ -587,7 +583,7 @@ plot_grid(
   plot_reg, plot_coef,
   nrow = 1, rel_widths = c(3, 2), labels = "AUTO"
 ) +
-  draw_plot(plot_reg_legend, x = 0.42, y = 0.84, hjust = 0.5, vjust = 0.5)
+  draw_plot(plot_reg_legend, x = 0.37, y = 0.84, hjust = 0.5, vjust = 0.5)
 
 # Save plot
 ggsave(here(figures_dir, "regression_coef.pdf"), width = 12, height = 5)
