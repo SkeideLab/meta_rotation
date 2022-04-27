@@ -466,7 +466,7 @@ summary(res_brm_reg)
 draws_reg <- epred_draws(
   res_brm_reg,
   dat_reg,
-  ndraws = n_draws,
+  ndraws = NULL,
   re_formula = NA
 )
 
@@ -493,7 +493,7 @@ dat_reg %>%
   # Individual study effect sizes - Habituation tasks
   geom_point(aes(color = gender_task, size = ni), shape = 0) +
   scale_color_manual(
-    values = habituation_colors,
+    values = habi_colors,
     breaks = names(habi_colors),
     labels = c("Females", "Males", "Mixed gender"),
     na.value = NA
