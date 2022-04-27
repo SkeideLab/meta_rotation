@@ -470,6 +470,9 @@ draws_reg <- epred_draws(
   re_formula = NA
 )
 
+# Summarise to obtain HPDIs
+draws_reg_hdi <- mean_hdi(draws_reg)
+
 # Use colors as proposed in https://arxiv.org/abs/2107.02270
 habi_colors <- c(
   "Female, Habituation" = "#5790fc",
@@ -482,13 +485,17 @@ voe_colors <- c("Mixed, VoE" = "#964a8b")
 dat_reg %>%
   ggplot(aes(x = age * 12, y = gi)) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-
-  # Regression lines and HPDIs - Habituation tasks
-  stat_lineribbon(
-    aes(y = .epred, color = gender_task),
-    data = draws_reg,
-    alpha = .4,
-    point_interval = "mean_hdi"
+  # Regression lines - Habituation tasks
+  geom_lineribbon(
+    aes(y = .epred, ymin = .lower, ymax = .upper, color = gender_task),
+    data = draws_reg_hdi,
+    fill = NA
+  ) +
+  # Bayesian HPDIs - Habituation tasks
+  geom_ribbon(
+    aes(ymin = .lower, ymax = .upper, color = gender_task),
+    data = draws_reg_hdi,
+    fill = NA
   ) +
   # Individual study effect sizes - Habituation tasks
   geom_point(aes(color = gender_task, size = ni), shape = 0) +
@@ -503,15 +510,18 @@ dat_reg %>%
     override.aes = list(fill = NA),
     order = 1
   )) +
-
-  # Regression lines and HPDIs - VoE tasks
   ggnewscale::new_scale_color() +
-  stat_lineribbon(
-    aes(y = .epred, color = gender_task),
-    data = draws_reg,
-    alpha = .4,
-    fill = NA,
-    point_interval = "mean_hdi"
+  # Regression lines - VoE tasks
+  geom_lineribbon(
+    aes(y = .epred, ymin = .lower, ymax = .upper, color = gender_task),
+    data = draws_reg_hdi,
+    fill = NA
+  ) +
+  # Bayesian HPDIs - VoE tasks
+  geom_ribbon(
+    aes(ymin = .lower, ymax = .upper, color = gender_task),
+    data = draws_reg_hdi,
+    fill = NA
   ) +
   # Individual study effect sizes - VoE tasks
   geom_point(aes(color = gender_task, size = ni), shape = 0) +
@@ -527,15 +537,10 @@ dat_reg %>%
     ),
     order = 2
   ) +
-
   # Styling
   coord_cartesian(expand = FALSE) +
   scale_x_continuous(limits = c(2.9, 16.1), breaks = seq(3, 16, 1)) +
   scale_y_continuous(limits = c(-1.2, 2.2), breaks = seq(-1, 2, 0.5)) +
-  scale_fill_grey(
-    start = 0.9, end = 0.7,
-    labels = as_mapper(~ scales::percent(as.numeric(.x)))
-  ) +
   labs(
     x = "Age (months)",
     y = expression("Hedges'" ~ italic("g")),
