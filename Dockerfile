@@ -19,6 +19,7 @@ RUN \
     brms \
     cowplot \
     git2r \
+    ggnewscale \
     ggridges \
     googledrive \
     here \
