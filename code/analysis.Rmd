@@ -16,6 +16,7 @@ library(magrittr)
 library(metafor)
 library(brms)
 library(tidybayes)
+library(cowplot)
 
 # Global chunk options
 knitr::opts_chunk$set(
@@ -549,14 +550,47 @@ dat_reg %>%
   ) +
   theme_bw() +
   theme(
+    legend.direction = "vertical",
     legend.key = element_blank(),
+    legend.position = "none",
     panel.border = element_rect(size = 1),
     panel.grid = element_blank(), # element_line(color = "grey90"),
     text = element_text(family = "Helvetica"),
-  )
+  ) -> plot_reg
 
-# Save the plot
-ggsave(here(figures_dir, "regression.pdf"), width = 8, height = 5)
+# Extract the legend so that we can put it inside the plotting area
+plot_reg_legend <- get_legend(plot_reg + theme(legend.position = "top"))
+
+# Plot posterior distributions of the regression coefficients
+draws_reg_coef <- tidy_draws(res_brm_reg)
+draws_reg_coef %>%
+  select(coef_colnames) %>%
+  gather() %>%
+  mutate(coef = factor(key, levels = names(coef_colnames))) %>%
+  ggplot(aes(x = value, y = fct_rev(coef))) +
+  geom_vline(xintercept = 0) +
+  stat_halfeye(point_interval = mean_hdi) +
+  coord_cartesian(xlim = c(-1.25, 1.25)) +
+  scale_x_continuous(breaks = seq(-1, 1, 0.5)) +
+  labs(
+    x = expression("Regression weight (" * Delta * italic("g") * ")"),
+    y = NULL
+  ) +
+  theme_bw() +
+  theme(
+    axis.text.y  = element_text(hjust = 1),
+    panel.border = element_rect(size = 1)
+  ) -> plot_coef
+
+# Combine plots
+plot_grid(
+  plot_reg, plot_coef,
+  nrow = 1, rel_widths = c(3, 2), labels = "AUTO"
+) +
+  draw_plot(plot_reg_legend, x = 0.42, y = 0.84, hjust = 0.5, vjust = 0.5)
+
+# Save plot
+ggsave(here(figures_dir, "regression_coef.pdf"), width = 12, height = 5)
 ```
 
 # Methods
