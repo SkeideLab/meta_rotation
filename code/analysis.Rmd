@@ -226,6 +226,14 @@ summary(res_prior)
 res_brm <- update(res_prior, sample_prior = FALSE)
 summary(res_brm)
 # plot(res_brm)
+
+# Compute intra-class correlation
+sd_article <- VarCorr(res_brm)$article$sd
+sd_experiment <- VarCorr(res_brm)$`article:experiment`$sd
+(icc <- sd_article / (sd_article + sd_experiment))
+
+# Compute probabilities of the meta-analytic being greater than 0
+hypothesis(res_brm, "Intercept > 0")$hypothesis
 ```
 
 ```{r, fig_forest}
@@ -432,6 +440,19 @@ res_reg <- rma.mv(
 )
 print(res_reg)
 # forest(res_full)
+
+# Compute intra-class correlation
+sd_article_reg <- VarCorr(res_brm_reg)$article$sd
+sd_experiment_reg <- VarCorr(res_brm_reg)$`article:experiment`$sd
+(icc_reg <- sd_article_reg / (sd_article_reg + sd_experiment_reg))
+
+# Compute reduction in heterogeneity compared to the original meta-analysis
+1 - (sd_article_reg + sd_experiment_reg) / (sd_article + sd_experiment)
+
+# Compute probabilities of the different effects being greater than 0
+hypothesis(res_brm_reg, "gender3M2 > 0")$hypothesis
+hypothesis(res_brm_reg, "gender2M1 < 0")$hypothesis
+hypothesis(res_brm_reg, "task2M1 > 0")$hypothesis
 ```
 
 ```{r, meta_regression_bayes}
