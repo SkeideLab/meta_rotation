@@ -229,10 +229,9 @@ summary(res_brm)
 ```
 
 ```{r, fig_forest}
-# Forest plot inputs
-level <- 0.05
-n_draws <- 10000
+# Define some plotting parameters
 n_experiments <- length(unique(dat$experiment))
+linewidth <- 0.5
 
 # Helper functions for printing confidence intervals
 print_num <- function(x, digits = 2) {
@@ -245,11 +244,11 @@ print_ci <- function(est, lb, ub) {
 }
 
 # Get posterior draws for each experiment
-draws <- epred_draws(res_brm, dat, ndraws = n_draws) %>%
+draws <- epred_draws(res_brm, dat, ndraws = NULL) %>%
   mutate(experiment_f = factor(experiment))
 
 # Get posterior draws for the meta-analytic effect
-meta_draws <- spread_draws(res_brm, b_Intercept, ndraws = n_draws)
+meta_draws <- spread_draws(res_brm, b_Intercept, ndraws = NULL)
 meta_effect_size <- summary(res_brm)$fixed
 
 # Create forest plot
@@ -261,14 +260,15 @@ dat %>%
     # Show article labels only for the first experiment per article
     article = if_else(article == lag(article, default = ""), "", article),
     # Compute frequentist confidence intervals
-    ci_lb = gi - qnorm(level / 2, lower.tail = FALSE) * sqrt(vi),
-    ci_ub = gi + qnorm(level / 2, lower.tail = FALSE) * sqrt(vi),
+    ci_lb = gi - qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
+    ci_ub = gi + qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
     ci_print = print_ci(gi, ci_lb, ci_ub)
   ) %>%
   # Prepare plotting canvas
   ggplot(aes(x = gi, y = experiment_f)) +
-  geom_vline(xintercept = seq(-3, 3, 1), size = 0.8, color = "grey90") +
-  geom_vline(xintercept = seq(-2.5, 2.5, 1), size = 0.4, color = "grey90") +
+  geom_vline(
+    xintercept = seq(-3, 3, 0.5), size = linewidth / 2, color = "grey70"
+  ) +
   # Add article and group labels as text on the left
   geom_text(aes(x = -9.9, label = article), hjust = 0) +
   geom_text(aes(x = -7.1, label = group_long), hjust = 0) +
@@ -339,9 +339,10 @@ dat %>%
   theme_minimal() +
   theme(
     legend.position = "bottom",
-    axis.title.x = element_text(hjust = 0.67),
-    axis.title.y = element_blank(),
+    axis.text.x = element_text(family = "Helvetica", color = "black"),
     axis.text.y = element_blank(),
+    axis.title.x = element_text(hjust = 0.67, margin = margin(t = 7, b = -10)),
+    axis.title.y = element_blank(),
     panel.grid = element_blank(),
     text = element_text(family = "Helvetica")
   )
@@ -485,7 +486,7 @@ voe_colors <- c("Mixed, VoE" = "#964a8b")
 # Regression plot
 dat_reg %>%
   ggplot(aes(x = age * 12, y = gi)) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
+  geom_hline(yintercept = 0, size = linewidth / 2) +
   # Regression lines and HPDIs - Habituation tasks
   stat_lineribbon(
     aes(y = .epred, color = gender_task),
@@ -540,12 +541,14 @@ dat_reg %>%
   ) +
   theme_bw() +
   theme(
+    axis.text = element_text(family = "Helvetica", color = "black"),
+    axis.ticks = element_line(color = "black", size = linewidth / 2),
     legend.direction = "vertical",
     legend.key = element_blank(),
     legend.position = "none",
-    panel.border = element_rect(size = 1),
-    panel.grid = element_blank(), # element_line(color = "grey90"),
-    text = element_text(family = "Helvetica"),
+    panel.border = element_rect(color = "black", size = linewidth),
+    panel.grid = element_blank(),
+    text = element_text(family = "Helvetica", color = "black")
   ) -> plot_reg
 
 # Extract the legend so that we can put it inside the plotting area
@@ -569,7 +572,7 @@ draws_reg_coef %>%
   gather() %>%
   mutate(coef = factor(key, levels = names(coef_colnames))) %>%
   ggplot(aes(x = value, y = fct_rev(coef))) +
-  geom_vline(xintercept = 0) +
+  geom_vline(xintercept = 0, size = linewidth / 2) +
   stat_halfeye(point_interval = mean_hdi) +
   coord_cartesian(xlim = c(-1.25, 1.25)) +
   scale_x_continuous(breaks = seq(-1, 1, 0.5)) +
@@ -579,15 +582,21 @@ draws_reg_coef %>%
   ) +
   theme_bw() +
   theme(
+    axis.text = element_text(family = "Helvetica", color = "black"),
+    axis.title.y = element_text(margin = margin(l = 17, r = -17)),
+    axis.ticks = element_line(color = "black", size = linewidth / 2),
     panel.grid = element_blank(),
     axis.text.y = element_text(hjust = 1),
-    panel.border = element_rect(size = 1)
+    panel.border = element_rect(color = "black", size = linewidth),
+    text = element_text(family = "Helvetica", color = "black")
   ) -> plot_coef
 
 # Combine plots
 plot_grid(
   plot_reg, plot_coef,
-  nrow = 1, rel_widths = c(3, 2), labels = "AUTO"
+  nrow = 1, rel_widths = c(3, 2), labels = "AUTO",
+  label_size = 12, label_fontfamily = "Helvetica",
+  label_x = 0.008, label_y = 0.99
 ) +
   draw_plot(plot_reg_legend, x = 0.37, y = 0.84, hjust = 0.5, vjust = 0.5)
 
