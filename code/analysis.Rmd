@@ -53,7 +53,7 @@ included %>%
   mutate(
 
     # Add unique experiment identifier
-    experiment = str_c(year, article, group, seq = ", "),
+    experiment = str_c(year, article, group, sep = ", "),
 
     # Add difference between condition means
     mean_diff = case_when(
@@ -523,12 +523,7 @@ dat_reg %>%
     labels = c("Mixed gender"),
     na.value = NA
   ) +
-  guides(
-    color = guide_legend(
-      title = "Violation of\nexpectation tasks"
-    ),
-    order = 2
-  ) +
+  guides(color = guide_legend(title = "VoE tasks", order = 2)) +
   # Styling
   coord_cartesian(expand = FALSE) +
   scale_x_continuous(limits = c(2.9, 16.1), breaks = seq(3, 16, 1)) +
@@ -556,10 +551,21 @@ dat_reg %>%
 # Extract the legend so that we can put it inside the plotting area
 plot_reg_legend <- get_legend(plot_reg + theme(legend.position = "top"))
 
+# Define new labels for the regression coefficients
+coef_colnames <- c(
+  "Intercept" = "b_Intercept",
+  "Females - mixed" = "b_gender2M1",
+  "Males - females" = "b_gender3M2",
+  "Age (per year)" = "b_age_c",
+  "Habituation - VoE" = "b_task2M1",
+  "(Females - Mixed) × age" = "b_gender2M1:age_c",
+  "(Males - Females) × age" = "b_gender3M2:age_c"
+)
+
 # Plot posterior distributions of the regression coefficients
 draws_reg_coef <- tidy_draws(res_brm_reg)
 draws_reg_coef %>%
-  select(coef_colnames) %>%
+  select(all_of(coef_colnames)) %>%
   gather() %>%
   mutate(coef = factor(key, levels = names(coef_colnames))) %>%
   ggplot(aes(x = value, y = fct_rev(coef))) +
@@ -569,7 +575,7 @@ draws_reg_coef %>%
   scale_x_continuous(breaks = seq(-1, 1, 0.5)) +
   labs(
     x = expression("Regression weight (" * Delta * italic("g") * ")"),
-    y = NULL
+    y = "Fixed effect"
   ) +
   theme_bw() +
   theme(
