@@ -41,13 +41,7 @@ excel_file <- here(data_dir, "literature_search.xlsx")
 # Read sheets
 screening <- readxl::read_excel(excel_file, sheet = "screening")
 included <- readxl::read_excel(excel_file, sheet = "included", na = "NA")
-```
 
-# Results
-
-## Mental rotation ability
-
-```{r, prepare_effect_sizes}
 # Add columns to the table of included experiments
 included %>%
   mutate(
@@ -176,6 +170,30 @@ dat_both_mixed <- filter(
 # while not biasing the gender results
 dat <- dat_both_mixed
 ```
+
+# Introduction
+
+```{r, results_literature_search}
+# Number of experiments
+nrow(dat)
+
+# Number of infants
+sum(dat$sample_size)
+
+# Age range in months
+min(dat$age_min, na.rm = TRUE) / 30.417
+max(dat$age_max, na.rm = TRUE) / 30.417
+
+# Mean age in months
+sum((dat$age_mean * dat$sample_size)) / sum(dat$sample_size) / 30.417
+
+# Number of experiments per task type
+table(dat$task)
+```
+
+# Results
+
+## Mental rotation ability
 
 ```{r, meta_analysis}
 # Three-level model
