@@ -245,26 +245,27 @@ res_brm <- update(res_prior, sample_prior = FALSE)
 summary(res_brm)
 # plot(res_brm)
 
-# Compute by-experiment variance
-sd_experiment_draws <- as.matrix(
-  res_brm,
-  variable = "sd_article:experiment__Intercept"
-)
-mean_qi(sd_experiment_draws^2)
-
-# Compute by-article variance
-sd_article_draws <- as.matrix(
-  res_brm,
-  variable = "sd_article__Intercept"
-)
-mean_qi(sd_article_draws^2)
-
-# Compute intra-class correlation
-icc_draws <- sd_article_draws^2 / (sd_article_draws^2 + sd_experiment_draws^2)
-mean_qi(icc_draws)
-
 # Compute probabilities of the meta-analytic being greater than 0
 hypothesis(res_brm, "Intercept > 0")$hypothesis
+
+# Compute by-experiment variance
+var_experiment <- as.matrix(
+  res_brm,
+  variable = "sd_article:experiment__Intercept"
+)^2
+mean_qi(var_experiment)
+
+# Compute by-article variance
+var_article <- as.matrix(
+  res_brm,
+  variable = "sd_article__Intercept"
+)^2
+mean_qi(var_article_draws)
+
+# Compute intra-class correlation
+var_total <- (var_experiment + var_article)
+icc_draws <- var_article / var_total
+mean_qi(icc_draws)
 ```
 
 ```{r, fig_forest}
@@ -512,13 +513,27 @@ hypothesis(res_brm_reg, "gender3M2 > 0")$hypothesis
 hypothesis(res_brm_reg, "gender2M1 < 0")$hypothesis
 hypothesis(res_brm_reg, "task2M1 > 0")$hypothesis
 
+# Compute by-experiment variance
+var_experiment_reg <- as.matrix(
+  res_brm_reg,
+  variable = "sd_article:experiment__Intercept"
+)^2
+mean_qi(var_experiment_reg)
+
+# Compute by-article variance
+var_article_reg <- as.matrix(
+  res_brm_reg,
+  variable = "sd_article__Intercept"
+)^2
+mean_qi(var_article_reg)
+
 # Compute intra-class correlation
-sd_article_reg <- VarCorr(res_brm_reg)$article$sd
-sd_experiment_reg <- VarCorr(res_brm_reg)$`article:experiment`$sd
-(icc_reg <- sd_article_reg / (sd_article_reg + sd_experiment_reg))
+var_total_reg <- var_experiment_reg + var_article_reg
+icc_reg <- var_article_reg / var_total_reg
+mean_qi(icc_reg)
 
 # Compute reduction in heterogeneity compared to the original meta-analysis
-1 - (sd_article_reg + sd_experiment_reg) / (sd_article + sd_experiment)
+1 - mean(var_total_reg / var_total)
 ```
 
 ```{r, fig_regression}
