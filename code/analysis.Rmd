@@ -255,10 +255,6 @@ hypothesis(res_brm, "Intercept > 0")$hypothesis
 ```
 
 ```{r, fig_forest}
-# Define some plotting parameters
-n_experiments <- length(unique(dat$experiment))
-linewidth <- 0.5
-
 # Helper functions for printing confidence intervals
 print_num <- function(x, digits = 2) {
   x <- format(round(x, digits), trim = TRUE, nsmall = digits)
@@ -278,6 +274,7 @@ meta_draws <- spread_draws(res_brm, b_Intercept, ndraws = NULL)
 meta_effect_size <- summary(res_brm)$fixed
 
 # Create forest plot
+n_experiments <- length(unique(dat$experiment))
 dat %>%
   # Make sure the plot will be ordered alphabetically by experiment IDs
   arrange(experiment) %>%
@@ -292,9 +289,7 @@ dat %>%
   ) %>%
   # Prepare plotting canvas
   ggplot(aes(x = gi, y = experiment_f)) +
-  geom_vline(
-    xintercept = seq(-3, 3, 0.5), size = linewidth / 2, color = "grey70"
-  ) +
+  geom_vline(xintercept = seq(-3, 3, 0.5), color = "grey90") +
   # Add article and group labels as text on the left
   geom_text(aes(x = -9.9, label = article), hjust = 0) +
   geom_text(aes(x = -7.1, label = group_long), hjust = 0) +
@@ -362,8 +357,11 @@ dat %>%
     fontface = "bold"
   ) +
   # Styling
-  coord_cartesian(ylim = c(-1.5, n_experiments + 2), expand = FALSE) +
+  coord_cartesian(
+    ylim = c(-1.5, n_experiments + 2), expand = FALSE, clip = "off"
+  ) +
   scale_x_continuous(breaks = seq(-3, 3, 0.5)) +
+  annotate("segment", x = -3.3, xend = 3.3, y = -1.5, yend = -1.5) +
   labs(
     x = expression("Hedges'" ~ italic("g")),
     size = "Sample size",
@@ -374,7 +372,8 @@ dat %>%
     legend.position = "bottom",
     axis.text.x = element_text(family = "Helvetica", color = "black"),
     axis.text.y = element_blank(),
-    axis.title.x = element_text(hjust = 0.67, margin = margin(t = 7, b = -10)),
+    axis.ticks.x = element_line(colour = "black"),
+    axis.title.x = element_text(hjust = 0.67, margin = margin(b = -15)),
     axis.title.y = element_blank(),
     panel.grid = element_blank(),
     text = element_text(family = "Helvetica")
@@ -532,7 +531,12 @@ voe_colors <- c("Mixed, VoE" = "#964a8b")
 # Regression plot
 dat_reg %>%
   ggplot(aes(x = age * 12, y = gi)) +
-  geom_hline(yintercept = 0, size = linewidth / 2) +
+  geom_hline(yintercept = seq(-1, 2, 0.5), color = "grey90") +
+  annotate(
+    "rect",
+    xmin = 5.5, xmax = Inf, ymin = 1.25, ymax = Inf,
+    color = NA, fill = "white"
+  ) +
   # Regression lines and HPDIs - Habituation tasks
   stat_lineribbon(
     aes(y = .epred, color = gender_task),
@@ -587,14 +591,13 @@ dat_reg %>%
     fill = "CrI level",
     size = "Sample size"
   ) +
-  theme_bw() +
+  theme_classic() +
   theme(
     axis.text = element_text(family = "Helvetica", color = "black"),
-    axis.ticks = element_line(color = "black", size = linewidth / 2),
+    axis.ticks = element_line(color = "black"),
     legend.direction = "vertical",
     legend.key = element_blank(),
     legend.position = "none",
-    panel.border = element_rect(color = "black", size = linewidth),
     panel.grid = element_blank(),
     text = element_text(family = "Helvetica", color = "black")
   ) -> plot_reg
@@ -620,22 +623,28 @@ draws_reg_coef %>%
   gather() %>%
   mutate(coef = factor(key, levels = names(coef_colnames))) %>%
   ggplot(aes(x = value, y = fct_rev(coef))) +
-  geom_vline(xintercept = 0, size = linewidth / 2) +
+  geom_vline(xintercept = seq(-1, 1, 0.5), color = "grey90") +
   stat_halfeye(point_interval = "mean_qi", .width = c(0.5, 0.95)) +
-  coord_cartesian(xlim = c(-1.25, 1.25)) +
+  coord_cartesian(xlim = c(-1.25, 1.25), clip = "off") +
   scale_x_continuous(breaks = seq(-1, 1, 0.5)) +
-  labs(
-    x = expression("Regression weight (" * Delta * italic("g") * ")"),
-    y = "Fixed effect"
+  labs(x = expression("Regression weight (" * Delta * italic("g") * ")")) +
+  annotate(
+    "text",
+    label = "Fixed effects", x = -3.175, y = 7.86, hjust = 0,
+    family = "Helvetica", fontface = "bold", color = "black"
   ) +
-  theme_bw() +
+  theme_minimal() +
   theme(
-    axis.text = element_text(family = "Helvetica", color = "black"),
-    axis.title.y = element_text(margin = margin(l = 17, r = -17)),
-    axis.ticks = element_line(color = "black", size = linewidth / 2),
+    axis.line.x = element_line(colour = "black"),
+    axis.text.x = element_text(family = "Helvetica", color = "black"),
+    axis.text.y = element_text(
+      family = "Helvetica", color = "black", size = 3.88 * .pt,
+      hjust = 0, vjust = -0.1, margin = margin(l = 20)
+    ),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
     panel.grid = element_blank(),
-    axis.text.y = element_text(hjust = 1),
-    panel.border = element_rect(color = "black", size = linewidth),
     text = element_text(family = "Helvetica", color = "black")
   ) -> plot_coef
 
@@ -643,10 +652,10 @@ draws_reg_coef %>%
 plot_grid(
   plot_reg, plot_coef,
   nrow = 1, rel_widths = c(3, 2), labels = "auto",
-  label_size = 12, label_fontfamily = "Helvetica",
-  label_x = 0.008, label_y = 0.995
+  label_size = 11, label_fontfamily = "Helvetica",
+  label_x = 0.008, label_y = 0.99
 ) +
-  draw_plot(plot_reg_legend, x = 0.37, y = 0.84, hjust = 0.5, vjust = 0.5)
+  draw_plot(plot_reg_legend, x = 0.385, y = 0.865, hjust = 0.5, vjust = 0.5)
 
 # Save plot
 ggsave(here(figures_dir, "regression_coef.pdf"), width = 12, height = 5)
