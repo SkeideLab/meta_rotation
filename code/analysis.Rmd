@@ -245,10 +245,23 @@ res_brm <- update(res_prior, sample_prior = FALSE)
 summary(res_brm)
 # plot(res_brm)
 
+# Compute by-experiment variance
+sd_experiment_draws <- as.matrix(
+  res_brm,
+  variable = "sd_article:experiment__Intercept"
+)
+mean_qi(sd_experiment_draws^2)
+
+# Compute by-article variance
+sd_article_draws <- as.matrix(
+  res_brm,
+  variable = "sd_article__Intercept"
+)
+mean_qi(sd_article_draws^2)
+
 # Compute intra-class correlation
-sd_article <- VarCorr(res_brm)$article$sd
-sd_experiment <- VarCorr(res_brm)$`article:experiment`$sd
-(icc <- sd_article / (sd_article + sd_experiment))
+icc_draws <- sd_article_draws^2 / (sd_article_draws^2 + sd_experiment_draws^2)
+mean_qi(icc_draws)
 
 # Compute probabilities of the meta-analytic being greater than 0
 hypothesis(res_brm, "Intercept > 0")$hypothesis
