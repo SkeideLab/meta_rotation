@@ -15,6 +15,7 @@ library(tidyverse)
 library(magrittr)
 library(metafor)
 library(brms)
+library(bayestestR)
 library(tidybayes)
 library(cowplot)
 
@@ -221,19 +222,21 @@ round(res_ml$sigma2[2] / sum(res_ml$sigma2), 3) # Within-article (between-exp.)
 ```{r, meta_analysis_bayes}
 # Specify priors
 prior_c <- c(
-  set_prior("normal(0, 1)", class = "Intercept"),
+  set_prior("normal(0, 1)", class = "b"),
   set_prior("cauchy(0, 0.3)", class = "sd")
 )
 
 # Run prior predictive simulation
+n_iter <- 20000
 res_prior <- brm(
-  gi | se(sei) ~ 1 + (1 | article / experiment),
+  gi | se(sei) ~ 0 + Intercept + (1 | article / experiment),
   data = dat,
   prior = prior_c,
   sample_prior = "only",
   save_pars = save_pars(all = TRUE),
   chains = 4,
-  iter = 10000,
+  iter = n_iter,
+  warmup = 1000,
   cores = 4,
   control = list(adapt_delta = 0.99)
 )
@@ -245,8 +248,13 @@ res_brm <- update(res_prior, sample_prior = FALSE)
 summary(res_brm)
 # plot(res_brm)
 
-# Compute probabilities of the meta-analytic being greater than 0
-hypothesis(res_brm, "Intercept > 0")$hypothesis
+# Summarise fixed effects (incl. Bayes factors)
+describe_posterior(
+  res_brm,
+  centrality = "mean", ci = 0.95, ci_method = "ETI",
+  test = c("p_direction", "rope", "bayesfactor"),
+  rope_range = c(-0.1, 0.1)
+)
 
 # Compute by-experiment variance
 var_experiment <- as.matrix(
@@ -260,7 +268,7 @@ var_article <- as.matrix(
   res_brm,
   variable = "sd_article__Intercept"
 )^2
-mean_qi(var_article_draws)
+mean_qi(var_article)
 
 # Compute intra-class correlation
 var_total <- (var_experiment + var_article)
@@ -483,20 +491,22 @@ print(res_reg)
 ```{r, meta_regression_bayes}
 # Specify priors
 prior_c <- c(
-  set_prior("normal(0, 1)", class = "Intercept"),
+  set_prior("normal(0, 1)", class = "b", coef = "Intercept"),
   set_prior("normal(0, 0.5)", class = "b"),
   set_prior("cauchy(0, 0.3)", class = "sd")
 )
 
 # Run prior predictive simulation
 res_prior_reg <- brm(
-  gi | se(sei) ~ gender * age_c + task + (1 | article / experiment),
+  gi | se(sei) ~ 0 + Intercept + gender * age_c + task +
+    (1 | article / experiment),
   data = dat_reg,
   prior = prior_c,
   sample_prior = "only",
   save_pars = save_pars(all = TRUE),
   chains = 4,
-  iter = 10000,
+  iter = n_iter,
+  warmup = 1000,
   cores = 4,
   control = list(adapt_delta = 0.99)
 )
@@ -508,10 +518,13 @@ res_brm_reg <- update(res_prior_reg, sample_prior = FALSE)
 summary(res_brm_reg)
 # plot(res_brm_reg)
 
-# Compute probabilities of the different effects being greater than 0
-hypothesis(res_brm_reg, "gender3M2 > 0")$hypothesis
-hypothesis(res_brm_reg, "gender2M1 < 0")$hypothesis
-hypothesis(res_brm_reg, "task2M1 > 0")$hypothesis
+# Summarise fixed effects (incl. Bayes factors)
+describe_posterior(
+  res_brm_reg,
+  centrality = "mean", ci = 0.95, ci_method = "ETI",
+  test = c("p_direction", "rope", "bayesfactor"),
+  rope_range = c(-0.1, 0.1)
+)
 
 # Compute by-experiment variance
 var_experiment_reg <- as.matrix(
