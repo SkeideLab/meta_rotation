@@ -101,16 +101,7 @@ included %>%
     # See http://dx.doi.org/10.20982/tqmp.14.4.p242
     dfi = 2 * (sample_size - 1),
     ji = exp(lgamma(dfi / 2) - log(sqrt(dfi / 2)) - lgamma((dfi - 1) / 2)),
-    gi = di * ji,
-
-    # Compute empirical correlation based on sd_z and condition SDs
-    d_z = case_when(
-      !is.na(d_z_t) ~ d_z_t,
-      !is.na(d_z_f) ~ d_z_f,
-      !is.na(d_z_diff) ~ d_z_diff
-    ),
-    sd_z = mean_diff / d_z,
-    ri = (sd_z^2 - sd_novel^2 - sd_familiar^2) / (-2 * sd_novel * sd_familiar)
+    gi = di * ji
   ) %>%
   # Order rows by experiment ID
   arrange(experiment) -> dat_all
@@ -129,13 +120,9 @@ dat_all %>%
     d_z_f,
     d_z_diff,
     d_av,
-    d_nov_pref,
-    ri
+    d_nov_pref
   ) %>%
   print(n = Inf)
-
-# Get empirical estimate of the correlation between dependent samples
-summary(dat_all$ri)
 
 # Compute standard error of Cohen's d based on assumed correlation
 # See Hedges' formula on p. 253 in http://dx.doi.org/10.20982/tqmp.14.4.p242
@@ -993,6 +980,81 @@ mean(metas$estimate)
 ```
 
 # Supplementary information
+
+```{r, ri_assumed_sens}
+# Compute empirical estimate of the correlation between dependent samples
+dat %>%
+  mutate(
+    # Get effect size from paired samples t-test, one sample t-test, or ANOVA
+    d_diff = case_when(
+      !is.na(d) ~ d,
+      !is.na(d_z_t) ~ d_z_t,
+      !is.na(d_z_f) ~ d_z_f,
+      !is.na(d_z_diff) ~ d_z_diff
+    ),
+    # Compute empirical correlation
+    # Basesd on the SD of the difference and the SDs within the two conditions
+    sd_diff = mean_diff / d_diff,
+    ri = (sd_diff^2 - sd_novel^2 - sd_familiar^2) /
+      (-2 * sd_novel * sd_familiar)
+  ) %>%
+  pull(ri) -> ri_empirical
+
+# Summarise the estimated correlations
+summary(ri_empirical)
+
+# Re-run the meta-analysis for different values of r_assumed
+seq(-0.9, 0.9, by = 0.3) %>%
+  map_dfr(function(ri_sens) {
+
+    # Re-compute standard errors of the effect sizes
+    mutate(
+      dat,
+      vi = (dfi / (dfi - 2)) * ((2 * (1 - ri_sens)) / ni) *
+        (1 + gi^2 * (ni / (2 * (1 - ri_sens)))) - (gi^2 / ji^2),
+      sei = sqrt(vi)
+    ) -> dat_ri_sens
+
+    # Re-run meta-analysis
+    res_ri_sens <- update(res_brm, newdata = dat_ri_sens, refresh = 0)
+
+    # Extract posterior draws
+    tidy_draws(res_ri_sens) %>%
+      mutate(ri_sens = ri_sens)
+  }) -> draws_ri_sens
+
+# Plot meta-analytic results for each assumed correlation
+draws_ri_sens %>%
+  mutate(ri_sens_f = fct_rev(factor(print_num(ri_sens)))) %>%
+  ggplot(aes(y = ri_sens_f, x = b_Intercept)) +
+  geom_vline(xintercept = seq(-0.75, 0.75, 0.25), color = "grey90") +
+  stat_halfeye(point_interval = "mean_qi", .width = c(0.5, 0.95)) +
+  coord_cartesian(xlim = c(-0.75, 0.75), clip = "off") +
+  scale_x_continuous(breaks = seq(-0.75, 0.75, 0.25)) +
+  labs(x = expression("Hedges" ~ italic("g"))) +
+  annotate(
+    "text",
+    label = "Correlation", x = -1.1, y = 7.86, hjust = 0,
+    family = "Helvetica", fontface = "bold", color = "black"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.line.x = element_line(colour = "black"),
+    axis.text.x = element_text(family = "Helvetica", color = "black"),
+    axis.text.y = element_text(
+      family = "Helvetica", color = "black", size = 3.88 * .pt,
+      hjust = 0, vjust = -0.1, margin = margin(l = 20)
+    ),
+    axis.ticks.x = element_line(color = "black"),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    panel.grid = element_blank(),
+    text = element_text(family = "Helvetica", color = "black")
+  )
+
+# Save the plot
+ggsave(here(figures_dir, "ri_sens.pdf"), width = 4, height = 5)
+```
 
 ```{r, prior_sens}
 # Prior sensitivity analysis
