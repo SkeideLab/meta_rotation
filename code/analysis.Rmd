@@ -1018,42 +1018,33 @@ seq(-0.9, 0.9, by = 0.3) %>%
     # Re-run meta-analysis
     res_ri_sens <- update(res_brm, newdata = dat_ri_sens, refresh = 0)
 
-    # Extract posterior draws
-    tidy_draws(res_ri_sens) %>%
-      mutate(ri_sens = ri_sens)
-  }) -> draws_ri_sens
+    # Compute ICC
+    var_experiment_ri_sens <- as.matrix(
+      res_ri_sens,
+      variable = "sd_article:experiment__Intercept"
+    )^2
+    var_article_ri_sens <- as.matrix(
+      res_ri_sens,
+      variable = "sd_article__Intercept"
+    )^2
+    var_total_ri_sens <- var_experiment_ri_sens + var_article_ri_sens
+    icc_ri_sens <- var_article_ri_sens / var_total_ri_sens
+    icc_row <- mean_qi(icc_ri_sens) %>%
+      rename(Estimate = y, `l-95% CI` = ymin, `u-95% CI` = ymax)
 
-# Plot meta-analytic results for each assumed correlation
-draws_ri_sens %>%
-  mutate(ri_sens_f = fct_rev(factor(print_num(ri_sens)))) %>%
-  ggplot(aes(y = ri_sens_f, x = b_Intercept)) +
-  geom_vline(xintercept = seq(-0.75, 0.75, 0.25), color = "grey90") +
-  stat_halfeye(point_interval = "mean_qi", .width = c(0.5, 0.95)) +
-  coord_cartesian(xlim = c(-0.75, 0.75), clip = "off") +
-  scale_x_continuous(breaks = seq(-0.75, 0.75, 0.25)) +
-  labs(x = expression("Hedges" ~ italic("g"))) +
-  annotate(
-    "text",
-    label = "Correlation", x = -1.1, y = 7.86, hjust = 0,
-    family = "Helvetica", fontface = "bold", color = "black"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.line.x = element_line(colour = "black"),
-    axis.text.x = element_text(family = "Helvetica", color = "black"),
-    axis.text.y = element_text(
-      family = "Helvetica", color = "black", size = 3.88 * .pt,
-      hjust = 0, vjust = -0.1, margin = margin(l = 20)
-    ),
-    axis.ticks.x = element_line(color = "black"),
-    axis.ticks.y = element_blank(),
-    axis.title.y = element_blank(),
-    panel.grid = element_blank(),
-    text = element_text(family = "Helvetica", color = "black")
-  )
+    # Extract summary statistics as a data frame row
+    with(summary(res_ri_sens), bind_rows(fixed, bind_rows(random))) %>%
+      bind_rows(icc_row) %>%
+      transmute(
+        parameter = c("Hedges' g", "SD_{article}", "SD_{experiment}", "ICC"),
+        Estimate = print_ci(Estimate, `l-95% CI`, `u-95% CI`)
+      ) %>%
+      pivot_wider(names_from = parameter, values_from = Estimate) %>%
+      bind_cols(`Assumed r_i` = print_num(ri_sens), .)
+  }) -> tab_ri_sens
 
-# Save the plot
-ggsave(here(figures_dir, "ri_sens.pdf"), width = 4, height = 5)
+# Save the table
+write_csv(tab_ri_sens, file = here(tables_dir, "ri_sens.csv"))
 ```
 
 ```{r, prior_sens}
