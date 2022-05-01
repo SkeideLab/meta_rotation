@@ -28,6 +28,7 @@ RUN \
     huxtable \
     kableExtra \
     languageserver \
+    logspline \
     magick \
     metafor \
     MetBrewer \
