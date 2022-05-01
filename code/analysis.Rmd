@@ -715,7 +715,8 @@ summary(ri_empirical)
 
 # Re-run the meta-analysis for different values of r_assumed
 seq(-0.9, 0.9, by = 0.3) %>%
-  map_dfr(function(ri_sens) {
+  set_names(., str_c("r = ", print_num(.))) %>%
+  map(function(ri_sens) {
 
     # Re-compute standard errors of the effect sizes
     mutate(
@@ -726,57 +727,65 @@ seq(-0.9, 0.9, by = 0.3) %>%
     ) -> dat_ri_sens
 
     # Re-run meta-analysis
-    res_ri_sens <- update(res_brm, newdata = dat_ri_sens, refresh = 0)
+    update(res_brm, newdata = dat_ri_sens, refresh = 0)
+  }) -> res_ri_sens
+
+# Prior sensitivity analysis
+list(
+  "Intercept U(-10,10)" = c(
+    set_prior("uniform(-10, 10)", class = "Intercept"),
+    set_prior("cauchy(0, 0.3)", class = "sd")
+  ),
+  "Intercept N(0,0.2)" = c(
+    set_prior("normal(0, 0.2)", class = "Intercept"),
+    set_prior("cauchy(0, 0.3)", class = "sd")
+  ),
+  "SD U(0,10)" = c(
+    set_prior("normal(0, 1)", class = "Intercept"),
+    set_prior("uniform(0, 10)", class = "sd")
+  ),
+  "SD Student-t(10,0,0.2)" = c(
+    set_prior("normal(0, 1)", class = "Intercept"),
+    set_prior("student_t(10, 0, 0.2)", class = "sd")
+  )
+) %>%
+  # Re-run the meta-analysis with different priors
+  map(
+    function(prior_sens) update(res_brm, prior = prior_sens, refresh = 0)
+  ) -> res_prior_sens
+
+# Create a table summarizing all sensitivity analyses
+map2_dfr(
+  c(res_ri_sens, res_prior_sens),
+  c(names(res_ri_sens), names(res_prior_sens)),
+  function(res, name) {
 
     # Compute ICC
-    var_experiment_ri_sens <- as.matrix(
-      res_ri_sens,
+    var_experiment <- as.matrix(
+      res,
       variable = "sd_article:experiment__Intercept"
     )^2
-    var_article_ri_sens <- as.matrix(
-      res_ri_sens,
+    var_article <- as.matrix(
+      res,
       variable = "sd_article__Intercept"
     )^2
-    var_total_ri_sens <- var_experiment_ri_sens + var_article_ri_sens
-    icc_ri_sens <- var_article_ri_sens / var_total_ri_sens
-    icc_row <- mean_qi(icc_ri_sens) %>%
+    var_total <- var_experiment + var_article
+    icc <- var_article / var_total
+    icc_row <- mean_qi(icc) %>%
       rename(Estimate = y, `l-95% CI` = ymin, `u-95% CI` = ymax)
 
-    # Extract summary statistics as a data frame row
-    with(summary(res_ri_sens), bind_rows(fixed, bind_rows(random))) %>%
+    # Create a data frame row of summary statistics
+    with(summary(res), bind_rows(fixed, bind_rows(random))) %>%
       bind_rows(icc_row) %>%
       transmute(
         parameter = c("Hedges' g", "SD_{article}", "SD_{experiment}", "ICC"),
         Estimate = print_ci(Estimate, `l-95% CI`, `u-95% CI`)
       ) %>%
       pivot_wider(names_from = parameter, values_from = Estimate) %>%
-      bind_cols(`Assumed r_i` = print_num(ri_sens), .)
-  }) -> tab_ri_sens
+      bind_cols(Simulation = name, .)
+  }
+) -> tab_sens
 
 # Save the table
-write_csv(tab_ri_sens, file = here(tables_dir, "ri_sens.csv"))
-```
-
-```{r, prior_sens}
-# Prior sensitivity analysis
-list(
-  "interept_uninformative" = c(
-    set_prior("uniform(-3, 3)", class = "Intercept"),
-    set_prior("cauchy(0, 0.3)", class = "sd")
-  ),
-  "interept_informative" = c(
-    set_prior("normal(0, 0.2)", class = "Intercept"),
-    set_prior("cauchy(0, 0.3)", class = "sd")
-  ),
-  "sd_uninformative" = c(
-    set_prior("normal(0, 1)", class = "Intercept"),
-    set_prior("uniform(0, 10)", class = "sd", ub = 10)
-  ),
-  "sd_informative" = c(
-    set_prior("normal(0, 1)", class = "Intercept"),
-    set_prior("student_t(10, 0, 0.2)", class = "sd")
-  )
-) %>%
-  map(function(prior_sens) update(res_brm, prior = prior_sens)) -> res_sens
-map(res_sens, summary)
+write_csv(tab_sens, file = here(tables_dir, "sensitivity_analysis.csv"))
 ```
