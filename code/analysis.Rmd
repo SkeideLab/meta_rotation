@@ -848,6 +848,57 @@ res_reg <- rma.mv(
 )
 print(res_reg)
 # forest(res_full)
+
+# Extract standard deviations and ICCs
+vars_ml <- list(matrix())
+
+# Export results as a table
+map2_dfr(
+  c("Meta-analysis", "Meta-regression"),
+  list(res_ml, res_reg),
+  function(name, res) {
+    # Intercept / regression weights
+    tibble(
+      Model = c(name, rep(NA, length(res$b) - 1)),
+      Parameter = rownames(res$b),
+      Estimate = print_num(as.numeric(res$b)),
+      SE = print_num(res$se),
+      z = print_num(res$zval),
+      p = print_num(res$pval, digits = 3),
+      ci_lower = print_num(res$ci.lb),
+      ci_upper = print_num(res$ci.ub)
+    ) %>%
+      # Re-format confidence interval
+      mutate(
+        `95% CI` = str_c("[", ci_lower, ", ", ci_upper, "]"),
+        .keep = "unused"
+      ) %>%
+      # Add variances
+      bind_rows(tibble(
+        Parameter = res$s.name,
+        Estimate = print_num(res$sigma2)
+      ))
+  }
+) %>%
+  mutate(
+    Parameter = c(
+      "Hedges' g",
+      "s2article",
+      "s2experiment",
+      "Intercept",
+      "Female - mixed",
+      "Male - female",
+      "Age (per year)",
+      "Habituation - VoE",
+      "(Female - mixed) × age",
+      "(Male - female) × age",
+      "s2article",
+      "s2experiment"
+    )
+  ) -> tab_freq
+
+# Save the table
+write_csv(tab_freq, file = here(tables_dir, "frequentist_results.csv"), na = "")
 ```
 
 ```{r, sensitivity_analysis, eval=FALSE, include=TRUE}
