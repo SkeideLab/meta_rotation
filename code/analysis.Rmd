@@ -1,14 +1,73 @@
 ---
-title: "A meta-analysis of mental rotation ability in the first years of life"
-author: "Alexander Enge, Shreya Kapoor, Anne-Sophie Kieslinger & Michael A. Skeide"
-date: "`r paste('Commit', substr(git2r::commits()[[1]]$sha, 1, 7))`"
-output:
-  pdf_document:
-    latex_engine: xelatex
+title             : "A small male advantage in infant mental rotation"
+shorttitle        : "Infant mental rotation"
+
+author: 
+  - name          : "Alexander Enge"
+    affiliation   : "1,2"
+    corresponding : "yes"
+    address       : "Stephanstraße 1a, 04103 Leipzig"
+    email         : "enge@cbs.mpg.de"
+  - name          : "Shreya Kapoor"
+    affiliation   : "1"
+  - name          : "Anne-Sophie Kieslinger"
+    affiliation   : "1"
+  - name          : "Michael A. Skeide"
+    affiliation   : "1"
+affiliation:
+  - id            : "1"
+    institution   : "Research Group Learning in Early Childhood, Max Planck Institute for Human Cognitive and Brain Sciences"
+  - id            : "2"
+    institution   : "Department of Psychology, Humboldt-Universität zu Berlin"
+
+authornote: |
+  \addORCIDlink{Alexander Enge}{0000-0003-0100-2297}
+
+  \addORCIDlink{Shreya Kapoor}{0000-0003-2619-8257}
+
+  The data and code for this study are openly available at ???.
+  We have no conflict of interest to disclose.
+  There were no ethical concerns since we did not collect any new data.
+
+abstract: |
+  Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning and educational achievement (Shepard & Metzler, 1971; Hegarty & Kozhevnikov, 1999; Johnshon & Bouchard, 2005).
+  On average, males outperform females in mental rotation tasks (Linn & Petersen 1985, Voyer et al. 1995, Voyer 2011, Maeda & Yoon 2013).
+  When such performance differences emerge during development, however, remains poorly understood (Lauer et al. 2019).
+  Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3 to 16 months.
+  We robustly found that male infants looked longer at rotated objects than female infants.
+  These findings indicate that the average male cognitive advantage in mental rotation already emerges in the first months of life.
+
+keywords          : "mental rotation, spatial cognition, spatial ability, infants, children, gender, meta-analysis"
+wordcount         : "X"
+
+bibliography      : ["r-references.bib"]
+csl               : "nature.csl"
+
+floatsintext      : no
+figurelist        : no
+tablelist         : no
+footnotelist      : no
+linenumbers       : no
+mask              : no
+draft             : no
+
+documentclass     : "apa7"
+classoption       : "man,donotrepeattitle"
+fontsize          : "10pt"
+output            : papaja::apa6_pdf
+header-includes:
+  - \geometry{a4paper}
+  - \raggedbottom
+  - \usepackage[all]{nowidow}
+  - \usepackage{setspace}
+  - \AtBeginEnvironment{tabular}{\doublespacing}
+  - \renewcommand{\cellset}{\renewcommand{\arraystretch}{0.7}}
+  - \captionsetup{font={stretch=1}, belowskip=15pt}
 ---
 
 ```{r, setup, include=FALSE}
 # Load packages
+library(papaja)
 library(here)
 library(ggridges)
 library(tidyverse)
@@ -21,11 +80,12 @@ library(cowplot)
 
 # Global chunk options
 knitr::opts_chunk$set(
-  echo = TRUE,
+  include = FALSE,
   message = FALSE,
   fig.height = 10,
   fig.width = 7.5,
-  out.width = "100%"
+  out.width = "100%",
+  warning = FALSE
 )
 
 # Directory paths
@@ -101,7 +161,33 @@ included %>%
     # See http://dx.doi.org/10.20982/tqmp.14.4.p242
     dfi = 2 * (sample_size - 1),
     ji = exp(lgamma(dfi / 2) - log(sqrt(dfi / 2)) - lgamma((dfi - 1) / 2)),
-    gi = di * ji
+    gi = di * ji,
+
+    # Recode gender as a categorical (factor) variable for meta-regression
+    gender = case_when(
+      female_percent == 1.0 ~ "Female",
+      female_percent == 0.0 ~ "Male",
+      TRUE ~ "Mixed"
+    ) %>% factor(levels = c("Mixed", "Female", "Male")),
+
+    # Recode mean sample age in years (centered) for meta-regression
+    age = age_mean / 365.25,
+    age_c = age - mean(age, na.rm = TRUE),
+    age_sd = age_sd / 365.25,
+
+    # Recode task type as a categorical (factor) variale for meta-regression
+    task = factor(task, levels = c("Habituation", "VoE")),
+
+    # Combine gender and task into one column for plotting
+    gender_task = factor(
+      str_c(gender, task, sep = ", "),
+      levels = c(
+        "Female, Habituation",
+        "Male, Habituation",
+        "Mixed, Habituation",
+        "Mixed, VoE"
+      )
+    )
   ) %>%
   # Order rows by experiment ID
   arrange(experiment) -> dat_all
@@ -161,52 +247,33 @@ dat <- dat_both_mixed
 
 # Introduction
 
-```{r, results_literature_search}
-# Number of experiments
-nrow(dat)
+The cognitive ability to move visual object representations in mind for recognition across different orientations, known as mental rotation, emerges in the first three months of life (Johnson & Moore 2020, Moore & Johnson 2020).
+Mental rotation is a key component of intelligence and a powerful predictor of learning outcome and educational achievement (Shepard & Metzler, 1971; Hegarty & Kozhevnikov, 1999; Johnshon & Bouchard, 2005).
 
-# Number of infants
-sum(dat$sample_size)
+Previous meta-analyses revealed that males solve mental rotation tasks slightly faster than females on average (Linn & Petersen 1985, Voyer et al. 1995, Voyer 2011, Maeda & Yoon 2013).
+Effect sizes of this difference, however, are heterogeneous and often only medium (mean weighted g = 0.37–0.73).
+Interestingly, a recent meta-analysis in 3-17-year-old children and adolescents suggests even only a small-to-medium male advantage (mean weighted g = 0.39) (Lauer et al. 2019).
+Whether gender differences in mental rotation performance already emerge during infancy remains unknown.
 
-# Age range in months
-min(dat$age_min, na.rm = TRUE) / 30.417
-max(dat$age_max, na.rm = TRUE) / 30.417
+In the present study we meta-analyzed 59 effect sizes derived from looking times in mental rotation tasks conducted by 1,798 infants (47.5% female) aged 3 to 16 months (mean = 7 months 14 days).
+All tasks were embedded either into habituation experiments (40) or violation of expectation experiments (19) (Fantz 1964; Baillargeon et al. 1985).
+These experiments comprised real world stimuli (e.g., toy objects, Antrilli & Wang, 2016), three-dimensional digital stimuli (e.g., cube figures; Moore & Johnson, 2008), or two-dimensional digital stimuli (e.g., digits; Quinn & Liben, 2008).
+In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object.
+Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation.
+In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle.
+Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle.
+Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown.
+Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle.
+In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
 
-# Mean age in months
-sum((dat$age_mean * dat$sample_size)) / sum(dat$sample_size) / 30.417
-
-# Number of experiments per task type
-table(dat$task)
-```
+Following previous work in older populations we hypothesized that looking times in mental rotation experiments are on average significantly longer in male compared to female infants.
+Effect sizes were assumed to be small.
 
 # Results
 
-## Mental rotation ability
+## Mental rotation performance
 
 ```{r, meta_analysis}
-# Three-level model
-res_ml <- rma.mv(
-  gi, vi,
-  random = ~ 1 | article / experiment,
-  data = dat,
-  slab = experiment
-)
-print(res_ml)
-# forest(res_ml)
-
-# Check heterogeneity
-(i2 <- dmetar::var.comp(res_ml))
-# plot(i2)
-
-# Check share of variance at each level of the model
-round(res_ml$sigma2[1] / sum(res_ml$sigma2), 3) # Between-article (ICC)
-round(res_ml$sigma2[2] / sum(res_ml$sigma2), 3) # Within-article (between-exp.)
-
-# # Profile likelihodd plots for checking that REML has converged
-# profile(res_ml)
-```
-
-```{r, meta_analysis_bayes}
 # Specify priors
 prior_c <- c(
   set_prior("normal(0, 1)", class = "b"),
@@ -215,33 +282,40 @@ prior_c <- c(
 
 # Run prior predictive simulation
 n_iter <- 20000
+n_warmup <- 1000
+n_chains <- 4
 res_prior <- brm(
   gi | se(sei) ~ 0 + Intercept + (1 | article / experiment),
   data = dat,
   prior = prior_c,
   sample_prior = "only",
   save_pars = save_pars(all = TRUE),
-  chains = 4,
+  chains = n_chains,
   iter = n_iter,
-  warmup = 1000,
-  cores = 4,
-  control = list(adapt_delta = 0.99)
+  warmup = n_warmup,
+  cores = n_chains,
+  control = list(adapt_delta = 0.99),
+  file = here("results", "models", "res_prior")
 )
 summary(res_prior)
 # plot(res_prior)
 
 # Run Bayesian multilevel model
-res_brm <- update(res_prior, sample_prior = FALSE)
+res_brm <- update(
+  res_prior,
+  sample_prior = FALSE,
+  file = here("results", "models", "res_brm")
+)
 summary(res_brm)
 # plot(res_brm)
 
-# Summarise fixed effects (incl. Bayes factors)
-describe_posterior(
-  res_brm,
-  centrality = "mean", ci = 0.95, ci_method = "ETI",
-  test = c("p_direction", "rope", "bayesfactor"),
-  rope_range = c(-0.1, 0.1)
-)
+# # Summarise fixed effects (incl. Bayes factors)
+# describe_posterior(
+#   res_brm,
+#   centrality = "mean", ci = 0.95, ci_method = "ETI",
+#   test = c("p_direction", "rope", "bayesfactor"),
+#   rope_range = c(-0.1, 0.1)
+# )
 
 # Compute by-experiment variance
 var_experiment <- as.matrix(
@@ -263,7 +337,9 @@ icc_draws <- var_article / var_total
 mean_qi(icc_draws)
 ```
 
-```{r, fig_forest}
+For our first meta-analytic model effect sizes were quantified as the standardized mean difference in infants’ looking times between novel and familiar rotated objects. Based on this effect size index we tested if there was evidence that infants can perform mental rotation. Across studies, infants indeed looked longer at novel rotated objects than at familiar rotated objects, with a standardized mean difference of g = 0.26, 95% credible interval (CrI) [0.12, 0.41] (Fig. 1). The probability for this effect being greater than zero was 99.9%. The heterogeneity of effect sizes was $sigma$2Experiment = 0.03, 95% CrI [0.00, 0.12], at the experiment level and $sigma$2Article = 0.17, 95% CrI [0.09, 0.29] at the article level. Therefore, approximately 86.7% of the heterogeneity between effect sizes was attributable to differences between experiments and 13.3% was attributable to differences between articles.
+
+```{r, fig1, include=TRUE, fig.height=14, fig.width=12, fig.cap="(ref:fig1-caption)"}
 # Helper functions for printing confidence intervals
 print_num <- function(x, digits = 2) {
   x <- format(round(x, digits), trim = TRUE, nsmall = digits)
@@ -392,90 +468,20 @@ dat %>%
 ggsave(here(figures_dir, "forest.pdf"), width = 12, height = 14)
 ```
 
-```{r, tab_within}
-# Helper functions to re-format age in years and/or months
-format_days_months <- function(days) {
-  days_per_month <- 30.417
-  months <- days %/% days_per_month
-  days_left <- round(days - months * days_per_month)
-  str <- paste0(as.character(months), "m ", as.character(days_left), "d")
-  str[is.na(days)] <- NA
-  return(str)
-}
+(ref:fig1-caption) Mental rotation performance.
+A Bayesian three-level meta-analysis provided evidence for mental rotation ability in infants.
+White squares indicate the effect sizes (Hedges’ g) for infants’ mental rotation ability in all individual experiments and black lines their 95% confidence intervals.
+Gray bars indicate the 95% and 50% Bayesian credible interval (CrI) based on a Bayesian three-level random-effects model.
+Note that these intervals got shrunk towards the meta-analytic effect size because of partial pooling, that is, the three-level model regularizing the impact of experiments with small sample sizes and/or unrealistically large effect sizes.
+The last line shows the meta-analytic effect size from the three-level model (black dot) together with its 95% CrI and its posterior distribution (gray curve).
 
-# Save within-analysis table of experiments
-dat %>%
-  mutate(
-    age_mean = format_days_months(age_mean),
-    age_sd = str_c(as.character(round(age_sd)), "d"),
-  ) %>%
-  transmute(
-    Article = if_else(article == lag(article, default = ""), "", article),
-    Experiment = group_long,
-    `Sample size` = sample_size,
-    `Females` = round(female_percent * sample_size),
-    Age = str_c(age_mean, "±", age_sd, sep = " "),
-    Task = task,
-    `Stimulus type` = str_to_sentence(stimuli_presentation),
-    `Stimulus dimensions` = stimuli_dimensions
-  ) %>%
-  write_csv(
-    file = here(tables_dir, "within_experiments.csv"),
-    na = "n/a"
-  )
-```
-
-## Moderator variables
+## Effects of gender, age, and task type
 
 ```{r, meta_regression}
-# Recode predictor variables for meta-regression and plotting
-dat %>%
-  mutate(
-
-    # Gender as a categorical (factor) variable
-    gender = case_when(
-      female_percent == 1.0 ~ "Female",
-      female_percent == 0.0 ~ "Male",
-      TRUE ~ "Mixed"
-    ) %>% factor(levels = c("Mixed", "Female", "Male")),
-
-    # Mean sample age in years, centered around the mean
-    age = age_mean / 365.25,
-    age_c = age - mean(age, na.rm = TRUE),
-    age_sd = age_sd / 365.25,
-
-    # Task type as a categorical (factor) variale
-    task = factor(task, levels = c("Habituation", "VoE")),
-
-    # Combine gender and task into one column for plotting
-    gender_task = factor(
-      str_c(gender, task, sep = ", "),
-      levels = c(
-        "Female, Habituation",
-        "Male, Habituation",
-        "Mixed, Habituation",
-        "Mixed, VoE"
-      )
-    )
-  ) -> dat_reg
-
 # Set numerical contrasts for factor variables
-contrasts(dat_reg$gender) <- MASS::contr.sdif(3)
-contrasts(dat_reg$task) <- MASS::contr.sdif(2)
+contrasts(dat$gender) <- MASS::contr.sdif(3)
+contrasts(dat$task) <- MASS::contr.sdif(2)
 
-# Meta-regression with gender, age, and task
-res_reg <- rma.mv(
-  gi, vi,
-  mods = ~ gender * age_c + task,
-  random = ~ 1 | article / experiment,
-  data = dat_reg,
-  slab = experiment
-)
-print(res_reg)
-# forest(res_full)
-```
-
-```{r, meta_regression_bayes}
 # Specify priors
 prior_c <- c(
   set_prior("normal(0, 1)", class = "b", coef = "Intercept"),
@@ -487,21 +493,26 @@ prior_c <- c(
 res_prior_reg <- brm(
   gi | se(sei) ~ 0 + Intercept + gender * age_c + task +
     (1 | article / experiment),
-  data = dat_reg,
+  data = dat,
   prior = prior_c,
   sample_prior = "only",
   save_pars = save_pars(all = TRUE),
-  chains = 4,
+  chains = n_chains,
   iter = n_iter,
-  warmup = 1000,
-  cores = 4,
-  control = list(adapt_delta = 0.99)
+  warmup = n_warmup,
+  cores = n_chains,
+  control = list(adapt_delta = 0.99),
+  file = here("results", "models", "res_prior_reg")
 )
 summary(res_prior_reg)
 # plot(res_prior_reg)
 
 # Run Bayesian multilevel model
-res_brm_reg <- update(res_prior_reg, sample_prior = FALSE)
+res_brm_reg <- update(
+  res_prior_reg,
+  sample_prior = FALSE,
+  file = here("results", "models", "res_brm_reg")
+)
 summary(res_brm_reg)
 # plot(res_brm_reg)
 
@@ -536,17 +547,24 @@ mean_qi(icc_reg)
 1 - mean(var_total_reg / var_total)
 ```
 
-```{r, fig_regression}
+We next performed a meta-regression analysis to explain the heterogeneity of effect sizes and to test if the age of the gender of the infants, their age, and/or the type of mental rotation task influenced mental rotation performance (Fig. 2).
+Indeed, there was evidence that experiments with all-male samples obtained better mental rotation performance than experiments with all-female samples, b = 0.48, 95% CrI [0.06, 0.91].
+The probability for this effect being greater than zero was 98.5%.
+Experiments with mixed-gender samples performed only slightly better than experiments than all-female samples, b = 0.13, 95% CrI [-0.20, 0.52].
+The probability for this effect being greater than zero was 75.4%.
+There was no evidence that the mean age of the infants influenced mental rotation performance, with a change per year of b = 0.05, 95% [-0.58, 0.68].
+Similarly, there was no evidence for an interaction between gender and age.
+Finally, there was weak evidence that violation of expectation tasks yielded larger effects than habituation tasks, b = 0.26, 95% [-0.08, 0.58].
+The probability for this effect being greater than zero was 93.5%.
+
+```{r, fig2, include=TRUE, fig.height=5, fig.width=12, fig.cap="(ref:fig2-caption)"}
 # Get draws from the posterior distribution
 draws_reg <- epred_draws(
   res_brm_reg,
-  dat_reg,
-  ndraws = NULL,
+  dat,
+  ndraws = NA,
   re_formula = NA
 )
-
-# Summarise to obtain HPDIs
-draws_reg_hdi <- mean_qi(draws_reg)
 
 # Use colors as proposed in https://arxiv.org/abs/2107.02270
 habi_colors <- c(
@@ -557,7 +575,7 @@ habi_colors <- c(
 voe_colors <- c("Mixed, VoE" = "#964a8b")
 
 # Regression plot
-dat_reg %>%
+dat %>%
   ggplot(aes(x = age * 12, y = gi)) +
   geom_hline(yintercept = seq(-1, 2, 0.5), color = "grey90") +
   annotate(
@@ -689,9 +707,150 @@ plot_grid(
 ggsave(here(figures_dir, "regression_coef.pdf"), width = 12, height = 5)
 ```
 
+(ref:fig2-caption) Effects of gender, age, and task task.
+a Open squares show the effect size (Hedges’ g) for infants’ mental rotation ability in each of 59 individual experiments, color-coded according to the type of habituation task and the gender of the infants (blue = habituation task, all-female sample, yellow = habituation task, all-male sample, red = habituation task, mixed-gender sample, purple = violation of expectation [VoE] task, mixed-gender sample).
+Lines indicate the best-fit regression estimates according to a Bayesian three-level meta-regression model and gray ribbons indicate their corresponding 95% and 50% credible interval (CrI).
+b Fixed effect estimates from the Bayesian three-level meta-regression model are shown as black dots together with their 95% (thin black lines) and 50% (thick black lines) CrI.
+Gray curves show the posterior distribution for each effect.
+
 # Supplementary information
 
-```{r, ri_assumed_sens}
+```{r, tabs1, include=TRUE}
+# Helper functions to re-format age in years and/or months
+format_days_months <- function(days) {
+  days_per_month <- 30.417
+  months <- days %/% days_per_month
+  days_left <- round(days - months * days_per_month)
+  str <- paste0(as.character(months), "m ", as.character(days_left), "d")
+  str[is.na(days)] <- NA
+  return(str)
+}
+
+# Save within-analysis table of experiments
+dat %>%
+  mutate(
+    age_mean = format_days_months(age_mean),
+    age_sd = str_c(as.character(round(age_sd)), "d"),
+  ) %>%
+  transmute(
+    Article = if_else(article == lag(article, default = ""), "", article),
+    Experiment = group_long,
+    `Sample size` = sample_size,
+    `Females` = round(female_percent * sample_size),
+    Age = str_c(age_mean, "±", age_sd, sep = " "),
+    Task = task,
+    `Stimulus type` = str_to_sentence(stimuli_presentation),
+    `Stimulus dimensions` = stimuli_dimensions
+  ) -> tabS1
+
+# Save the table
+write_csv(tabS1, file = here(tables_dir, "within_experiments.csv"), na = "n/a")
+
+# Display the table
+apa_table(
+  tabS1,
+  caption = "Experiments included in the main analysis", label = "S1",
+  landscape = TRUE
+)
+```
+
+```{r, figs2, include=TRUE, fig.height=6, fig.width=12, fig.cap="(ref:figs2-caption)"}
+# Extract convergence statistics from results
+conv_stats <- with(summary(res_brm), tibble(
+  parameter = c(
+    "b_Intercept", "sd_article__Intercept", "sd_article:experiment__Intercept"
+  ),
+  name_expr = c(
+    "Hedges ~ italic(g)", "italic(sigma)[article]", "italic(sigma)[experiment]"
+  ),
+  r_hat = print_num(c(fixed$Rhat, map_dbl(random, ~ .$Rhat)), digits = 4),
+  bulk_ess = round(c(fixed$Bulk_ESS, map_dbl(random, ~ .$Bulk_ESS))),
+  tail_ess = round(c(fixed$Tail_ESS, map_dbl(random, ~ .$Tail_ESS))),
+  r_hat_expr = str_c("italic(R)[hat] == ", r_hat),
+  bulk_ess_expr = str_c("italic(N)[eff(bulk)] == ", bulk_ess),
+  tail_ess_expr = str_c("italic(N)[eff(tail)] == ", tail_ess),
+  y_pos = c(0.7, 0.75, 0.8)
+))
+
+# Create trace plot
+n_draws <- n_iter - n_warmup
+bayesplot::mcmc_trace(
+  res_brm,
+  pars = conv_stats$parameter, facet_args = list(ncol = 1)
+) +
+  geom_text(
+    aes(y = 0.45, label = name_expr, color = NA),
+    conv_stats,
+    y = 0.45, x = -800, color = "black", parse = TRUE, angle = 90
+  ) +
+  geom_text(
+    aes(y = y_pos, label = r_hat_expr, color = NA),
+    conv_stats,
+    x = 13000, hjust = 1, color = "black", parse = TRUE,
+  ) +
+  geom_text(
+    aes(y = y_pos, label = bulk_ess_expr, color = NA),
+    conv_stats,
+    x = 16000, hjust = 1, color = "black", parse = TRUE,
+  ) +
+  geom_text(
+    aes(y = y_pos, label = tail_ess_expr, color = NA),
+    conv_stats,
+    x = 19000, hjust = 1, color = "black", parse = TRUE,
+  ) +
+  labs(x = "Sample number", y = NULL, color = "MCMC\nchain") +
+  coord_cartesian(expand = FALSE, clip = "off") +
+  scale_x_continuous(limits = c(0, n_draws), breaks = seq(0, n_draws, 2000)) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
+  scale_color_grey(start = 0.0, end = 0.9) +
+  theme_classic() +
+  theme(
+    axis.line = element_line(colour = "black"),
+    axis.text = element_text(family = "Helvetica", color = "black"),
+    axis.ticks = element_line(color = "black"),
+    plot.margin = margin(t = 10, l = 25),
+    strip.background = element_blank(),
+    strip.text = element_blank(),
+    text = element_text(family = "Helvetica", color = "black")
+  )
+
+# Save the plot
+ggsave(here(figures_dir, "trace.pdf"), width = 12, height = 6)
+```
+
+(ref:figs2-caption) Convergence checks.
+
+```{r, frequentist_results}
+# Three-level model
+res_ml <- rma.mv(
+  gi, vi,
+  random = ~ 1 | article / experiment,
+  data = dat,
+  slab = experiment
+)
+print(res_ml)
+# forest(res_ml)
+
+# Check share of variance at each level of the model
+round(res_ml$sigma2[1] / sum(res_ml$sigma2), 3) # Between-article (ICC)
+round(res_ml$sigma2[2] / sum(res_ml$sigma2), 3) # Within-article (between-exp.)
+
+# # Profile likelihodd plots for checking that REML has converged
+# profile(res_ml)
+
+# Meta-regression with gender, age, and task
+res_reg <- rma.mv(
+  gi, vi,
+  mods = ~ gender * age_c + task,
+  random = ~ 1 | article / experiment,
+  data = dat,
+  slab = experiment
+)
+print(res_reg)
+# forest(res_full)
+```
+
+```{r, sensitivity_analysis, eval=FALSE, include=TRUE}
 # Compute empirical estimate of the correlation between dependent samples
 dat %>%
   mutate(

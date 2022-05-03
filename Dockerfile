@@ -37,6 +37,8 @@ RUN \
     tidybayes \
     # Install R packages from GitHub
     && installGithub.r \
+    claudiozandonella/trackdown@844a0ec \
+    crsh/papaja@2572124 \
     stan-dev/cmdstanr@a2a97d9 \
     MathiasHarrer/dmetar@3e7e309 \
     # Build CmdStanR
@@ -49,14 +51,23 @@ RUN \
     && tlmgr update --self \
     && tlmgr install \
     amsmath \
+    apa7 \
     auxhook \
     bigintcalc \
     bitset \
+    booktabs \
+    caption \
+    csquotes \
+    endfloat \
+    environ \
+    epstopdf-pkg \
     etexcmds \
     etoolbox \
     euenc \
+    fancyhdr \
     fancyvrb \
     fontspec \
+    fp \
     framed \
     geometry \
     gettitlestring \
@@ -71,15 +82,27 @@ RUN \
     latex-amsmath-dev \
     letltxmacro \
     ltxcmds \
+    makecell \
+    ms \
+    multirow \
+    nowidow \
+    pgf \
     pdfescape \
     pdftexcmds \
     refcount \
     rerunfilecheck \
+    scalerel \
+    setspace \
     stringenc \
+    threeparttable \
+    threeparttablex \
     tipa \
+    trimspaces \
     unicode-math \
     uniquecounter \
+    was \
     xcolor \
+    xpatch \
     xunicode \
     zapfding \
     # Add default user permissions
