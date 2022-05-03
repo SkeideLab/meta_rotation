@@ -1,6 +1,10 @@
+*.fdb_latexmk
+*.fff
 *.log
 *.pdf
+*.png
 *.tex
+*.ttt
 *.xlsx
 .DS_Store
 /results/
