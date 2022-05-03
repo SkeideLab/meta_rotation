@@ -30,12 +30,7 @@ authornote: |
   There were no ethical concerns since we did not collect any new data.
 
 abstract: |
-  Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning and educational achievement (Shepard & Metzler, 1971; Hegarty & Kozhevnikov, 1999; Johnshon & Bouchard, 2005).
-  On average, males outperform females in mental rotation tasks (Linn & Petersen 1985, Voyer et al. 1995, Voyer 2011, Maeda & Yoon 2013).
-  When such performance differences emerge during development, however, remains poorly understood (Lauer et al. 2019).
-  Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3 to 16 months.
-  We robustly found that male infants looked longer at rotated objects than female infants.
-  These findings indicate that the average male cognitive advantage in mental rotation already emerges in the first months of life.
+  Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning and educational achievement (Shepard & Metzler, 1971; Hegarty & Kozhevnikov, 1999; Johnshon & Bouchard, 2005). On average, males solve mental rotation tasks slightly faster than females (Linn & Petersen 1985, Voyer et al. 1995, Voyer 2011, Maeda & Yoon 2013). When such behavioral differences emerge during development, however, remains poorly understood (Lauer et al. 2019). Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3 to 16 months. We robustly found that male infants looked longer at novel rotated objects than female infants. The effect size of this average difference was small and did not change with age. These findings indicate that gender differences in mental rotation are already present in the first months of life.
 
 keywords          : "mental rotation, spatial cognition, spatial ability, infants, children, gender, meta-analysis"
 wordcount         : "X"
@@ -59,9 +54,9 @@ header-includes:
   - \geometry{a4paper}
   - \raggedbottom
   - \usepackage[all]{nowidow}
+  - \usepackage{makecell}
   - \usepackage{setspace}
-  - \AtBeginEnvironment{tabular}{\doublespacing}
-  - \renewcommand{\cellset}{\renewcommand{\arraystretch}{0.7}}
+  - \renewcommand{\arraystretch}{1.0}
   - \captionsetup{font={stretch=1}, belowskip=15pt}
 ---
 
@@ -247,27 +242,12 @@ dat <- dat_both_mixed
 
 # Introduction
 
-The cognitive ability to move visual object representations in mind for recognition across different orientations, known as mental rotation, emerges in the first three months of life (Johnson & Moore 2020, Moore & Johnson 2020).
-Mental rotation is a key component of intelligence and a powerful predictor of learning outcome and educational achievement (Shepard & Metzler, 1971; Hegarty & Kozhevnikov, 1999; Johnshon & Bouchard, 2005).
+The cognitive ability to move visual object representations in mind for recognition across different orientations, known as mental rotation, emerges in the first three months of life (Johnson & Moore 2020, Moore & Johnson 2020). Mental rotation is a key component of intelligence and a powerful predictor of learning outcome and educational achievement (Shepard & Metzler, 1971; Hegarty & Kozhevnikov, 1999; Johnshon & Bouchard, 2005).
 
-Previous meta-analyses revealed that males solve mental rotation tasks slightly faster than females on average (Linn & Petersen 1985, Voyer et al. 1995, Voyer 2011, Maeda & Yoon 2013).
-Effect sizes of this difference, however, are heterogeneous and often only medium (mean weighted g = 0.37–0.73).
-Interestingly, a recent meta-analysis in 3-17-year-old children and adolescents suggests even only a small-to-medium male advantage (mean weighted g = 0.39) (Lauer et al. 2019).
-Whether gender differences in mental rotation performance already emerge during infancy remains unknown.
+Previous meta-analyses revealed that males solve mental rotation tasks slightly faster than females on average (Linn & Petersen 1985, Voyer et al. 1995, Voyer 2011, Maeda & Yoon 2013). Effect sizes of this difference, however, are heterogeneous and often only medium (mean weighted g = 0.37–0.73). Interestingly, a recent meta-analysis in 3-17-year-old children and adolescents suggests even only a small-to-medium difference (mean weighted g = 0.39) (Lauer et al. 2019). Whether gender differences in mental rotation behavior already emerge during infancy remains unknown.
 
-In the present study we meta-analyzed 59 effect sizes derived from looking times in mental rotation tasks conducted by 1,798 infants (47.5% female) aged 3 to 16 months (mean = 7 months 14 days).
-All tasks were embedded either into habituation experiments (40) or violation of expectation experiments (19) (Fantz 1964; Baillargeon et al. 1985).
-These experiments comprised real world stimuli (e.g., toy objects, Antrilli & Wang, 2016), three-dimensional digital stimuli (e.g., cube figures; Moore & Johnson, 2008), or two-dimensional digital stimuli (e.g., digits; Quinn & Liben, 2008).
-In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object.
-Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation.
-In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle.
-Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle.
-Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown.
-Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle.
-In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
-
-Following previous work in older populations we hypothesized that looking times in mental rotation experiments are on average significantly longer in male compared to female infants.
-Effect sizes were assumed to be small.
+In the present study we meta-analyzed 59 effect sizes derived from looking times in mental rotation tasks conducted by 1,798 infants (47.5% female) aged 3 to 16 months (mean age of 7 months 14 days). All tasks were embedded either into habituation experiments (40) or violation of expectation experiments (19) (Fantz 1964; Baillargeon et al. 1985). These experiments comprised real world stimuli (e.g., toy objects, Antrilli & Wang, 2016), three-dimensional digital stimuli (e.g., cube figures; Moore & Johnson, 2008), or two-dimensional digital stimuli (e.g., digits; Quinn & Liben, 2008). In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object. Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation. In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle. Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle. Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown. Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle. In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
+Following previous work in older populations we hypothesized that looking times in mental rotation experiments are on average significantly longer in male compared to female infants. Effect sizes were assumed to be small.
 
 # Results
 
@@ -337,7 +317,7 @@ icc_draws <- var_article / var_total
 mean_qi(icc_draws)
 ```
 
-For our first meta-analytic model effect sizes were quantified as the standardized mean difference in infants’ looking times between novel and familiar rotated objects. Based on this effect size index we tested if there was evidence that infants can perform mental rotation. Across studies, infants indeed looked longer at novel rotated objects than at familiar rotated objects, with a standardized mean difference of g = 0.26, 95% credible interval (CrI) [0.12, 0.41] (Fig. 1). The probability for this effect being greater than zero was 99.9%. The heterogeneity of effect sizes was $sigma$2Experiment = 0.03, 95% CrI [0.00, 0.12], at the experiment level and $sigma$2Article = 0.17, 95% CrI [0.09, 0.29] at the article level. Therefore, approximately 86.7% of the heterogeneity between effect sizes was attributable to differences between experiments and 13.3% was attributable to differences between articles.
+For our first meta-analytic model effect sizes were quantified as the standardized mean difference in infants’ looking times for novel and familiar rotated objects. Using this effect size index we ran a Bayesian three-level random-effects model to test if there was evidence that infants did perform mental rotation. Across studies, infants indeed looked longer at novel rotated objects than at familiar rotated objects, with a standardized mean difference of g = 0.26, 95% credible interval (CrI) [0.12, 0.41] (Fig. 1). The probability for this effect being greater than zero was 99.9%. The heterogeneity of effect sizes was $sigma$2Experiment = 0.03, 95% CrI [0.00, 0.12], at the experiment level and $sigma$2Article = 0.17, 95% CrI [0.09, 0.29] at the article level. Therefore, approximately 86.7% of the heterogeneity between effect sizes was attributable to differences between experiments and 13.3% was attributable to differences between articles.
 
 ```{r, fig1, include=TRUE, fig.height=14, fig.width=12, fig.cap="(ref:fig1-caption)"}
 # Helper functions for printing confidence intervals
@@ -468,12 +448,7 @@ dat %>%
 ggsave(here(figures_dir, "forest.pdf"), width = 12, height = 14)
 ```
 
-(ref:fig1-caption) Mental rotation performance.
-A Bayesian three-level meta-analysis provided evidence for mental rotation ability in infants.
-White squares indicate the effect sizes (Hedges’ g) for infants’ mental rotation ability in all individual experiments and black lines their 95% confidence intervals.
-Gray bars indicate the 95% and 50% Bayesian credible interval (CrI) based on a Bayesian three-level random-effects model.
-Note that these intervals got shrunk towards the meta-analytic effect size because of partial pooling, that is, the three-level model regularizing the impact of experiments with small sample sizes and/or unrealistically large effect sizes.
-The last line shows the meta-analytic effect size from the three-level model (black dot) together with its 95% CrI and its posterior distribution (gray curve).
+(ref:fig1-caption) Mental rotation performance. A Bayesian three-level meta-analysis provided evidence for mental rotation ability in infants. White squares depict the effect sizes (Hedges’ g) for infants’ mental rotation performance in all individual experiments and black lines depict their 95% confidence intervals. Gray bars indicate the 95% and 50% Bayesian credible intervals (CrI). These intervals got shrunk towards the meta-analytic effect size because of partial pooling which regularized the impact of experiments with small sample sizes or unrealistically large effect sizes to prevent overfitting the model. The last line shows the meta-analytic effect size (black dot) together with its 95% CrI and its posterior distribution (gray curve).
 
 ## Effects of gender, age, and task type
 
@@ -516,13 +491,13 @@ res_brm_reg <- update(
 summary(res_brm_reg)
 # plot(res_brm_reg)
 
-# Summarise fixed effects (incl. Bayes factors)
-describe_posterior(
-  res_brm_reg,
-  centrality = "mean", ci = 0.95, ci_method = "ETI",
-  test = c("p_direction", "rope", "bayesfactor"),
-  rope_range = c(-0.1, 0.1)
-)
+# # Summarise fixed effects (incl. Bayes factors)
+# describe_posterior(
+#   res_brm_reg,
+#   centrality = "mean", ci = 0.95, ci_method = "ETI",
+#   test = c("p_direction", "rope", "bayesfactor"),
+#   rope_range = c(-0.1, 0.1)
+# )
 
 # Compute by-experiment variance
 var_experiment_reg <- as.matrix(
@@ -547,22 +522,14 @@ mean_qi(icc_reg)
 1 - mean(var_total_reg / var_total)
 ```
 
-We next performed a meta-regression analysis to explain the heterogeneity of effect sizes and to test if the age of the gender of the infants, their age, and/or the type of mental rotation task influenced mental rotation performance (Fig. 2).
-Indeed, there was evidence that experiments with all-male samples obtained better mental rotation performance than experiments with all-female samples, b = 0.48, 95% CrI [0.06, 0.91].
-The probability for this effect being greater than zero was 98.5%.
-Experiments with mixed-gender samples performed only slightly better than experiments than all-female samples, b = 0.13, 95% CrI [-0.20, 0.52].
-The probability for this effect being greater than zero was 75.4%.
-There was no evidence that the mean age of the infants influenced mental rotation performance, with a change per year of b = 0.05, 95% [-0.58, 0.68].
-Similarly, there was no evidence for an interaction between gender and age.
-Finally, there was weak evidence that violation of expectation tasks yielded larger effects than habituation tasks, b = 0.26, 95% [-0.08, 0.58].
-The probability for this effect being greater than zero was 93.5%.
+As a next step, we conducted a meta-regression analysis to test if the gender of the infants, their age, or the type of mental rotation task was related to mental rotation performance (Fig. 2). Indeed, experiments with all-male samples revealed larger looking time differences than experiments with all-female samples, b = 0.48, 95% CrI [0.06, 0.91]. The probability for this effect being larger than zero was 98.5%. We found no difference between mixed-gender and all-female samples, b = 0.13, 95% CrI [-0.20, 0.52] (75.4% probability of an effect larger than zero). Additionally, mean age was not related to mental rotation performance, with a change per year of b = 0.05, 95% [-0.58, 0.68]. We also did not detect an interaction between gender and age ([females - mixed] × age: b = 0.02, 95% CrI [-0.81, 0.84]; [males - females] × age: b = 0.06, 95% CrI [-0.84, 0.96]). Finally, there was weak evidence that violation of expectation tasks yielded larger effects than habituation tasks, b = 0.26, 95% [-0.08, 0.58]. The probability for this effect being greater than zero was 93.5%.
 
 ```{r, fig2, include=TRUE, fig.height=5, fig.width=12, fig.cap="(ref:fig2-caption)"}
 # Get draws from the posterior distribution
 draws_reg <- epred_draws(
   res_brm_reg,
   dat,
-  ndraws = NA,
+  ndraws = NULL,
   re_formula = NA
 )
 
@@ -707,11 +674,112 @@ plot_grid(
 ggsave(here(figures_dir, "regression_coef.pdf"), width = 12, height = 5)
 ```
 
-(ref:fig2-caption) Effects of gender, age, and task task.
-a Open squares show the effect size (Hedges’ g) for infants’ mental rotation ability in each of 59 individual experiments, color-coded according to the type of habituation task and the gender of the infants (blue = habituation task, all-female sample, yellow = habituation task, all-male sample, red = habituation task, mixed-gender sample, purple = violation of expectation [VoE] task, mixed-gender sample).
-Lines indicate the best-fit regression estimates according to a Bayesian three-level meta-regression model and gray ribbons indicate their corresponding 95% and 50% credible interval (CrI).
-b Fixed effect estimates from the Bayesian three-level meta-regression model are shown as black dots together with their 95% (thin black lines) and 50% (thick black lines) CrI.
-Gray curves show the posterior distribution for each effect.
+(ref:fig2-caption) Effects of gender, age, and task. a Squares show the effect size (Hedges’ g) for infants’ mental rotation performance in each of the 59 individual experiments. Squares are color-coded according to the type of habituation task and the gender of the infants (blue = habituation task, all-female sample, yellow = habituation task, all-male sample, red = habituation task, mixed-gender sample, purple = violation of expectation [VoE] task, mixed-gender sample). Lines indicate the best-fit regression estimates according to a Bayesian three-level meta-regression model and gray ribbons indicate their corresponding 95% and 50% credible interval (CrI). b Fixed effect estimates obtained from the Bayesian three-level meta-regression model are depicted as black dots together with their 95% Crl (thin black lines) and 50% Crl (thick black lines). Gray curves indicate the posterior distribution for each effect.
+
+To confirm the gender difference between males and females we set up another Bayesian meta-analysis, this time focusing on the looking-time contrasts between all-male and all-female groups reported within each article by the original authors. Our additional analysis revealed a meta-analytic effect size of g = 0.20, 95% Crl [0.03, 0.38] (Supplementary Fig. 1) and a probability of this effect being greater than zero of 98.9%. The heterogeneity of effect sizes was $sigma$2Experiment = 0.01, 95% CrI [0.00, 0.07], at the experiment level, and $sigma$2Article = 0.02, 95% CrI [0.00, 0.10] at the article level. This means that 56.1% of the total variance can be attributed to differences between articles and 43.1% to differences within articles.
+
+## Evaluation of publication bias
+
+By visual inspection of a funnel plot of standard errors and effect sizes we detected a slight asymmetry indicating a small publication bias (Fig. 3). Publication bias was also suggested by the results of an Egger regression test indicating that the slope of a weighted linear regression of the effect sizes on the standard errors is significantly different from zero (t(57) = 3.37, p = 0.001). Nevertheless, a jackknife leave-one-out analysis confirmed that the current results are robust to the effects of individual studies (see Supplementary Table 5).
+
+# Discussion
+
+We analyzed looking times during mental rotation in 1,798 infants ranging from 3 to 16 months of age. To this end, we scrutinized the robustness of 59 experimental effect sizes. We found that male infants looked on average slightly longer at novel rotated objects compared to female infants. This effect was small and unrelated to age in the current range.
+
+## Effect size estimates
+
+We interpret the meta-regression-based estimate of the gender difference (b = 0.48, b = $Delta$g ) as an upper bound of the true effect size since this estimate is based on experiments that reported only separate effect sizes for males and females. The gender effect of these experiments can be considered as positively biased when assuming that authors who observe a statistically significant gender difference more likely report separate effect sizes for males and females. In contrast, the meta-analytic estimate derived from the observed gender differences within each experiment (g = .20) can be viewed as a lower bound of the true effect size. This view is plausible because the unknown effect sizes of experiments without significant gender differences were set to zero although non-zero differences some of these experiments will have found a non-zero gender difference but the size of this effect was not reported because of a lack of power to render it statistically significant.
+
+## Gender differences
+
+The gender differences observed here remain to be explained by interacting genetic and environmental factors that are largely unknown. To the best of our knowledge, there are currently no genetic association or gene-environment interaction studies with a focus on mental rotation. Nevertheless, it is documented that genetic contributions to behavioral variance in mental rotation are substantially smaller than unique non-shared environmental contributions both in male and female adults (Shakeshaft et al. 2016). Whether this observation also applies to infants remains to be explored.
+
+One recent study on 5-6-month-old female infants provided preliminary evidence for possible social-environmental effects related to parental attitudes towards gender which might partly explain the results of our present work (Constantinescu et al. 2018). As far as we know, potentially mediating and moderating factors that could already be operational in infancy, however, are not yet empirically established. In a similar vein, while mental rotation training has small-to-medium post-test effects in children, it is unclear whether it can remove gender differences and be adapted to infants Uttal et al. (2013).
+
+Sex hormone concentration in male infants, especially postnatal testosterone in the first six months of life, could also contribute to gender differences in mental rotation performance (Toivainen et al. 2018, Constantinescu et al. 2018, Erdmann et al. 2019). Possible biological developmental pathways, however, bridging the gap from hormonal to behavioral differences are currently far from understood.
+
+## Additional factors
+
+A number of additional factors have been associated with individual differences in infant mental rotation performance. For example, mental rotation is related to previous relevant experience with the particular objects used in the specific task (Möhring and Frick 2013; Schwarzer et al. 2013b; Slone et al. 2018). This relation also applies to previous experience with manually rotating toys (Schwarzer et al. 2013b). While these preliminary results require replication they are in line with the longstanding notion that prior knowledge is the strongest predictor of learning outcomes in a range of cognitive domains (e.g. Ausubel 1968; Bradley & Bryant 1983; Halberda et al. 2008). Furthermore, there is yet to be confirmed preliminary evidence for possible links between mental rotation performance and several sensory motor skills including fine and gross motor skills, oculomotor control and crawling skills (Schwarzer et al. 2013a; Schwarzer et al. 2013b).
+
+# Conclusion
+
+The present study robustly revealed that male infants look slightly but significantly longer at novel rotated objects than female infants. Thus, on average, males outperform females in mental rotation already in the first months of life.
+
+# Methods
+
+## Protocol
+
+We used established PRISMA 2020 (Preferred Reporting Items for Systematic reviews and Meta-Analyses; Page et al., 2021) guidelines to conduct this meta-analysis. Fig. 4 presents the PRISMA flowchart and Supplementary Table 2 contains the PRISMA checklist.
+
+```{r, fig4, include=TRUE, fig.width=6, fig.cap="(ref:fig4-caption)", out.width="50%"}
+# Include the flowchart (created with MS PowerPoint)
+knitr::include_graphics("results/figures/flowchart.pdf")
+```
+
+(ref:fig4-caption) Literature search and selection process. We searched four online databases as well as review articles and reference sections to identify articles that reported mental rotation experiments in infants. Experiments from these articles were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. Redundant articles that reported the same experiment(s) as another article were excluded. aAdditional reasons for excluding articles were an experimental paradigm that differed substantially compared to all other articles (1 article) and a sample of infants that was substantially older compared to all other articles (1 article).
+
+## Eligibility criteria
+
+Articles needed to fulfill six criteria for being included in the meta-analysis: (1) The article was written English or German; (2) The article includes results from a group study with human participants (excluding review articles, meta-analyses, case studies, and animal studies); (3) These participants include at least one group of infants (mean age between 0.0 and 3.0 years); (4) Infants had no preterm status or clinical diagnosis; (5) Infants performed a mental rotation task; (6) The article contains quantitative scores that could be converted into a standardized mean difference (see below). We explicitly included works that were not peer reviewed (e.g., dissertations and preprints) to reduce the impact of publication bias.
+
+## Information sources and search strategy
+
+We entered the search terms (“mental rotation” OR “mental transformation” OR “spatial rotation” OR “spatial transformation” OR “spatial ability” OR “spatial skills”) AND (“infant” OR “infants” OR “infanthood” OR “toddler” OR “toddlers” OR “toddlerhood” OR “child” OR “children” OR “childhood” OR “month” OR “months”) into four online databases (APA PsycINFO, PubMed/MEDLINE, Scopus, ProQuest Dissertations & Theses Global). All database queries were completed on December 6, 2021. We configured the databases to check for article titles, abstracts, and keywords while applying no other filters or limits. This yielded 2,616 articles in total, 1,954 of which remained after removing duplicate records (Figure 1). We further identified 76 articles by screening the reference sections of previous reviews and meta-analyses on mental rotation and related skills (Frick et al., 2014; Johnson & Moore, 2020; Kubicek & Schwarzer, 2018; Lauer et al., 2019; Linn & Petersen, 1985; Moore & Johnson, 2020; Uttal et al., 2013; Voyer et al., 1995; Yang et al., 2020). Of these, 34 had not been covered by the database search. We also identified 94 articles by screening the reference sections of all articles that had been included after the first pass of the selection process. Of these, 49 had not been covered by the database search. We thus screened 2,037 unique articles in total.
+
+## Selection process
+
+Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria. Interrater agreement for the binary decision to include versus exclude an article was 98.5% ($Kappa$w [Cohen’s weighted kappa] = 0.67, 95% CI [0.55, 0.78]). Interrater agreement for the specific eligibility criteria were 88.2% ($Kappa$w = 0.72, 95% CI [0.40, 1.00]). Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached. One article (Mash et al., 2007) was excluded because the authors used a unique mental rotation paradigm that was not comparable to that used in the other articles. One article (Pedrett et al., 2020) was excluded because the average age of the infants (30.7 months) was almost twice as high as that of the next article (15.8 months), z = ??? compared to all articles. We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life. This procedure led to a total of 23 articles being included in the meta-analysis (Fig. 4).
+
+Many of these articles consisted of multiple experiments, e.g., using different variations of the mental rotation task or different subpopulations of infants. We included all of these experiments in the meta-analysis and accounted for the dependencies between them by means of multilevel modeling with by-article random effects (see below). However, we excluded experiments if there was insufficient information to compute a standardized effect size (see below). Whenever an article reported separate effect sizes for boys and girls—or other subgroups like crawling and non-crawling infants)—but also an effect size combining these groups, we only included the combined effect size. We dropped effect sizes that were clearly based on the same data but reported in different articles. This procedure led to a total of 59 experiments being included in the meta-analysis (Supplementary Table 1).
+
+## Data collection process and items
+
+Outcome measures and other relevant variables were extracted from each article by one of three raters and verified by a second rater. Outcome measures were any summary statistic (Table 1) that could be used to determine the standardized mean difference between novel/unexpected rotation events and familiar/expected rotation events (see Introduction). Other extracted variables included, if available, the sample size, the number of girls and boys, the mean age and its standard deviation, the minimum and maximum age, the type of mental rotation task (habitation or violation of expectation), the modality of stimulus presentation (real objects or objects on a computer screen), and the dimensionality of the stimuli (2D or 3D; Supplementary Table 1).
+
+```{r, tab1, include=TRUE}
+print("Nice table goes here")
+```
+
+No study investigators were contacted for obtaining or confirming additional data and no automated tools were used in the data collection process.
+
+## Effect size measures
+
+One outcome measure per experiment was converted into a standardized mean difference with small sample correction (Hedges’ g) using the formulas provided in Table 1. The sampling variance Var_g of the outcome measure g for each experiment was computed using the formula provided by Goulet-Pelletier & Cousineau (2018):
+
+v = (df(df - 2)) * ((2 * (1 - r)) / n) * (1 + g^2 * (n / (2 * (1 - r)))) - (g^2 / j^2)
+
+where n is the sample size of the experiment, df are the degrees of freedom (with df=2*(n-1)), r is the correlation between the two dependent measures in the experiment, and j is the correction factor for small samples as described in Table 1. The correlation r was not reported in any of the original articles. We therefore always assumed a correlation of r = .50 to make our analysis comparable to standard (between-group) meta-analyses (Lakens, 2013) and because we were able to infer an average correlation of r ≈ .50 from a subsample of articles which provided sufficient information (Supplementary Methods 1). A sensitivity analysis indicated that changing the assumed correlation to values from r = -.90 via r = .00 to r = .90 had no meaningful impact on the meta-analytic effect size (Supplementary Table 3).
+
+For the meta-analysis of gender differences within each article, effect sizes were computed according to the following formulas in Table yy, and redundant groups were excluded from the analysis.
+
+```{r, tab2, include=TRUE}
+print("Nice table goes here")
+```
+
+Furthermore, the sampling variance was computed according to the following equation:
+
+$sigma$between group = dfdf -2   2ñ1 + g2ñ2- g2J2 
+
+Where ñ is the harmonic mean of the group sizes  and   ñ = nmale  nmalenfemale + nmale. A sensitivity analysis reported in supplementary xxx highlights the stability of the effect size computed using the Bayesian meta analysis.
+
+## Bayesian meta-analysis
+
+We synthesized the effect sizes and their sampling variances using a Bayesian multilevel model. This model had three levels, with infant participants nested in experiments and experiments nested in articles (Van den Noortgate et al., 2013). We used a weakly-informative normal (N(0,1)) prior for the meta-analytic effect size and a weakly-informative half-Cauchy (HC(0, 0.3)) prior for all standard deviations (Williams et al., 2018). A prior sensitivity analysis indicated that making these priors either more informative or less informative did not change the meta-analytic results (Supplementary Table 3). All Bayesian models were fitted using the brms package (Version 2.16.3; Bürkner, 2017, 2018) in R (Version 4.1.2; R Core Team, 2021) and the Stan language (Version 2.29.2; Stan Development Team, 2022). Markov Chain Monte Carlo (MCMC) sampling was used with four parallel chains, each sampling 10,000 draws (including 5,000 warm-up draws) from the posterior distribution. To verify the convergence of the Markov chains, we examined rank plots as well as the R_{hat} and N_{eff} statistics (Vehtari et al., 2021; Supplementary Fig. 1). For reporting, the credible interval (CrI) for each model parameter was computed as the 95% equal-tailed interval (ETI) of its posterior distribution, although replacing this with the 95% highest density interval (HDI) yielded highly similar results (Kruschke, 2015).
+
+## Bayesian meta-regression
+
+We examined the influence of three moderator variables on the mental rotation outcomes across studies, namely (a) the gender of the sample of infants, (b) the age of the sample of infants, and (c) the type of mental rotation task. Gender was coded as a categorical predictor (mixed-gender sample, all-female sample, all-male sample) and contrast-coded using two successive difference contrasts so that we could compare all-female versus mixed samples and all-male samples versus all-female samples (Schad et al., 2020). Age was coded as a continuous predictor in years and centered by subtracting the average across all studies. Task was coded as a categorical predictor (habituation task, violation of expectation task) and contrast-coded using a scaled sum contrast (Schad et al., 2020). We then included these predictors for gender, age, and task type as well as two predictors for the interaction between gender task type (i.e., [female - mixed] × age and [male - female] × age) into a Bayesian meta-regression model. This model used the same random effects structure and sampling and sampling parameters as described above.
+
+## Frequentist meta-analysis
+
+We verified the results from our Bayesian analyses using classical (frequentist) meta-analysis and meta-regression. We used the metafor package (Version 3.0.2; Viechtbauer, 2010) in R to specify the same three-level models as described above but dropping the Bayesian priors (Supplementary Table 3). The models were fitted using restricted maximum likelihood estimation (REML). To verify that REML converged on the correct estimates, we examined profile likelihood plots for the two variance components in the model (i.e., the between-experiment variance and the between-article variance; see Supplementary Fig. 2).
+
+## Reporting bias and certainty assessment
+
+We assessed publication bias by means of a funnel plot and Egger regression test (Egger et al. 1997). We adapted code from the R package metaviz (Version 0.3.1; Kossmeier et al., 2020) to produce the funnel plot and used the R package metafor for the Egger regression test. We examined heterogeneity in our study samples by means of a jackknife leave-one-out-analysis (Gee 2005). We adapted code from the bootstrap R package (Version 2019.6; Scott Kostyshak et al., 2019) to fit the Bayesian model repeatedly to our study samples, leaving out one experiment sample for every iteration. To take into account the variance inherent in Bayesian model estimation, we averaged over x iterations of the jackknife.
+
+## Data & code availability
 
 # Supplementary information
 
@@ -741,16 +809,16 @@ dat %>%
     Task = task,
     `Stimulus type` = str_to_sentence(stimuli_presentation),
     `Stimulus dimensions` = stimuli_dimensions
-  ) -> tabS1
+  ) -> tabs1
 
 # Save the table
-write_csv(tabS1, file = here(tables_dir, "within_experiments.csv"), na = "n/a")
+write_csv(tabs1, file = here(tables_dir, "within_experiments.csv"), na = "n/a")
 
 # Display the table
 apa_table(
-  tabS1,
+  tabs1,
   caption = "Experiments included in the main analysis", label = "S1",
-  landscape = TRUE
+  landscape = TRUE, font_size = "scriptsize"
 )
 ```
 
