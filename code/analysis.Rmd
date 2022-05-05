@@ -881,11 +881,66 @@ To confirm the gender difference between males and females we set up another Bay
 Our additional analysis revealed a meta-analytic effect size of $g = `r summ_brm_gender$intercept`$, 95% Crl [`r summ_brm_gender$intercept.lower`, `r summ_brm_gender$intercept.upper`] (Supplementary Fig. 1) and a probability of this effect being greater than zero of `r print_perc(hyp_brm_gender$Post.Prob)`.
 The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_brm_gender$sigma2_experiment`$, 95% CrI [`r summ_brm_gender$sigma2_experiment.lower`, `r summ_brm_gender$sigma2_experiment.upper`], at the experiment level and $\sigma_{\text{Article}}^2 = `r summ_brm_gender$sigma2_article`$, 95% CrI [`r summ_brm_gender$sigma2_article.lower`, `r summ_brm_gender$sigma2_article.upper`] at the article level. This means that `r print_perc(summ_brm_gender$icc)` of the total variance can be attributed to differences *between* articles and `r print_perc(1 - summ_brm_gender$icc)` to differences between experiments *within* articles.
 
-## Evaluation of publication bias
+## Publication bias and certainty assessment
 
-By visual inspection of a funnel plot of standard errors and effect sizes we detected a slight asymmetry indicating a small publication bias (Fig. 3).
-Publication bias was also suggested by the results of an Egger regression test indicating that the slope of a weighted linear regression of the effect sizes on the standard errors is significantly different from zero (t(57) = 3.37, p = 0.001).
-Nevertheless, a jackknife leave-one-out analysis confirmed that the current results are robust to the effects of individual studies (see Supplementary Table 5).
+```{r, publication_bias, echo=TRUE}
+# Classical Egger regression test
+(egger <- regtest(x = dat$gi, sei = dat$sei, model = "lm", predictor = "sei"))
+(egger_ci <- confint(egger$fit)["Xsei", ])
+```
+
+By visual inspection of a funnel plot of standard errors and effect sizes we detected a slight asymmetry indicating a small publication bias (Fig. 3). Publication bias was also suggested by the results of an Egger regression test indicating that the slope of a weighted linear regression of the effect sizes on the standard errors is significantly different from zero in a two-sided $t$-test, $b = `r coef(egger$fit)["Xsei"]`$, $t(`r egger$dfs`) = `r egger$zval`$, $p = `r print_p(egger$pval)`$, 95% confidence interval (CI) [`r egger_ci["2.5 %"]`, `r egger_ci["97.5 %"]`]. Nevertheless, a jackknife leave-one-out analysis confirmed that the current results are robust to the effects of individual studies (Supplementary Table 3).
+
+```{r, fig3, include=TRUE, fig.height=3.5, fig.width=5.56, fig.cap="(ref:fig3-caption)", out.width="50%"}
+# Compute funnel
+funnel_z_crit <- stats::qnorm(0.975)
+funnel_max_se <- 0.5 # A bit larger than the largest observed `sei` in `dat`
+funnel_tau2 <- 0 # We don't take heterogeneity into account, only the SE
+funnel <- data.frame(
+  x = c(
+    summ_brm$intercept - funnel_z_crit * sqrt(funnel_max_se^2 + funnel_tau2),
+    summ_brm$intercept - funnel_z_crit * sqrt(funnel_tau2),
+    summ_brm$intercept + funnel_z_crit * sqrt(funnel_tau2),
+    summ_brm$intercept + funnel_z_crit * sqrt(funnel_max_se^2 + funnel_tau2)
+  ),
+  y = c(funnel_max_se, 0, 0, funnel_max_se)
+)
+
+# Create funnel plot
+dat %>%
+  ggplot(aes(x = gi, y = sei)) +
+  geom_vline(xintercept = seq(-2, 2, 0.5), color = "grey90") +
+  # Meta-analytic effect size
+  geom_vline(xintercept = summ_brm$intercept, color = "black") +
+  # Experiment-specific effect sizes
+  geom_point(shape = 0) +
+  # Funnel
+  geom_path(data = funnel, aes(x = x, y = y), linetype = "dashed") +
+  # Styling
+  scale_x_continuous(breaks = seq(-2, 2, 0.5)) +
+  scale_y_reverse() +
+  coord_cartesian(
+    xlim = c(-2.5, 2.5),
+    ylim = c(funnel_max_se, 0),
+    expand = FALSE
+  ) +
+  labs(
+    x = expression("Hedges'" ~ italic("g")),
+    y = "Standard error",
+  ) +
+  theme_classic() +
+  theme(
+    axis.line = element_line(colour = "black"),
+    axis.text = element_text(family = "Helvetica", color = "black"),
+    axis.ticks = element_line(color = "black"),
+    text = element_text(family = "Helvetica", color = "black")
+  )
+
+# Save the plot
+ggsave(here(figures_dir, "funnel.pdf"), width = 5.56, height = 3.5)
+```
+
+(ref:fig3-caption) **Evaluation of publication bias.** The funnel plot shows the standard errors and the effect sizes for each of the individual studies. The funnel contours (dashed lines) show a 95%-pseudo-confidence interval of the standard error around the meta-analytic effect size (vertical solid line). A slight asymmetry induced by the underrepresentation of studies with high standard error and small effect size suggest a small publication bias. 
 
 # Discussion
 
