@@ -58,6 +58,9 @@ print(res_freq)
 round(res_freq$sigma2[1] / sum(res_freq$sigma2), 3) # Between-art. (ICC)
 round(res_freq$sigma2[2] / sum(res_freq$sigma2), 3) # Within-art. (between-exp.)
 
+# Get profile likelihoods for sigmas to check that REML has converged
+prof_liks <- profile(res_freq, plot = FALSE)
+
 # Meta-regression with gender, age, and task
 res_reg_freq <- rma.mv(
   gi, vi,
@@ -362,7 +365,7 @@ dat_gender %>%
   )
 
 # Save the plot
-ggsave(here(figures_dir, "forest_gender.pdf"), width = 12, height = 8)
+ggsave(here(figures_dir, "figs1_gender.pdf"), width = 12, height = 8)
 ```
 
 (ref:figs1-caption) **Meta-analysis of gender differences.** A Bayesian three-level meta-analysis provided evidence for a small gender difference in mental rotation performance between male and female infants. White squares indicate the effect sizes (Hedges’ $g$) for gender difference in all individual experiments and black lines their 95% confidence intervals. Note that for experiments that observed a non-significant gender difference and did not specify the exact size of this effect, we assumed an effect size of $g = 0.00$. Gray bars indicate the 95% and 50% Bayesian credible interval (CrI) based on a Bayesian three-level random-effects model. Note that these intervals got shrunk towards the meta-analytic effect size because of partial pooling, that is, the three-level model regularizing the impact of experiments with small sample sizes and/or unrealistically large effect sizes. The last line shows the meta-analytic effect size from the three-level model (black dot) together with its 95% CrI (black line) and its posterior distribution (gray curve).
@@ -428,7 +431,58 @@ bayesplot::mcmc_trace(
   )
 
 # Save the plot
-ggsave(here(figures_dir, "trace.pdf"), width = 12, height = 6)
+ggsave(here(figures_dir, "figs2_convergence.pdf"), width = 12, height = 6)
 ```
 
 (ref:figs2-caption) **Convergence checks for the Bayesian meta-analysis.** For each of the three parameters in the three-level meta-analytic model, gray traces show the exploration of the posterior distribution by four independent Markov Chain Monte Carlo (MCMC) chains. Overlap of the gray traces as well as random upward and downward fluctuations (rather than systematic drifts) indicate efficient exploration of the posterior distribution. Rhat = potential scale reduction factor, with values close to 1.0 indicating convergence of the chains, Neff(bulk) = bulk effective sample size, with larger values indicating better sampling efficiency in the bulk of the distribution (e.g., for estimating the posterior mean), Neff(tail) = tail effective sample size, with larger values indicating better sampling efficiency in the tails of the distribution (e.g., for estimating the 95% credible interval [CrI]). For details about these and other convergence criteria, we refer the reader to @vehtari2021.
+
+```{r, figs3, include=TRUE, fig.height=4, fig.width=12, fig.cap="(ref:figs3-caption)"}
+# Combine profile likelihood results into one data frame
+prof_liks %>%
+  head(-1) %>% # Remove the `comp` element
+  map(~ tibble(sigma2 = .$sigma2, ll = .$ll)) %>%
+  bind_rows(.id = "parameter") %>%
+  # Create new labels for plotting
+  mutate(parameter = factor(
+    parameter,
+    levels = c(1, 2),
+    labels = c("italic(sigma)[article]^2", "italic(sigma)[experiment]^2")
+  )) -> prof_liks_df
+
+# Find the best-fitting parameter estimates
+prof_liks_df %>%
+  group_by(parameter) %>%
+  filter(ll == max(ll)) -> prof_liks_max
+
+# Create plot
+prof_liks_df %>%
+  ggplot(aes(x = sigma2, y = ll)) +
+  facet_wrap(~parameter, scales = "free", labeller = label_parsed) +
+  # Best fitting parameters
+  geom_hline(
+    aes(yintercept = ll),
+    data = prof_liks_max, linetype = "dashed"
+  ) +
+  geom_vline(
+    aes(xintercept = sigma2),
+    data = prof_liks_max, linetype = "dashed"
+  ) +
+  # All tested parameters
+  geom_point() +
+  geom_line() +
+  # Styling
+  labs(x = "Parameter value", y = "Restricted log-likelihood") +
+  theme_classic() +
+  theme(
+    axis.line = element_line(colour = "black"),
+    axis.text = element_text(family = "Helvetica", color = "black"),
+    axis.ticks = element_line(color = "black"),
+    strip.background = element_blank(),
+    text = element_text(family = "Helvetica", color = "black")
+  )
+
+# Save the plot
+ggsave(here(figures_dir, "figs3_convergence_freq.pdf"), width = 12, height = 4)
+```
+
+(ref:figs3-caption) **Convergence checks for the frequentist meta-analysis.** Profile likelihood plots [@raue2009; @viechtbauer2010] indicate that restricted maximum likelihood estimation (REML) was able to identify the most likely parameter estimates for the two variance components in the three-level meta-analytic model, that is, for the between-article variance and for the between-experiment (within-article) variance.
