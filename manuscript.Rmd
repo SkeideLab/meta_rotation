@@ -84,7 +84,9 @@ library(cowplot)
 knitr::opts_chunk$set(
   include = FALSE,
   message = FALSE,
+  fig.align = "center",
   fig.height = 10,
+  fig.pos = "tp",
   fig.width = 7.5,
   out.width = "100%",
   warning = FALSE
