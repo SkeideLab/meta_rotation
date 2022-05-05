@@ -3,12 +3,18 @@
 .DS_Store
 *.xlsx
 
+# LaTeX files
+*.aux
+*.fdb_latexmk
+*.fff
+*.fls
+*.pdf
+*.png
+*.tex
+*.ttt
+
 # PDF articles of the original experiments
 /data/articles/
-
-# LaTeX files
-/code/
-!/code/analysis.Rmd
 
 # Fitted Bayesian models
 /results/
