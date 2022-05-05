@@ -902,6 +902,14 @@ To take into account the variance inherent in Bayesian model estimation, we aver
 
 ## Data & code availability
 
+Blah blah blah
+
+# References
+
+<div id="refs"></div>
+
+\newpage
+
 # Supplementary information
 
 ```{r, tabs1, include=TRUE}
