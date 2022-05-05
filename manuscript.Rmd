@@ -46,7 +46,7 @@ floatsintext      : yes
 figurelist        : no
 tablelist         : no
 footnotelist      : no
-linenumbers       : no
+linenumbers       : yes
 mask              : no
 draft             : no
 
@@ -270,6 +270,7 @@ descs <- list(
   n_infants = sum(dat$sample_size),
   percent_female = mean(dat$female_percent, na.rm = TRUE),
   min_age_months = as.integer(min(dat$age_min, na.rm = TRUE) / 30.417),
+  max_age_months = as.integer(max(dat$age_max, na.rm = TRUE) / 30.417),
   mean_age_weighted = format_days_months(
     sum(dat$age_mean * dat$ni) / (sum(dat$ni)),
     long = TRUE
@@ -950,44 +951,27 @@ ggsave(here(figures_dir, "funnel.pdf"), width = 5.56, height = 3.5)
 
 # Discussion
 
-We analyzed looking times during mental rotation in 1,798 infants ranging from 3 to 16 months of age.
-To this end, we scrutinized the robustness of 59 experimental effect sizes.
-We found that male infants looked on average slightly longer at novel rotated objects compared to female infants.
-This effect was small and unrelated to age in the current range.
+We analyzed looking times during mental rotation in `r formatC(descs$n_infants, big.mark = ",")` infants ranging from `r descs$min_age_months` to `r descs$max_age_months` months of age. To this end, we scrutinized the robustness of `r descs$n_experiments` experimental effect sizes. We found that male infants looked on average slightly longer at novel rotated objects compared to female infants. This effect was small and unrelated to age in the current range.
 
 ## Effect size estimates
 
-We interpret the meta-regression-based estimate of the gender difference (b = 0.48, b = $Delta$g ) as an upper bound of the true effect size since this estimate is based on experiments that reported only separate effect sizes for males and females.
-The gender effect of these experiments can be considered as positively biased when assuming that authors who observe a statistically significant gender difference more likely report separate effect sizes for males and females.
-In contrast, the meta-analytic estimate derived from the observed gender differences within each experiment (g = .20) can be viewed as a lower bound of the true effect size.
-This view is plausible because the unknown effect sizes of experiments without significant gender differences were set to zero although non-zero differences some of these experiments will have found a non-zero gender difference but the size of this effect was not reported because of a lack of power to render it statistically significant.
+We interpret the meta-regression-based estimate of the gender difference ($b = `r summ_brm_reg$male_female`$, where $b = \Delta{g}$) as an upper bound of the true effect size since this estimate is based on experiments that reported only separate effect sizes for males and females. The gender effect of these experiments can be considered as positively biased when assuming that authors who observe a statistically significant gender difference more likely report separate effect sizes for males and females. In contrast, the meta-analytic estimate derived from the observed gender differences within each experiment ($g = `r summ_brm_gender$intercept`$) can be viewed as a lower bound of the true effect size. This view is plausible because the unknown effect sizes of experiments without significant gender differences were set to zero although non-zero differences were likely also observed but just not reported because of missing power to render these effects statistically significant. 
 
 ## Gender differences
 
-The gender differences observed here remain to be explained by interacting genetic and environmental factors that are largely unknown.
-To the best of our knowledge, there are currently no genetic association or gene-environment interaction studies with a focus on mental rotation.
-Nevertheless, it is documented that genetic contributions to behavioral variance in mental rotation are substantially smaller than unique non-shared environmental contributions both in male and female adults (Shakeshaft et al. 2016).
-Whether this observation also applies to infants remains to be explored.
+The gender differences observed here remain to be explained by interacting genetic and environmental factors that are largely unknown. To the best of our knowledge, there are currently no genetic association or gene-environment interaction studies with a focus on mental rotation. Nevertheless, it is documented that genetic contributions to behavioral variance in mental rotation are substantially smaller than unique non-shared environmental contributions both in male and female adults [@shakeshaft2016]. Whether this observation also applies to infants remains to be explored. 
 
-One recent study on 5-6-month-old female infants provided preliminary evidence for possible social-environmental effects related to parental attitudes towards gender which might partly explain the results of our present work (Constantinescu et al. 2018).
-As far as we know, potentially mediating and moderating factors that could already be operational in infancy, however, are not yet empirically established.
-In a similar vein, while mental rotation training has small-to-medium post-test effects in children, it is unclear whether it can remove gender differences and be adapted to infants Uttal et al. (2013).
+One recent study on 5--6-month-old female infants provided preliminary evidence for possible social-environmental effects related to parental attitudes towards gender which might partly explain the results of our present work [@constantinescu2018]. As far as we know, potentially mediating and moderating factors that could already be operational in infancy, however, are not yet empirically established. In a similar vein, while mental rotation training has small-to-medium post-test effects in children, it is unclear whether it can remove gender differences and be adapted to infants [@uttal2013].
 
-Sex hormone concentration in male infants, especially postnatal testosterone in the first six months of life, could also contribute to gender differences in mental rotation performance (Toivainen et al. 2018, Constantinescu et al. 2018, Erdmann et al. 2019).
-Possible biological developmental pathways, however, bridging the gap from hormonal to behavioral differences are currently far from understood.
+Sex hormone concentration in male infants, especially postnatal testosterone in the first six months of life, could also contribute to gender differences in mental rotation performance [@toivainen2018; @constantinescu2018; @erdmann2019]. Possible biological developmental pathways, however, bridging the gap from hormonal to behavioral differences are currently far from understood. 
 
 ## Additional factors
 
-A number of additional factors have been associated with individual differences in infant mental rotation performance.
-For example, mental rotation is related to previous relevant experience with the particular objects used in the specific task (Möhring and Frick 2013; Schwarzer et al. 2013b; Slone et al. 2018).
-This relation also applies to previous experience with manually rotating toys (Schwarzer et al. 2013b).
-While these preliminary results require replication they are in line with the longstanding notion that prior knowledge is the strongest predictor of learning outcomes in a range of cognitive domains (e.g. Ausubel 1968; Bradley & Bryant 1983; Halberda et al. 2008).
-Furthermore, there is yet to be confirmed preliminary evidence for possible links between mental rotation performance and several sensory motor skills including fine and gross motor skills, oculomotor control and crawling skills (Schwarzer et al. 2013a; Schwarzer et al. 2013b).
+A number of additional factors have been associated with individual differences in infant mental rotation performance. For example, mental rotation is related to previous relevant experience with the particular objects used in the specific task [@mohring2013; @schwarzer2013a; @slone2018]. This relation also applies to previous experience with manually rotating toys [@schwarzer2013a]. While these preliminary results require replication they are in line with the longstanding notion that prior knowledge is the strongest predictor of learning outcomes in a range of cognitive domains (e.g. [@ausubel1968; @bradley1983; @halberda2008]). Furthermore, there is yet to be confirmed preliminary evidence for possible links between mental rotation performance and several sensory motor skills including fine and gross motor skills, oculomotor control, and crawling skills [@schwarzer2013; @schwarzer2013a].
 
 # Conclusion
 
-The present study robustly revealed that male infants look slightly but significantly longer at novel rotated objects than female infants.
-Thus, on average, males outperform females in mental rotation already in the first months of life.
+The present study robustly revealed that male infants look slightly but significantly longer at novel rotated objects than female infants. Thus, on average, males outperform females in mental rotation already in the first months of life. 
 
 # Methods
 

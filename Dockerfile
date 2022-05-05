@@ -82,6 +82,7 @@ RUN \
     kvsetkeys \
     latex-amsmath-dev \
     letltxmacro \
+    lineno \
     ltxcmds \
     makecell \
     ms \
