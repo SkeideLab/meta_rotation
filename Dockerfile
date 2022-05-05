@@ -66,6 +66,7 @@ RUN \
     euenc \
     fancyhdr \
     fancyvrb \
+    float \
     fontspec \
     fp \
     framed \

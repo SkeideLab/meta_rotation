@@ -1,10 +1,14 @@
-*.fdb_latexmk
-*.fff
-*.log
-*.pdf
-*.png
-*.tex
-*.ttt
-*.xlsx
+# General stuff
+.vscode
 .DS_Store
+*.xlsx
+
+# PDF articles of the original experiments
+/data/articles/
+
+# LaTeX files
+/code/
+!/code/analysis.Rmd
+
+# Fitted Bayesian models
 /results/

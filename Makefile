@@ -19,13 +19,17 @@ all: code/analysis.pdf
 code/analysis.pdf:
 	$(run) Rscript -e "rmarkdown::render(input = 'code/analysis.Rmd')"
 
+# Convert from LaTeX to PDF after postprocessing
+latex:
+	$(run) /bin/bash -c "cd code && xelatex analysis"
+
 # Auto-format the document
 style:
 	$(run) Rscript -e "styler::style_file('code/analysis.Rmd')"
 
 # Run an interactive RStudio session with Docker
 interactive:
-	docker run --rm --volume $(PROJECT_DIR):$(REMOTE_DIR) \
+	docker run --rm -it --volume $(PROJECT_DIR):$(REMOTE_DIR) \
 	-e PASSWORD=1234 -p 8888:8888 $(IMAGE_TAG)
 
 # Build the container with Docker
