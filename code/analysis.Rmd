@@ -58,8 +58,10 @@ header-includes:
   - \usepackage[all]{nowidow}
   - \usepackage{makecell}
   - \usepackage{setspace}
-  - \renewcommand{\arraystretch}{1.0}
-  - \captionsetup{font={stretch=1}, belowskip=15pt}
+  - \DeclareCaptionLabelSeparator{bar}{ | }
+  - \DeclareCaptionTextFormat{tabletext}{\textup{#1}}
+  - \captionsetup[table]{font=small,labelfont=bf,labelsep=bar,textfont=bf,textformat=tabletext}
+  - \captionsetup[figure]{belowskip=10pt,font=small,labelfont=bf,labelsep=bar,name=Fig.,textfont=normalfont}
 ---
 
 ```{r, setup, include=FALSE}
@@ -1109,6 +1111,8 @@ To take into account the variance inherent in Bayesian model estimation, we aver
 ## Data & code availability
 
 Blah blah blah
+
+\newpage
 
 # References
 
