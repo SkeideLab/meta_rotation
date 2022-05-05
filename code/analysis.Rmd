@@ -277,7 +277,7 @@ The cognitive ability to move visual object representations in mind for recognit
 
 Previous meta-analyses revealed that males solve mental rotation tasks slightly faster than females on average [@linn1985; @voyer1995; @voyer2011; @maeda2013]. Effect sizes of this difference, however, are heterogeneous and often only medium in size (mean weighted $g = 0.37\text{--}0.73$). Interestingly, a recent meta-analysis [@lauer2019a] in 3-17-year-old children and adolescents suggests even only a small-to-medium difference (mean weighted $g = 0.39$). Whether gender differences in mental rotation behavior already emerge during infancy remains unknown.
 
-In the present study, we meta-analyzed `r descs$n_experiments` effect sizes derived from looking times in mental rotation tasks conducted by `r descs$n_infants` infants (`r print_perc(descs$percent_female)` female) aged `r descs$min_age_months` to `r descs$max_age_months` months (mean age of `r descs$mean_age_weighted`; Supplementary Table 1). All tasks were embedded either into habituation experiments (`r descs$n_experiments_habituation`) or violation of expectation experiments (`r descs$n_experiments_voe`) [@fantz1964; @baillargeon1985]. These experiments comprised real world stimuli (e.g., toy objects [@antrilli2016]), three-dimensional digital stimuli (e.g., cube figures [@moore2008]), or two-dimensional digital stimuli (e.g., digits [@quinn2008]). In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object. Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation. In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle. Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle. Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown. Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle. In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
+In the present study, we meta-analyzed `r descs$n_experiments` effect sizes derived from looking times in mental rotation tasks conducted by `r formatC(descs$n_infants, big.mark = ",")` infants (`r print_perc(descs$percent_female)` female) aged `r descs$min_age_months` to `r descs$max_age_months` months (mean age of `r descs$mean_age_weighted`; Supplementary Table 1). All tasks were embedded either into habituation experiments (`r descs$n_experiments_habituation`) or violation of expectation experiments (`r descs$n_experiments_voe`) [@fantz1964; @baillargeon1985]. These experiments comprised real world stimuli (e.g., toy objects [@antrilli2016]), three-dimensional digital stimuli (e.g., cube figures [@moore2008]), or two-dimensional digital stimuli (e.g., digits [@quinn2008]). In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object. Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation. In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle. Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle. Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown. Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle. In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
 
 Following previous work in older populations, we hypothesized that looking times in mental rotation experiments are on average significantly longer in male compared to female infants. Effect sizes were assumed to be small.
 
@@ -333,11 +333,7 @@ summary(res_brm)
 # )
 
 # Extract posterior draws for the meta-analytic effects
-spread_draws(
-  res_brm,
-  b_Intercept, sd_article__Intercept, `sd_article:experiment__Intercept`,
-  ndraws = NULL
-) %>%
+spread_draws(res_brm, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
   # Compute variances and ICC
   mutate(
     intercept = b_Intercept,
@@ -481,7 +477,7 @@ dat %>%
 ggsave(here(figures_dir, "forest.pdf"), width = 12, height = 14)
 ```
 
-(ref:fig1-caption) Mental rotation performance. A Bayesian three-level meta-analysis provided evidence for mental rotation ability in infants. White squares depict the effect sizes (Hedges’ g) for infants’ mental rotation performance in all individual experiments and black lines depict their 95% confidence intervals. Gray bars indicate the 95% and 50% Bayesian credible intervals (CrI). These intervals got shrunk towards the meta-analytic effect size because of partial pooling which regularized the impact of experiments with small sample sizes or unrealistically large effect sizes to prevent overfitting the model. The last line shows the meta-analytic effect size (black dot) together with its 95% CrI (black line) and its posterior distribution (gray curve).
+(ref:fig1-caption) **Mental rotation performance.** A Bayesian three-level meta-analysis provided evidence for mental rotation ability in infants. White squares depict the effect sizes (Hedges’ $g$) for infants’ mental rotation performance in all individual experiments and black lines depict their 95% confidence intervals. Gray bars indicate the 95% and 50% Bayesian credible intervals (CrI). These intervals got shrunk towards the meta-analytic effect size because of partial pooling which regularized the impact of experiments with small sample sizes or unrealistically large effect sizes to prevent overfitting the model. The last line shows the meta-analytic effect size (black dot) together with its 95% CrI (black line) and its posterior distribution (gray curve).
 
 For our first meta-analytic model effect sizes were quantified as the standardized mean difference in infants’ looking times for novel and familiar rotated objects. Using this effect size index we ran a Bayesian three-level random-effects model to test if there was evidence that infants did perform mental rotation. Across studies, infants indeed looked longer at novel rotated objects than at familiar rotated objects, with a standardized mean difference of $g = `r summ_brm$intercept`$, 95% credible interval (CrI) [`r summ_brm$intercept.lower`, `r summ_brm$intercept.upper`] (Fig. 1). The probability for this effect being greater than zero was `r print_perc(hyp_brm$Post.Prob)`. The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_brm$sigma2_experiment`$, 95% CrI [`r summ_brm$sigma2_experiment.lower`, `r summ_brm$sigma2_experiment.upper`], at the experiment level and $\sigma_{\text{Article}}^2 = `r summ_brm$sigma2_article`$, 95% CrI [`r summ_brm$sigma2_article.lower`, `r summ_brm$sigma2_article.upper`] at the article level. Therefore, approximately `r print_perc(1 - summ_brm$icc)` of the heterogeneity between effect sizes was attributable to differences between experiments and `r print_perc(summ_brm$icc)` was attributable to differences between articles.
 
@@ -526,6 +522,17 @@ res_brm_reg <- update(
 summary(res_brm_reg)
 # plot(res_brm_reg)
 
+# Get posterior probability mass > 0 for all regression weights
+(hyps_brm_reg <- list(
+  intercept = hypothesis(res_brm_reg, "Intercept > 0")$hypothesis,
+  female_mixed = hypothesis(res_brm_reg, "gender2M1 < 0")$hypothesis,
+  male_female = hypothesis(res_brm_reg, "gender3M2 > 0")$hypothesis,
+  age = hypothesis(res_brm_reg, "age_c > 0")$hypothesis,
+  voe_habituation = hypothesis(res_brm_reg, "task2M1 > 0")$hypothesis,
+  female_mixed_age = hypothesis(res_brm_reg, "gender2M1:age_c > 0")$hypothesis,
+  male_female_age = hypothesis(res_brm_reg, "gender3M2:age_c > 0")$hypothesis
+))
+
 # # Summarise fixed effects (incl. Bayes factors)
 # describe_posterior(
 #   res_brm_reg,
@@ -534,37 +541,37 @@ summary(res_brm_reg)
 #   rope_range = c(-0.1, 0.1)
 # )
 
-# Compute by-experiment variance
-var_experiment_reg <- as.matrix(
-  res_brm_reg,
-  variable = "sd_article:experiment__Intercept"
-)^2
-mean_qi(var_experiment_reg)
+# Extract posterior draws for the meta-analytic effects
+spread_draws(res_brm_reg, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
+  # Compute variances and ICC
+  mutate(
+    intercept = b_Intercept,
+    female_mixed = b_gender2M1,
+    male_female = b_gender3M2,
+    age = b_age_c,
+    voe_habituation = b_task2M1,
+    female_mixed_age = `b_gender2M1:age_c`,
+    male_female_age = `b_gender3M2:age_c`,
+    sigma_article = sd_article__Intercept,
+    sigma_experiment = `sd_article:experiment__Intercept`,
+    sigma2_article = sd_article__Intercept^2,
+    sigma2_experiment = `sd_article:experiment__Intercept`^2,
+    sigma2_total = sigma2_article + sigma2_experiment,
+    icc = sigma2_article / sigma2_total,
+  ) -> draws_brm_reg
 
-# Compute by-article variance
-var_article_reg <- as.matrix(
-  res_brm_reg,
-  variable = "sd_article__Intercept"
-)^2
-mean_qi(var_article_reg)
-
-# # Compute intra-class correlation
-# var_total_reg <- var_experiment_reg + var_article_reg
-# icc_reg <- var_article_reg / var_total_reg
-# mean_qi(icc_reg)
-
-# # Compute reduction in heterogeneity compared to the original meta-analysis
-# 1 - mean(var_total_reg / var_total)
+# Summarize as mean and 95% credible intervals
+(summ_brm_reg <- as.list(mean_qi(draws_brm_reg)))
 ```
 
 As a next step, we conducted a meta-regression analysis to test if the gender of the infants, their age, or the type of mental rotation task was related to mental rotation performance (Fig. 2).
-Indeed, experiments with all-male samples revealed larger looking time differences than experiments with all-female samples, b = 0.48, 95% CrI [0.06, 0.91].
-The probability for this effect being larger than zero was 98.5%.
-We found no difference between mixed-gender and all-female samples, b = 0.13, 95% CrI [-0.20, 0.52] (75.4% probability of an effect larger than zero).
-Additionally, mean age was not related to mental rotation performance, with a change per year of b = 0.05, 95% [-0.58, 0.68].
-We also did not detect an interaction between gender and age ([females - mixed] × age: b = 0.02, 95% CrI [-0.81, 0.84]; [males - females] × age: b = 0.06, 95% CrI [-0.84, 0.96]).
-Finally, there was weak evidence that violation of expectation tasks yielded larger effects than habituation tasks, b = 0.26, 95% [-0.08, 0.58].
-The probability for this effect being greater than zero was 93.5%.
+Indeed, experiments with all-male samples revealed larger looking time differences than experiments with all-female samples, $b = `r summ_brm_reg$male_female`$, 95% CrI [`r summ_brm_reg$male_female.lower`, `r summ_brm_reg$male_female.upper`].
+The probability for this effect being larger than zero was `r print_perc(hyps_brm_reg$male_female$Post.Prob)`.
+We found no difference between mixed-gender and all-female samples, $b = `r -summ_brm_reg$female_mixed`$, 95% CrI [`r -summ_brm_reg$female_mixed.lower`, `r -summ_brm_reg$female_mixed.upper`] (`r print_perc(hyps_brm_reg$female_mixed$Post.Prob)` probability of an effect larger than zero).
+Additionally, mean age was not related to mental rotation performance, with a change per year of $b = `r summ_brm_reg$age`$, 95% [`r summ_brm_reg$age.lower`, `r summ_brm_reg$age.upper`].
+We also did not detect an interaction between gender and age ([females - mixed] × age: $b = `r summ_brm_reg$female_mixed_age`$, 95% CrI [`r summ_brm_reg$female_mixed_age.lower`, `r summ_brm_reg$female_mixed_age.upper`]; [males - females] × age: $b = `r summ_brm_reg$male_female_age`$, 95% CrI [`r summ_brm_reg$male_female_age.lower`, `r summ_brm_reg$male_female_age.upper`]).
+Finally, there was weak evidence that violation of expectation tasks yielded larger effects than habituation tasks, $b = `r summ_brm_reg$voe_habituation`$, 95% [`r summ_brm_reg$voe_habituation.lower`, `r summ_brm_reg$voe_habituation.upper`].
+The probability for this effect being greater than zero was `r print_perc(hyps_brm_reg$voe_habituation$Post.Prob)`.
 
 ```{r, fig2, include=TRUE, fig.height=5, fig.width=12, fig.cap="(ref:fig2-caption)"}
 # Get draws from the posterior distribution
@@ -716,7 +723,7 @@ plot_grid(
 ggsave(here(figures_dir, "regression_coef.pdf"), width = 12, height = 5)
 ```
 
-(ref:fig2-caption) Effects of gender, age, and task. a Squares show the effect size (Hedges' g) for infants' mental rotation performance in each of the 59 individual experiments. Squares are color-coded according to the type of habituation task and the gender of the infants (blue = habituation task, all-female sample, yellow = habituation task, all-male sample, red = habituation task, mixed-gender sample, purple = violation of expectation [VoE] task, mixed-gender sample). Lines indicate the best-fit regression estimates according to a Bayesian three-level meta-regression model and gray ribbons indicate their corresponding 95% and 50% credible interval (CrI). b Fixed effect estimates obtained from the Bayesian three-level meta-regression model are depicted as black dots together with their 95% Crl (thin black lines) and 50% Crl (thick black lines). Gray curves indicate the posterior distribution for each effect.
+(ref:fig2-caption) **Effects of gender, age, and task.** **a,** Squares show the effect size (Hedges’ g) for infants’ mental rotation performance in each of the 59 individual experiments. Squares are color-coded according to the type of habituation task and the gender of the infants (blue = habituation task, all-female sample, yellow = habituation task, all-male sample, red = habituation task, mixed-gender sample, purple = violation of expectation [VoE] task, mixed-gender sample). Lines indicate the best-fit regression estimates according to a Bayesian three-level meta-regression model and gray ribbons indicate their corresponding 95% and 50% credible interval (CrI). **b,** Fixed effect estimates obtained from the Bayesian three-level meta-regression model are depicted as black dots together with their 95% Crl (thin black lines) and 50% Crl (thick black lines). Gray curves indicate the posterior distribution for each effect.
 
 To confirm the gender difference between males and females we set up another Bayesian meta-analysis, this time focusing on the looking-time contrasts between all-male and all-female groups reported within each article by the original authors.
 Our additional analysis revealed a meta-analytic effect size of g = 0.20, 95% Crl [0.03, 0.38] (Supplementary Fig. 1) and a probability of this effect being greater than zero of 98.9%.
