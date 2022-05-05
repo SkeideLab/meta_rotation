@@ -14,18 +14,18 @@ ifeq ($(DOCKER), TRUE)
 	run := docker run --rm --volume $(PROJECT_DIR):$(REMOTE_DIR) $(IMAGE_TAG)
 endif
 
-# Knit the document
-all: code/analysis.pdf
-code/analysis.pdf:
-	$(run) Rscript -e "rmarkdown::render(input = 'code/analysis.Rmd')"
+# Knit the manuscript
+all: manuscript.pdf
+manuscript.pdf:
+	$(run) Rscript -e "rmarkdown::render(input = 'manuscript.Rmd')"
 
 # Convert from LaTeX to PDF after postprocessing
 latex:
-	$(run) /bin/bash -c "cd code && xelatex analysis"
+	$(run) /bin/bash -c "cd code && xelatex manuscript"
 
-# Auto-format the document
+# Auto-format the manuscript
 style:
-	$(run) Rscript -e "styler::style_file('code/analysis.Rmd')"
+	$(run) Rscript -e "styler::style_file('manuscript.Rmd')"
 
 # Run an interactive RStudio session with Docker
 interactive:
