@@ -16,6 +16,7 @@ RUN \
     # Install R packages from MRAN
     && install2.r --error --skipinstalled \
     bayestestR \
+    bootstrap \
     brms \
     cowplot \
     git2r \
@@ -31,6 +32,7 @@ RUN \
     logspline \
     magick \
     metafor \
+    metaviz \
     MetBrewer \
     psych \
     styler \
