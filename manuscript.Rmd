@@ -266,6 +266,7 @@ print_perc <- function(x) scales::percent(x, accuracy = 0.1)
 
 # Extract some descriptive statistics for usage in the main text
 descs <- list(
+  n_articles = length(unique(dat$article)),
   n_experiments = nrow(dat),
   n_infants = sum(dat$sample_size),
   percent_female = mean(dat$female_percent, na.rm = TRUE),
@@ -977,64 +978,113 @@ The present study robustly revealed that male infants look slightly but signific
 
 ## Protocol
 
-We used established PRISMA 2020 (Preferred Reporting Items for Systematic reviews and Meta-Analyses; Page et al., 2021) guidelines to conduct this meta-analysis.
-Fig.
-4 presents the PRISMA flowchart and Supplementary Table 2 contains the PRISMA checklist.
+In the present meta-analysis we followed the established PRISMA 2020 guidelines (Preferred Reporting Items for Systematic reviews and Meta-Analyses [@page2021]). The PRISMA flowchart is provided in Fig. 4 and Supplementary Table 4 contains the PRISMA checklist.
 
 ```{r, fig4, include=TRUE, fig.width=6, fig.cap="(ref:fig4-caption)", out.width="50%"}
 # Include the flowchart (created with MS PowerPoint)
 knitr::include_graphics(here("results/figures/flowchart.pdf"))
 ```
 
-(ref:fig4-caption) Literature search and selection process. We searched four online databases as well as review articles and reference sections to identify articles that reported mental rotation experiments in infants. Experiments from these articles were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. Redundant articles that reported the same experiment(s) as another article were excluded. aAdditional reasons for excluding articles were an experimental paradigm that differed substantially compared to all other articles (1 article) and a sample of infants that was substantially older compared to all other articles (1 article).
+(ref:fig4-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. aAdditionally, we excluded an article that was based on an uncommon experimental paradigm differing substantially from all other articles (1 article). Finally, we excluded an article that was based on a sample of infants  who were substantially older compared to all other articles (1 article).
 
 ## Eligibility criteria
 
-Articles needed to fulfill six criteria for being included in the meta-analysis: (1) The article was written English or German; (2) The article includes results from a group study with human participants (excluding review articles, meta-analyses, case studies, and animal studies); (3) These participants include at least one group of infants (mean age between 0.0 and 3.0 years); (4) Infants had no preterm status or clinical diagnosis; (5) Infants performed a mental rotation task; (6) The article contains quantitative scores that could be converted into a standardized mean difference (see below).
-We explicitly included works that were not peer reviewed (e.g., dissertations and preprints) to reduce the impact of publication bias.
+Articles needed to fulfill six criteria for being included in this meta-analysis: (1) The article was written in English or German; (2) The article includes results from a group study with human samples (thus excluding review articles, meta-analyses, case studies, and animal studies); (3) These samples include at least one group of infants (mean age between 0 months and 36 months); (4) Infants were not born preterm and had no clinical diagnosis; (5) Infants performed a mental rotation task; (6) The article contains quantitative scores that could be converted into a standardized mean difference (see Data collection and process items below). We explicitly included works that were not peer reviewed (e.g., dissertations and preprints) to reduce the impact of publication bias.
 
 ## Information sources and search strategy
 
-We entered the search terms ("mental rotation" OR "mental transformation" OR "spatial rotation" OR "spatial transformation" OR "spatial ability" OR "spatial skills") AND ("infant" OR "infants" OR "infanthood" OR "toddler" OR "toddlers" OR "toddlerhood" OR "child" OR "children" OR "childhood" OR "month" OR "months") into four online databases (APA PsycINFO, PubMed/MEDLINE, Scopus, ProQuest Dissertations & Theses Global).
-All database queries were completed on December 6, 2021.
-We configured the databases to check for article titles, abstracts, and keywords while applying no other filters or limits.
-This yielded 2,616 articles in total, 1,954 of which remained after removing duplicate records (Figure 1).
-We further identified 76 articles by screening the reference sections of previous reviews and meta-analyses on mental rotation and related skills (Frick et al., 2014; Johnson & Moore, 2020; Kubicek & Schwarzer, 2018; Lauer et al., 2019; Linn & Petersen, 1985; Moore & Johnson, 2020; Uttal et al., 2013; Voyer et al., 1995; Yang et al., 2020).
-Of these, 34 had not been covered by the database search.
-We also identified 94 articles by screening the reference sections of all articles that had been included after the first pass of the selection process.
-Of these, 49 had not been covered by the database search.
-We thus screened 2,037 unique articles in total.
+We entered the search terms (“mental rotation” OR “mental transformation” OR “spatial rotation” OR “spatial transformation” OR “spatial ability” OR “spatial skills”) AND (“infant” OR “infants” OR “infanthood” OR “toddler” OR “toddlers” OR “toddlerhood” OR “child” OR “children” OR “childhood” OR “month” OR “months”) into four online databases (APA PsycINFO, PubMed/MEDLINE, Scopus, and ProQuest Dissertations & Theses Global). All database queries were completed on December 6, 2021. We configured the databases to check for article titles, abstracts, and keywords while applying no other filters or limits. This yielded 2,616 articles in total, 1,954 of which remained after removing duplicate records (Figure 4a). We further identified 76 articles by screening the reference sections of previous reviews and meta-analyses on mental rotation and related skills [@frick2014; @johnson2020; @kubicek2018; @lauer2019a; @linn1985; @moore2020; @uttal2013; @voyer1995; @yang2020]. Of these, 34 articles had not been covered by the database search. We also identified 94 articles by screening the reference sections of all publications that had been included after the first pass of the selection process. Of these, 49 articles had not been covered by the database search. Accordingly, we screened 2,037 unique articles in total.
 
 ## Selection process
 
-Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria.
-Interrater agreement for the binary decision to include versus exclude an article was 98.5% ($Kappa$w [Cohen's weighted kappa] = 0.67, 95% CI [0.55, 0.78]).
-Interrater agreement for the specific eligibility criteria were 88.2% ($Kappa$w = 0.72, 95% CI [0.40, 1.00]).
-Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached.
-One article (Mash et al., 2007) was excluded because the authors used a unique mental rotation paradigm that was not comparable to that used in the other articles.
-One article (Pedrett et al., 2020) was excluded because the average age of the infants (30.7 months) was almost twice as high as that of the next article (15.8 months), z = ???
-compared to all articles.
-We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life.
-This procedure led to a total of 23 articles being included in the meta-analysis (Fig. 4).
+```{r, selection_process}
+# Compute interrater agreement for binary decision (include vs. exclude)
+(irr_bin_perc <- with(screening, mean(bin_1 == bin_2)))
+(irr_bin_kappa <- with(screening, psych::cohen.kappa(cbind(bin_1, bin_2))))
+irr_bin_kappa_w <- as.list(irr_bin_kappa$confid["weighted kappa", ])
 
-Many of these articles consisted of multiple experiments, e.g., using different variations of the mental rotation task or different subpopulations of infants.
-We included all of these experiments in the meta-analysis and accounted for the dependencies between them by means of multilevel modeling with by-article random effects (see below).
-However, we excluded experiments if there was insufficient information to compute a standardized effect size (see below).
-Whenever an article reported separate effect sizes for boys and girls---or other subgroups like crawling and non-crawling infants)---but also an effect size combining these groups, we only included the combined effect size.
-We dropped effect sizes that were clearly based on the same data but reported in different articles.
-This procedure led to a total of 59 experiments being included in the meta-analysis (Supplementary Table 1).
+# Compute interrater agreement for specific exclusion codes
+(irr_code_perc <- with(screening, mean(code_1 == code_2)))
+(irr_code_kappa <- with(screening, psych::cohen.kappa(cbind(code_1, code_2))))
+irr_code_kappa_w <- as.list(irr_code_kappa$confid["weighted kappa", ])
+
+# Justify exclusion of @pedrett2020 based on outlier mean age
+mean_age_pedrett2020 <- 2.56 * 365.25 # In days
+mean_age_pedrett2020_m <- mean_age_pedrett2020 / 30.417 # In months
+mean_age_pedrett2020_z <- (mean_age_pedrett2020 - mean(dat$age_mean)) /
+  sd(dat$age_mean) # As z score
+
+```
+
+Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria. Interrater agreement for the binary decision to include versus exclude an article was `r print_perc(irr_bin_perc)` ($\kappa_w$ [Cohen’s weighted kappa] $= `r irr_bin_kappa_w$estimate`$, 95% CI [`r irr_bin_kappa_w$lower`, `r irr_bin_kappa_w$upper`]). Interrater agreement for the specific eligibility criteria were `r print_perc(irr_code_perc)` ($\kappa_w$ $= `r irr_code_kappa_w$estimate`$, 95% CI [`r irr_code_kappa_w$lower`, `r irr_code_kappa_w$upper`]). Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached. One article [@mash2007] was excluded because the authors used a unique mental rotation paradigm that was not comparable to the paradigm used in the other articles. Another article [@pedrett2020] was excluded because the average age of the infants studied (`r round(mean_age_pedrett2020_m, 1)` months) was almost twice as high as the average age of the next article (`r round(max(dat$age_mean), 1)` months; $z = `r mean_age_pedrett2020_z`$ compared to all articles). We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life. This procedure led to a total of `r descs$n_articles` articles being included in the meta-analysis (Fig. 4).
+
+Many of these articles consisted of multiple experiments, e.g., using different variations of the mental rotation task or different subsamples of infants. We included all of these experiments in the meta-analysis and accounted for the dependencies between them by means of multilevel modeling with by-article random effects (see Bayesian meta-analysis below). However, we excluded experiments if there was insufficient information to compute a standardized effect size (see Data collection process and items below). Whenever an article reported separate effect sizes for males and females---or other subgroups like crawling and non-crawling infants---but also an effect size combining these groups, we only included the combined effect size. Moreover, we disregarded effect sizes that were clearly based on the same data but reported in different articles. This procedure led to a total of `r descs$n_experiments` experiments being included in the meta-analysis (Supplementary Table 1).
 
 ## Data collection process and items
 
-Outcome measures and other relevant variables were extracted from each article by one of three raters and verified by a second rater.
-Outcome measures were any summary statistic (Table 1) that could be used to determine the standardized mean difference between novel/unexpected rotation events and familiar/expected rotation events (see Introduction).
-Other extracted variables included, if available, the sample size, the number of girls and boys, the mean age and its standard deviation, the minimum and maximum age, the type of mental rotation task (habitation or violation of expectation), the modality of stimulus presentation (real objects or objects on a computer screen), and the dimensionality of the stimuli (2D or 3D; Supplementary Table 1).
+Outcome measures and other relevant variables were extracted from each article by one of three raters and verified by a second rater. Outcome measures were any summary statistic (Table 1) that could be used to determine the standardized mean difference between novel/unexpected rotation events and familiar/expected rotation events (see Introduction). Other extracted variables included, if available, the sample size, the number of males and females, the mean age and its standard deviation, the minimum and maximum age, the type of mental rotation task (habituation or violation of expectation), the modality of stimulus presentation (real objects or objects on a computer screen), and the dimensionality of the stimuli (2D or 3D; Supplementary Table 1).
 
-```{r, tab1, include=TRUE}
-print("Nice table goes here")
+\scriptsize
+
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| Available statistics                                                  | Conversion to standardized mean difference (Hedges' $g$)                             |
++=======================================================================+======================================================================================+
+| (1) Cohen's $d$ and sample size $n$                                   | $df=2(n-1)$;\quad                                                                    |
+| [@goulet-pelletier2018; @hedges1985]                                  | $j=\frac{\Gamma(\frac{1}{2}df)}{\sqrt{\frac{df}{2}}\Gamma(\frac{1}{2}(df-1))}$;\quad |
+|                                                                       | $g=d*j$                                                                              |
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| (2) $t$-statistic and sample size $n$                                 | $d=\frac{t}{\sqrt{n}}$;\quad                                                         |
+| [@rosenthal1991]                                                      | then (1)                                                                             |
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| (3) Mean difference $m_\text{diff}$ and $SD_\text{diff}$              | $d=\frac{m_\text{diff}}{SD_\text{diff}}$;\quad                                       |
+| [@lakens2013]                                                         | then (1)                                                                             |
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| (4) Mean looking times per condition + $SD$s                          | $SD_\text{av}=\sqrt{\frac{SD_\text{novel}^2+SD_\text{familiar}^2}{2}}$;\quad         |
+| [@cumming2012]                                                        | $d=\frac{m_\text{movel}-m_\text{familiar}}{SD_\text{av}}$;\quad                      |
+|                                                                       | then (1)                                                                             |
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| (5) Mean novelty preference score $m_\text{pref}$ + $SD_\text{pref}$  | $d=\frac{m_\text{pref}}{SD_\text{pref}}$;\quad                                       |
+| [@lakens2013]                                                         | then (1)                                                                             |
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+
+Table: Extracted between-article summary statistics and conversion to effect sizes
+
+\normalsize
+
+```{r, tab1, eval=FALSE, include=TRUE}
+# Print table for conversion of effect sizes
+tibble(
+  `Available statistics` = c(
+    "(1) Cohen's $d$ and sample size $n$ [@goulet-pelletier2018]",
+    "(2) $t$-statistic and sample size $n$",
+    "(3) Mean difference $m_\\text{diff}$ and $SD_{m_\\text{diff}}$",
+    "(4) Mean looking times per condition and their $SD$s",
+    "(5) Mean novelty preference score $m_\\text{pref}$ and its $SD$"
+  ),
+  `Conversion to standardized mean difference (Hedges' $g$)` = c(
+    paste(
+      "$df=2(n-1)$",
+      "$j=\\frac{\\Gamma(\\frac{1}{2}v)}{\\sqrt{\\frac{v}{2}}\\Gamma(\\frac{1}{2}(v-1))}$",
+      "$g=d*j$",
+      sep = "\\newline"
+    ),
+    "$d=\\frac{t}{\\sqrt{n}}$; then (1)",
+    "$d=\\frac{m_\\text{diff}}{SD_{m_\\text{diff}}}$, then (1)",
+    paste(
+      "$SD_\\text{av}=$",
+      "$d=\\frac{m_\\text{novel}-m_\\text{familiar}}{}$",
+      sep = "\\newline"
+    ),
+    ""
+  )
+) %>%
+  apa_table(
+    caption = "Extracted between-article summary statistics and conversion to effect sizes",
+    font_size = "scriptsize", escape = FALSE
+  )
 ```
 
-No study investigators were contacted for obtaining or confirming additional data and no automated tools were used in the data collection process.
+No investigators were contacted for obtaining or confirming additional data and no automated tools were used in the data collection process.
 
 ## Effect size measures
 
@@ -1050,9 +1100,32 @@ A sensitivity analysis indicated that changing the assumed correlation to values
 
 For the meta-analysis of gender differences within each article, effect sizes were computed according to the following formulas in Table yy, and redundant groups were excluded from the analysis.
 
-```{r, tab2, include=TRUE}
-print("Nice table goes here")
-```
+\scriptsize
+
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| Available statistics                                                  | Conversion to standardized mean difference (Hedges' $g$)                             |
++=======================================================================+======================================================================================+
+| (1) Cohen's $d$ and sample size $n$                                   | $df=2(n-1)$;\quad                                                                    |
+| [@goulet-pelletier2018; @hedges1985]                                  | $j=\frac{\Gamma(\frac{1}{2}df)}{\sqrt{\frac{df}{2}}\Gamma(\frac{1}{2}(df-1))}$;\quad |
+|                                                                       | $g=d*j$                                                                              |
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| (2) $t$-statistic and sample size $n$                                 | $d=\frac{t}{\sqrt{n}}$;\quad                                                         |
+| [@rosenthal1991]                                                      | then (1)                                                                             |
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| (3) Mean difference $m_\text{diff}$ and $SD_\text{diff}$              | $d=\frac{m_\text{diff}}{SD_\text{diff}}$;\quad                                       |
+| [@lakens2013]                                                         | then (1)                                                                             |
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| (4) Mean looking times per condition + $SD$s                          | $SD_\text{av}=\sqrt{\frac{SD_\text{novel}^2+SD_\text{familiar}^2}{2}}$;\quad         |
+| [@cumming2012]                                                        | $d=\frac{m_\text{movel}-m_\text{familiar}}{SD_\text{av}}$;\quad                      |
+|                                                                       | then (1)                                                                             |
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+| (5) Mean novelty preference score $m_\text{pref}$ + $SD_\text{pref}$  | $d=\frac{m_\text{pref}}{SD_\text{pref}}$;\quad                                       |
+| [@lakens2013]                                                         | then (1)                                                                             |
++-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
+
+Table: Extracted within-article summary statistics and conversion to effect sizes
+
+\normalsize
 
 Furthermore, the sampling variance was computed according to the following equation:
 
