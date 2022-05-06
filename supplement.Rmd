@@ -546,3 +546,46 @@ ggplot(plotdata, aes(x = yi, y = sqrt(vi))) +
 # Save the plot
 ggsave(here(figures_dir, "funnel_taf.pdf"), width = 5.56, height = 3.5)
 ```
+
+```{r,selection_models}
+# random-effects 2 level model
+r_mod <- rma.uni(yi = dat$gi, vi = dat$vi)
+
+
+# EASY WEIGHT_FUNCTION MODEL
+# Lauer 2019 "We first implemented the Vevea and Hedges (1995) weightfunction model 
+# to estimate the population effect size after adjusting for selection bias."
+# specifying p value cutpoints of 0.01, 0.05, and 0.10
+sel_mod=selmodel(r_mod, type='stepfun',steps=c(0.01,.05, .3, 1),verbose=TRUE)
+print(sel_mod)
+print('The publication_bias-corrected estimate of the meta analytic effect is  0.21')
+
+
+# 4 DIFFERENT STEP FUNCTION MODELS
+# Lauer 2019 "We then conducted Vevea and Woods’ (2005) selection model analyses that 
+# provide estimates of the mean weighted effect size assuming varying degrees of selection bias."
+tab <- data.frame(
+  steps = c(0.005, 0.01, 0.05, 0.10, 0.25, 0.35, 0.50, 0.65, 0.75, 0.90, 0.95, 0.99, 0.995, 1),
+  delta.mod.1 = c(1, 0.99, 0.95, 0.80, 0.75, 0.65, 0.60, 0.55, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50),
+  delta.sev.1 = c(1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.40, 0.35, 0.30, 0.25, 0.10, 0.10, 0.10, 0.10),
+  delta.mod.2 = c(1, 0.99, 0.95, 0.90, 0.80, 0.75, 0.60, 0.60, 0.75, 0.80, 0.90, 0.95, 0.99, 1.00),
+  delta.sev.2 = c(1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.25, 0.25, 0.50, 0.60, 0.75, 0.90, 0.99, 1.00))
+
+sel_moderateonetailed=selmodel(r_mod, type='stepfun',steps=tab$steps,delta=tab$delta.mod.1,verbose=TRUE)
+sel_severeonetailed=selmodel(r_mod, type='stepfun',steps=tab$steps,delta=tab$delta.sev.1,verbose=TRUE)
+sel_moderatetwotailed=selmodel(r_mod, type='stepfun',steps=tab$steps,delta=tab$delta.mod.2,verbose=TRUE)
+sel_severetwotailed=selmodel(r_mod, type='stepfun',steps=tab$steps,delta=tab$delta.sev.2,verbose=TRUE)
+
+print(sel_moderateonetailed)
+print(sel_severeonetailed)
+print(sel_moderatetwotailed)
+print(sel_severetwotailed)
+
+print('The publication_bias-corrected estimate of the meta analytic effect using a moderate one-tailed selection model is  0.1302')
+print('The publication_bias-corrected estimate of the meta analytic effect using a severe one-tailed selection model is  -0.1421 ')
+print('The publication_bias-corrected estimate of the meta analytic effect using a moderate two-tailed selection model is  0.2234')
+print('The publication_bias-corrected estimate of the meta analytic effect using a severe two-tailed selection model is  0.1875')
+
+interpretation="The analysis of four more selection models  showed that the effect is robustly larger than 0.1, excepting severe publication bias based on p-value"
+
+```
