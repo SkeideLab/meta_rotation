@@ -3,12 +3,13 @@
 .DS_Store
 *.xlsx
 
-# LaTeX files
+# LaTeX-generated files
+/manuscript.pdf
+/manuscript_files/figure-latex
 *.aux
 *.fdb_latexmk
 *.fff
 *.fls
-*.pdf
 *.png
 *.tex
 *.ttt

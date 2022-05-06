@@ -303,6 +303,7 @@ prior_c <- c(
 )
 
 # Run prior predictive simulation
+dir.create(here("results", "models"), showWarnings = TRUE)
 n_iter <- 4000
 n_warmup <- 1000
 n_chains <- 4
@@ -978,11 +979,11 @@ The present study robustly revealed that male infants look slightly but signific
 
 ## Protocol
 
-In the present meta-analysis we followed the established PRISMA 2020 guidelines (Preferred Reporting Items for Systematic reviews and Meta-Analyses [@page2021]). The PRISMA flowchart is provided in Fig. 4 and Supplementary Table 4 contains the PRISMA checklist.
+In the present meta-analysis we followed the established PRISMA 2020 guidelines (Preferred Reporting Items for Systematic reviews and Meta-Analyses) [@page2021]. The PRISMA flowchart is provided in Fig. 4 and Supplementary Table 4 contains the PRISMA checklist.
 
 ```{r, fig4, include=TRUE, fig.width=6, fig.cap="(ref:fig4-caption)", out.width="50%"}
 # Include the flowchart (created with MS PowerPoint)
-knitr::include_graphics(here("results/figures/flowchart.pdf"))
+knitr::include_graphics(here("manuscript_files/flowchart.pdf"))
 ```
 
 (ref:fig4-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. aAdditionally, we excluded an article that was based on an uncommon experimental paradigm differing substantially from all other articles (1 article). Finally, we excluded an article that was based on a sample of infants  who were substantially older compared to all other articles (1 article).
@@ -1026,26 +1027,26 @@ Outcome measures and other relevant variables were extracted from each article b
 
 \scriptsize
 
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| Available statistics                                                  | Conversion to standardized mean difference (Hedges' $g$)                             |
-+=======================================================================+======================================================================================+
-| (1) Cohen's $d$ and sample size $n$                                   | $df=2(n-1)$;\quad                                                                    |
-| [@goulet-pelletier2018; @hedges1985]                                  | $j=\frac{\Gamma(\frac{1}{2}df)}{\sqrt{\frac{df}{2}}\Gamma(\frac{1}{2}(df-1))}$;\quad |
-|                                                                       | $g=d*j$                                                                              |
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (2) $t$-statistic and sample size $n$                                 | $d=\frac{t}{\sqrt{n}}$;\quad                                                         |
-| [@rosenthal1991]                                                      | then (1)                                                                             |
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (3) Mean difference $m_\text{diff}$ and $SD_\text{diff}$              | $d=\frac{m_\text{diff}}{SD_\text{diff}}$;\quad                                       |
-| [@lakens2013]                                                         | then (1)                                                                             |
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (4) Mean looking times per condition + $SD$s                          | $SD_\text{av}=\sqrt{\frac{SD_\text{novel}^2+SD_\text{familiar}^2}{2}}$;\quad         |
-| [@cumming2012]                                                        | $d=\frac{m_\text{movel}-m_\text{familiar}}{SD_\text{av}}$;\quad                      |
-|                                                                       | then (1)                                                                             |
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (5) Mean novelty preference score $m_\text{pref}$ + $SD_\text{pref}$  | $d=\frac{m_\text{pref}}{SD_\text{pref}}$;\quad                                       |
-| [@lakens2013]                                                         | then (1)                                                                             |
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
++-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
+| Available statistics                                                  | Conversion to standardized mean difference (Hedges' $g$)                                 |
++=======================================================================+==========================================================================================+
+| (1) Cohen's $d$ and sample size $n$                                   | $df=2(n-1)$;\quad                                                                        |
+| [@goulet-pelletier2018; @hedges1985]                                  | $J(df)=\frac{\Gamma(\frac{1}{2}df)}{\sqrt{\frac{df}{2}}\Gamma(\frac{1}{2}(df-1))}$;\quad |
+|                                                                       | $g=d*J(df)$                                                                              |
++-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
+| (2) $t$-statistic and sample size $n$                                 | $d=\frac{t}{\sqrt{n}}$;\quad                                                             |
+| [@rosenthal1991]                                                      | then (1)                                                                                 |
++-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
+| (3) Mean difference $m_\text{diff}$ and $SD_\text{diff}$              | $d=\frac{m_\text{diff}}{SD_\text{diff}}$;\quad                                           |
+| [@lakens2013]                                                         | then (1)                                                                                 |
++-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
+| (4) Mean looking times per condition + $SD$s                          | $SD_\text{av}=\sqrt{\frac{SD_\text{novel}^2+SD_\text{familiar}^2}{2}}$;\quad             |
+| [@cumming2012]                                                        | $d=\frac{m_\text{movel}-m_\text{familiar}}{SD_\text{av}}$;\quad                          |
+|                                                                       | then (1)                                                                                 |
++-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
+| (5) Mean novelty preference score $m_\text{pref}$ + $SD_\text{pref}$  | $d=\frac{m_\text{pref}}{SD_\text{pref}}$;\quad                                           |
+| [@lakens2013]                                                         | then (1)                                                                                 |
++-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
 
 Table: Extracted between-article summary statistics and conversion to effect sizes
 
@@ -1088,15 +1089,11 @@ No investigators were contacted for obtaining or confirming additional data and 
 
 ## Effect size measures
 
-One outcome measure per experiment was converted into a standardized mean difference with small sample correction (Hedges' g) using the formulas provided in Table 1.
-The sampling variance Var_g of the outcome measure g for each experiment was computed using the formula provided by Goulet-Pelletier & Cousineau (2018):
+One outcome measure per experiment was converted into a standardized mean difference with small sample correction (Hedges’ g) using the formulas provided in Table 1. The standard error $SE_g$ of the outcome measure $g$ for each experiment was computed using the formula provided by @goulet-pelletier2018:
 
-v = (df(df - 2)) \* ((2 \* (1 - r)) / n) \* (1 + g\^2 \* (n / (2 \* (1 - r)))) - (g\^2 / j\^2)
+$$SE_g=\sqrt{\frac{df}{df-2}\frac{2(1-r)}{n}(1+g^2\frac{n}{2(1-r)})-\frac{g^2}{J^2}}$$
 
-where n is the sample size of the experiment, df are the degrees of freedom (with df=2\*(n-1)), r is the correlation between the two dependent measures in the experiment, and j is the correction factor for small samples as described in Table 1.
-The correlation r was not reported in any of the original articles.
-We therefore always assumed a correlation of r = .50 to make our analysis comparable to standard (between-group) meta-analyses (Lakens, 2013) and because we were able to infer an average correlation of r $\approx$ .50 from a subsample of articles which provided sufficient information (Supplementary Methods 1).
-A sensitivity analysis indicated that changing the assumed correlation to values from r = -.90 via r = .00 to r = .90 had no meaningful impact on the meta-analytic effect size (Supplementary Table 3).
+where $n$ is the sample size of the experiment, $df$ are the degrees of freedom (with $df = 2*(n-1)$), $r$ is the correlation between the two dependent measures in the experiment, and $J(df)$ is the correction factor for small samples as described in Table 1. The correlation $r$ was not reported in any of the original articles [@harrer2021]. We therefore always assumed a correlation of $r = .50$ to make our analysis comparable to standard (between-group) meta-analyses [@cohen1988; @lakens2013] and because we were able to infer an average correlation of $r \approx .50$ from a subsample of articles which provided sufficient information (Supplementary Methods 1). A sensitivity analysis indicated that changing the assumed correlation to values from $r = -.90$ via $r = .00$ to $r = .90$ had no meaningful impact on the meta-analytic effect size (Supplementary Table 5).
 
 For the meta-analysis of gender differences within each article, effect sizes were computed according to the following formulas in Table yy, and redundant groups were excluded from the analysis.
 
@@ -1136,48 +1133,45 @@ A sensitivity analysis reported in supplementary xxx highlights the stability of
 
 ## Bayesian meta-analysis
 
-We synthesized the effect sizes and their sampling variances using a Bayesian multilevel model.
-This model had three levels, with infant participants nested in experiments and experiments nested in articles (Van den Noortgate et al., 2013).
-We used a weakly-informative normal (N(0,1)) prior for the meta-analytic effect size and a weakly-informative half-Cauchy (HC(0, 0.3)) prior for all standard deviations (Williams et al., 2018).
-A prior sensitivity analysis indicated that making these priors either more informative or less informative did not change the meta-analytic results (Supplementary Table 3).
-All Bayesian models were fitted using the brms package (Version 2.16.3; Bürkner, 2017, 2018) in R (Version 4.1.2; R Core Team, 2021) and the Stan language (Version 2.29.2; Stan Development Team, 2022).
-Markov Chain Monte Carlo (MCMC) sampling was used with four parallel chains, each sampling 10,000 draws (including 5,000 warm-up draws) from the posterior distribution.
-To verify the convergence of the Markov chains, we examined rank plots as well as the R\_{hat} and N\_{eff} statistics (Vehtari et al., 2021; Supplementary Fig. 1).
-For reporting, the credible interval (CrI) for each model parameter was computed as the 95% equal-tailed interval (ETI) of its posterior distribution, although replacing this with the 95% highest density interval (HDI) yielded highly similar results (Kruschke, 2015).
+We synthesized the effect sizes and their sampling variances using a Bayesian multilevel model. This model had three levels, with infant participants nested in experiments and experiments nested in articles [@vandennoortgate2013]. We used a weakly-informative $\mathcal{N}(0,1)$ (normal) prior for the meta-analytic effect size and a weakly-informative $\mathcal{HC}(0,0.3)$ (half-Cauchy) prior for all standard deviations [@williams2018]. A prior sensitivity analysis indicated that making these priors either more informative or less informative did not change the meta-analytic results (Supplementary Table 5). All Bayesian models were fitted using the brms package (Version `r packageVersion("brms")`) [@burkner2017; @burkner2018] in R (Version `r packageVersion("base")`) [@rcoreteam2021] and the Stan language (Version `r packageVersion("rstan")`) [@standevelopmentteam2022]. Markov Chain Monte Carlo (MCMC) sampling was used with four parallel chains, each sampling `r formatC(n_iter, big.mark = ",")` draws (including `r formatC(n_warmup, big.mark = ",")` warm-up draws) from the posterior distribution. To verify the convergence of the Markov chains, we examined rank plots as well as the $R_\text{hat}$ and $N_\text{eff}$ statistics (Supplementary Fig. 2) [@vehtari2021]. For reporting, the credible interval (CrI) for each model parameter was computed as the 95% equal-tailed interval (ETI) of its posterior distribution, although replacing this with the 95% highest density interval (HDI) yielded highly similar results [@kruschke2015].
 
 ## Bayesian meta-regression
 
-We examined the influence of three moderator variables on the mental rotation outcomes across studies, namely (a) the gender of the sample of infants, (b) the age of the sample of infants, and (c) the type of mental rotation task.
-Gender was coded as a categorical predictor (mixed-gender sample, all-female sample, all-male sample) and contrast-coded using two successive difference contrasts so that we could compare all-female versus mixed samples and all-male samples versus all-female samples (Schad et al., 2020).
-Age was coded as a continuous predictor in years and centered by subtracting the average across all studies.
-Task was coded as a categorical predictor (habituation task, violation of expectation task) and contrast-coded using a scaled sum contrast (Schad et al., 2020).
-We then included these predictors for gender, age, and task type as well as two predictors for the interaction between gender task type (i.e., [female - mixed] × age and [male - female] × age) into a Bayesian meta-regression model.
-This model used the same random effects structure and sampling and sampling parameters as described above.
+We examined the influence of three moderator variables on the mental rotation outcomes across studies, namely (a) the gender of the sample of infants, (b) the age of the sample of infants, and (c) the type of mental rotation task. Gender was coded as a categorical predictor (mixed-gender sample, all-female sample, all-male sample) and contrast-coded using two successive difference contrasts [@schad2020] so that we could compare all-female versus mixed samples and all-male samples versus all-female samples. Age was coded as a continuous predictor in years and centered by subtracting the average across all studies. Task was coded as a categorical predictor (habituation task, violation of expectation task) and contrast-coded using a scaled sum contrast [@schad2020]. We then included these predictors for gender, age, and task type as well as two predictors for the interaction between gender task type (i.e., [female - mixed] × age and [male - female] × age) into a Bayesian meta-regression model. This model used the same random effects structure and sampling parameters as described above.
 
 ## Frequentist meta-analysis
 
-We verified the results from our Bayesian analyses using classical (frequentist) meta-analysis and meta-regression.
-We used the metafor package (Version 3.0.2; Viechtbauer, 2010) in R to specify the same three-level models as described above but dropping the Bayesian priors (Supplementary Table 3).
-The models were fitted using restricted maximum likelihood estimation (REML).
-To verify that REML converged on the correct estimates, we examined profile likelihood plots for the two variance components in the model (i.e., the between-experiment variance and the between-article variance; see Supplementary Fig. 2).
+We verified the results obtained from our Bayesian analyses using classical frequentist meta-analysis and meta-regression. To this end, we used the metafor package (Version `r packageVersion("metafor")`) [@viechtbauer2010] in R to specify the same three-level models as described above but without the Bayesian priors (Supplementary Table 5). These models were fitted using restricted maximum likelihood estimation (REML). To verify that the REML converged on the correct estimates, we examined profile likelihood plots [@raue2009; @viechtbauer2010] for the two variance components in the model (i.e., the between-experiment variance and the between-article variance; Supplementary Fig. 3).
 
 ## Reporting bias and certainty assessment
 
-We assessed publication bias by means of a funnel plot and Egger regression test (Egger et al. 1997).
-We adapted code from the R package metaviz (Version 0.3.1; Kossmeier et al., 2020) to produce the funnel plot and used the R package metafor for the Egger regression test.
-We examined heterogeneity in our study samples by means of a jackknife leave-one-out-analysis (Gee 2005).
-We adapted code from the bootstrap R package (Version 2019.6; Scott Kostyshak et al., 2019) to fit the Bayesian model repeatedly to our study samples, leaving out one experiment sample for every iteration.
-To take into account the variance inherent in Bayesian model estimation, we averaged over x iterations of the jackknife.
+Publication bias was evaluated based on a funnel plot and an Egger regression test [@egger1997; @sterne2005]. To produce the funnel plot, which visualizes the relationship between standard errors and effect sizes, we adapted code from the R package metaviz (`r packageVersion("metaviz")`) [@kossmeier2020]. For the Egger regression test we used the R package metafor (Version `r packageVersion("metafor")`) [@viechtbauer2010] to identify a potential relationship between standard errors and effect sizes. Such a relationship is indicated by the observation that the slope of a weighted linear regression of the effect sizes on the standard errors is significantly different from zero in a two-sided $t$-test.
 
-## Data & code availability
+To scrutinize the robustness of the meta-analytic effect size against the effects of individual studies we conducted a jackknife leave-one-out-analysis [@gee2005; @efron1993]. To this end, we adapted code from the bootstrap R package (Version `r packageVersion("bootstrap")`) [@kostyshak2019]. Specifically, we fit the Bayesian models repeatedly to our study samples, leaving out one experiment sample for every iteration. To take into account the variance inherent in Bayesian model estimation, we averaged over ??? iterations of the jackknife. 
 
-Blah blah blah
+## Data availability
+
+The data is available via (OSF link here).
+
+## Code availability
+
+The code is available via (OSF link here).
 
 \newpage
 
 # References
 
 <div id="refs"></div>
+
+\newpage
+
+# Contributions
+
+M.A.S. conceived, designed, and obtained funding for the study.  
+
+A.E., S.K., and A.K. designed and executed the search strategy, performed study selection and screening procedures, managed the database of search results and performed data analysis in consultation with M.A.S. 
+
+A.E. and M.A.S. wrote the manuscript with feedback from S.K. and A.K.
 
 \newpage
 
