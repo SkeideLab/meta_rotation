@@ -2,7 +2,7 @@
 title             : "Gender differences in infant mental rotation"
 shorttitle        : "Infant mental rotation"
 
-author: 
+author:
   - name          : "Alexander Enge"
     affiliation   : "1,2,*"
     corresponding : "yes"
@@ -971,7 +971,7 @@ list(dat, dat_gender) %>%
 ggsave(here(figures_dir, "funnel.pdf"), width = 12, height = 3.5)
 ```
 
-(ref:fig3-caption) **Evaluation of publication bias.** The funnel plot shows the standard errors and the effect sizes for each of the individual studies. The funnel contours (dashed lines) show a 95%-pseudo-confidence interval of the standard error around the meta-analytic effect size (vertical solid line). A slight asymmetry induced by the underrepresentation of studies with high standard error and small effect size suggest a small publication bias. 
+(ref:fig3-caption) **Evaluation of publication bias.** The funnel plot shows the standard errors and the effect sizes for each of the individual studies. The funnel contours (dashed lines) show a 95%-pseudo-confidence interval of the standard error around the meta-analytic effect size (vertical solid line). A slight asymmetry induced by the underrepresentation of studies with high standard error and small effect size suggest a small publication bias.
 
 # Discussion
 
@@ -979,15 +979,15 @@ We analyzed looking times during mental rotation in `r formatC(descs$n_infants, 
 
 ## Effect size estimates
 
-We interpret the meta-regression-based estimate of the gender difference ($b = `r summ_brm_reg$male_female`$, where $b = \Delta{g}$) as an upper bound of the true effect size since this estimate is based on experiments that reported only separate effect sizes for males and females. The gender effect of these experiments can be considered as positively biased when assuming that authors who observe a statistically significant gender difference more likely report separate effect sizes for males and females. In contrast, the meta-analytic estimate derived from the observed gender differences within each experiment ($g = `r summ_brm_gender$intercept`$) can be viewed as a lower bound of the true effect size. This view is plausible because the unknown effect sizes of experiments without significant gender differences were set to zero although non-zero differences were likely also observed but just not reported because of missing power to render these effects statistically significant. 
+We interpret the meta-regression-based estimate of the gender difference ($b = `r summ_brm_reg$male_female`$, where $b = \Delta{g}$) as an upper bound of the true effect size since this estimate is based on experiments that reported only separate effect sizes for males and females. The gender effect of these experiments can be considered as positively biased when assuming that authors who observe a statistically significant gender difference more likely report separate effect sizes for males and females. In contrast, the meta-analytic estimate derived from the observed gender differences within each experiment ($g = `r summ_brm_gender$intercept`$) can be viewed as a lower bound of the true effect size. This view is plausible because the unknown effect sizes of experiments without significant gender differences were set to zero although non-zero differences were likely also observed but just not reported because of missing power to render these effects statistically significant.
 
 ## Gender differences
 
-The gender differences observed here remain to be explained by interacting genetic and environmental factors that are largely unknown. To the best of our knowledge, there are currently no genetic association or gene-environment interaction studies with a focus on mental rotation. Nevertheless, it is documented that genetic contributions to behavioral variance in mental rotation are substantially smaller than unique non-shared environmental contributions both in male and female adults [@shakeshaft2016]. Whether this observation also applies to infants remains to be explored. 
+The gender differences observed here remain to be explained by interacting genetic and environmental factors that are largely unknown. To the best of our knowledge, there are currently no genetic association or gene-environment interaction studies with a focus on mental rotation. Nevertheless, it is documented that genetic contributions to behavioral variance in mental rotation are substantially smaller than unique non-shared environmental contributions both in male and female adults [@shakeshaft2016]. Whether this observation also applies to infants remains to be explored.
 
 One recent study on 5--6-month-old female infants provided preliminary evidence for possible social-environmental effects related to parental attitudes towards gender which might partly explain the results of our present work [@constantinescu2018]. As far as we know, potentially mediating and moderating factors that could already be operational in infancy, however, are not yet empirically established. In a similar vein, while mental rotation training has small-to-medium post-test effects in children, it is unclear whether it can remove gender differences and be adapted to infants [@uttal2013].
 
-Sex hormone concentration in male infants, especially postnatal testosterone in the first six months of life, could also contribute to gender differences in mental rotation performance [@toivainen2018; @constantinescu2018; @erdmann2019]. Possible biological developmental pathways, however, bridging the gap from hormonal to behavioral differences are currently far from understood. 
+Sex hormone concentration in male infants, especially postnatal testosterone in the first six months of life, could also contribute to gender differences in mental rotation performance [@toivainen2018; @constantinescu2018; @erdmann2019]. Possible biological developmental pathways, however, bridging the gap from hormonal to behavioral differences are currently far from understood.
 
 ## Additional factors
 
@@ -995,7 +995,7 @@ A number of additional factors have been associated with individual differences 
 
 # Conclusion
 
-The present study robustly revealed that male infants look slightly but significantly longer at novel rotated objects than female infants. Thus, on average, males outperform females in mental rotation already in the first months of life. 
+The present study robustly revealed that male infants look slightly but significantly longer at novel rotated objects than female infants. Thus, on average, males outperform females in mental rotation already in the first months of life.
 
 # Methods
 
@@ -1093,22 +1093,23 @@ For the meta-analysis of gender differences within each article, effect sizes we
 +-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
 | Available statistics                                                  | Conversion to standardized mean difference (Hedges' $g$)                             |
 +=======================================================================+======================================================================================+
-| (1) Cohen's $d$ and sample size $n$                                   | $df=2(n-1)$;\quad                                                                    |
+| (1) Cohen's $d$ and group sample size $n$                             | $df=n_{female}+ n_{male}-1$; \quad                                                   |
 | [@goulet-pelletier2018; @hedges1985]                                  | $j=\frac{\Gamma(\frac{1}{2}df)}{\sqrt{\frac{df}{2}}\Gamma(\frac{1}{2}(df-1))}$;\quad |
 |                                                                       | $g=d*j$                                                                              |
 +-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (2) $t$-statistic and sample size $n$                                 | $d=\frac{t}{\sqrt{n}}$;\quad                                                         |
-| [@rosenthal1991]                                                      | then (1)                                                                             |
+| (2) $t$-statistic and group sample size $n$                           | $d = t \sqrt{\frac{1}{n_{female}} + \frac{1}{n_{male}$;\quad                         |
+| [@lankens2013]                                                        | then (1)                                                                             |
 +-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (3) Mean difference $m_\text{diff}$ and $SD_\text{diff}$              | $d=\frac{m_\text{diff}}{SD_\text{diff}}$;\quad                                       |
+| (3) $F$ statistic and group sample size                               | $d = \sqrt{f} \sqrt{\frac{1}{n_{female}} + \frac{1}{n_{male}$;\quad                  |
 | [@lakens2013]                                                         | then (1)                                                                             |
 +-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (4) Mean looking times per condition + $SD$s                          | $SD_\text{av}=\sqrt{\frac{SD_\text{novel}^2+SD_\text{familiar}^2}{2}}$;\quad         |
-| [@cumming2012]                                                        | $d=\frac{m_\text{movel}-m_\text{familiar}}{SD_\text{av}}$;\quad                      |
+| (4) Mean difference in looking times per group + $SD$s                | $SD_\text{mean} = \sqrt{\frac{{(n_{female} - 1) \sigma^2_{female} + (n_{male} -1) \sigma^2_{male}}}{df}}$;\quad |
+| [@lankens2013]                                                        | $d=\frac{m_\text{female}-m_\text{male}}{SD_\text{mean}}$;\quad                       |
 |                                                                       | then (1)                                                                             |
 +-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (5) Mean novelty preference score $m_\text{pref}$ + $SD_\text{pref}$  | $d=\frac{m_\text{pref}}{SD_\text{pref}}$;\quad                                       |
-| [@lakens2013]                                                         | then (1)                                                                             |
+| (5) Mean novelty preference score $m_\text{pref}$ + $SD_\text{pref}$  | $SD_\text{pref} = \sqrt{\frac{{(n_{female} - 1) \sigma^2_{female} + (n_{male} -1) \sigma^2_{male}}}{df}}$;\quad |
+|  [@lakens2013]                                                        | $d=\frac{m_\text{female}-m_\text{male}}{SD_\text{pref}}$;\quad                       |
+|                                                                       | then (1)                                                                             |
 +-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
 
 Table: Extracted within-article summary statistics and conversion to effect sizes
@@ -1116,10 +1117,8 @@ Table: Extracted within-article summary statistics and conversion to effect size
 \normalsize
 
 Furthermore, the sampling variance was computed according to the following equation:
-
-$sigma$between group = dfdf -2 2ñ1 + g2ñ2- g2J2
-
-Where ñ is the harmonic mean of the group sizes and ñ = nmale nmalenfemale + nmale.
+$    \sigma_{between group} = \sqrt{\frac{df}{df-2} \frac{2}{\tilde{n}} (1 + g^2\frac{\tilde{n}}{2}) - frac{g^2}{J^2}}          $
+Where ñ is the harmonic mean of the group sizes and $ñ = \frac{n_{female} n_{male}}{n_{female} + n_{male}}$ and $df$ are given by the equation in Table xxx.
 A sensitivity analysis reported in supplementary xxx highlights the stability of the effect size computed using the Bayesian meta analysis.
 
 ## Bayesian meta-analysis
