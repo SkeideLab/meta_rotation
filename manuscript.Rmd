@@ -1032,14 +1032,16 @@ irr_bin_kappa_w <- as.list(irr_bin_kappa$confid["weighted kappa", ])
 irr_code_kappa_w <- as.list(irr_code_kappa$confid["weighted kappa", ])
 
 # Justify exclusion of @pedrett2020 based on outlier mean age
-mean_age_pedrett2020 <- 2.56 * 365.25 # In days
-mean_age_pedrett2020_m <- mean_age_pedrett2020 / 30.417 # In months
-mean_age_pedrett2020_z <- (mean_age_pedrett2020 - mean(dat$age_mean)) /
-  sd(dat$age_mean) # As z score
-
+descs_pedrett2020 <- list(age_years = 2.56)
+descs_pedrett2020 <- within(descs_pedrett2020, {
+  age_months <- age_years * 12
+  next_largest_age_months <- max(dat$age_mean) / 30.417
+  age <- age_years * 365.25
+  z <- (age - mean(dat$age_mean)) / sd(dat$age_mean)
+})
 ```
 
-Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria. Interrater agreement for the binary decision to include versus exclude an article was `r print_perc(irr_bin_perc)` ($\kappa_w$ [Cohen’s weighted kappa] $= `r irr_bin_kappa_w$estimate`$, 95% CI [`r irr_bin_kappa_w$lower`, `r irr_bin_kappa_w$upper`]). Interrater agreement for the specific eligibility criteria were `r print_perc(irr_code_perc)` ($\kappa_w$ $= `r irr_code_kappa_w$estimate`$, 95% CI [`r irr_code_kappa_w$lower`, `r irr_code_kappa_w$upper`]). Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached. One article [@mash2007] was excluded because the authors used a unique mental rotation paradigm that was not comparable to the paradigm used in the other articles. Another article [@pedrett2020] was excluded because the average age of the infants studied (`r round(mean_age_pedrett2020_m, 1)` months) was almost twice as high as the average age of the next article (`r round(max(dat$age_mean), 1)` months; $z = `r mean_age_pedrett2020_z`$ compared to all articles). We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life. This procedure led to a total of `r descs$n_articles` articles being included in the meta-analysis (Fig. 4).
+Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria. Interrater agreement for the binary decision to include versus exclude an article was `r print_perc(irr_bin_perc)` ($\kappa_w$ [Cohen’s weighted kappa] $= `r irr_bin_kappa_w$estimate`$, 95% CI [`r irr_bin_kappa_w$lower`, `r irr_bin_kappa_w$upper`]). Interrater agreement for the specific eligibility criteria were `r print_perc(irr_code_perc)` ($\kappa_w$ $= `r irr_code_kappa_w$estimate`$, 95% CI [`r irr_code_kappa_w$lower`, `r print_num(irr_code_kappa_w$upper)`]). Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached. One article [@mash2007] was excluded because the authors used a unique mental rotation paradigm that was not comparable to the paradigm used in the other articles. Another article [@pedrett2020] was excluded because the average age of the infants studied (`r print_num(descs_pedrett2020$age_months, 1)` months) was almost twice as high as the average age of the next article (`r print_num(descs_pedrett2020$next_largest_age_months, 1)` months; $z = `r descs_pedrett2020$z`$ compared to all articles). We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life. This procedure led to a total of `r descs$n_articles` articles being included in the meta-analysis (Fig. 4).
 
 Many of these articles consisted of multiple experiments, e.g., using different variations of the mental rotation task or different subsamples of infants. We included all of these experiments in the meta-analysis and accounted for the dependencies between them by means of multilevel modeling with by-article random effects (see Bayesian meta-analysis below). However, we excluded experiments if there was insufficient information to compute a standardized effect size (see Data collection process and items below). Whenever an article reported separate effect sizes for males and females---or other subgroups like crawling and non-crawling infants---but also an effect size combining these groups, we only included the combined effect size. Moreover, we disregarded effect sizes that were clearly based on the same data but reported in different articles. This procedure led to a total of `r descs$n_experiments` experiments being included in the meta-analysis (Supplementary Table 1).
 
@@ -1073,39 +1075,6 @@ Outcome measures and other relevant variables were extracted from each article b
 Table: Extracted between-article summary statistics and conversion to effect sizes
 
 \normalsize
-
-```{r, tab1, eval=FALSE, include=TRUE}
-# Print table for conversion of effect sizes
-tibble(
-  `Available statistics` = c(
-    "(1) Cohen's $d$ and sample size $n$ [@goulet-pelletier2018]",
-    "(2) $t$-statistic and sample size $n$",
-    "(3) Mean difference $m_\\text{diff}$ and $SD_{m_\\text{diff}}$",
-    "(4) Mean looking times per condition and their $SD$s",
-    "(5) Mean novelty preference score $m_\\text{pref}$ and its $SD$"
-  ),
-  `Conversion to standardized mean difference (Hedges' $g$)` = c(
-    paste(
-      "$df=2(n-1)$",
-      "$j=\\frac{\\Gamma(\\frac{1}{2}v)}{\\sqrt{\\frac{v}{2}}\\Gamma(\\frac{1}{2}(v-1))}$",
-      "$g=d*j$",
-      sep = "\\newline"
-    ),
-    "$d=\\frac{t}{\\sqrt{n}}$; then (1)",
-    "$d=\\frac{m_\\text{diff}}{SD_{m_\\text{diff}}}$, then (1)",
-    paste(
-      "$SD_\\text{av}=$",
-      "$d=\\frac{m_\\text{novel}-m_\\text{familiar}}{}$",
-      sep = "\\newline"
-    ),
-    ""
-  )
-) %>%
-  apa_table(
-    caption = "Extracted between-article summary statistics and conversion to effect sizes",
-    font_size = "scriptsize", escape = FALSE
-  )
-```
 
 No investigators were contacted for obtaining or confirming additional data and no automated tools were used in the data collection process.
 
