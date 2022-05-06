@@ -589,3 +589,65 @@ print('The publication_bias-corrected estimate of the meta analytic effect using
 interpretation="The analysis of four more selection models  showed that the effect is robustly larger than 0.1, excepting severe publication bias based on p-value"
 
 ```
+
+```{r, tabs_trimfill_selectionmodels, include=TRUE}
+# Format all frequentist results together as a table
+map2_dfr(
+  c(
+    "Two-level random effects model",
+    "Trim-and-fill",
+    "Selection model: moderate one-tailed",
+    "Selection model: severe one-tailed",
+    "Selection model: moderate two-tailed",
+  "Selection model:severe two-tailed",
+  "Selection model: weight-function [0.01,0.05,0.3]"),
+    list(
+      r_mod,
+      res_tf,
+      sel_moderateonetailed,
+      sel_severeonetailed,
+      sel_moderatetwotailed,
+      sel_severetwotailed,
+      sel_mod),
+  function(name, res) {
+    print(name)
+    # Intercept / regression weights
+    tibble(
+      Model = c(name, rep(NA, length(res$b) - 1)),
+      Parameter = rownames(res$b),
+      Estimate = print_num(as.numeric(res$b)),
+      `$SE$` = print_num(res$se),
+      `$z$` = print_num(res$zval),
+      `$p$` = print_num(res$pval, digits = 3),
+      ci_lower = print_num(res$ci.lb),
+      ci_upper = print_num(res$ci.ub)
+    ) %>%
+      # Re-format confidence interval
+      mutate(
+        `95\\% CI` = str_c("[", ci_lower, ", ", ci_upper, "]"),
+        .keep = "unused"
+      ) %>%
+      bind_rows()
+  }
+) %>%
+  # Rename parameters for readibility
+  mutate(
+    Parameter = c(
+      "Hedges' $g$"
+    )
+  ) %>%
+  # Replace NAs with blank cells
+  mutate(across(.fns = ~ ifelse(is.na(.), "", .))) -> tab_freq
+
+# Display the table
+apa_table(
+  tab_freq,
+  align = "llccccc",
+  caption = "Sensitivity/robustness analyses frequentist",
+  font_size = "scriptsize",
+  escape = FALSE
+)
+
+# Save the table
+write_csv(tab_freq, file = here(tables_dir, "robustness_freq.csv"))
+```
