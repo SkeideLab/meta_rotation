@@ -4,11 +4,6 @@ ENV HOME=/home/$NB_USER
 ENV PROJECT_DIR=$HOME/project
 ENV RETICULATE_MINICONDA_ENABLED=FALSE
 
-RUN mkdir $PROJECT_DIR
-RUN mkdir -p $PROJECT_DIR/results
-RUN mkdir -p $PROJECT_DIR/results/figures
-RUN mkdir -p $PROJECT_DIR/results/models
-RUN mkdir -p $PROJECT_DIR/results/tables
 COPY .Rprofile $PROJECT_DIR/.Rprofile
 
 USER root

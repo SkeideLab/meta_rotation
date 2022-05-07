@@ -39,6 +39,7 @@ apa_table(
 )
 
 # Save the table
+dir.create(tables_dir, showWarnings = FALSE)
 write_csv(tabs1, file = here(tables_dir, "tabs1_experiments.csv"), na = "n/a")
 ```
 

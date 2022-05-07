@@ -94,6 +94,7 @@ knitr::opts_chunk$set(
 
 # Directory paths
 data_dir <- here("data")
+models_dir <- here("results/models")
 figures_dir <- here("results/figures")
 tables_dir <- here("results/tables")
 
@@ -303,7 +304,7 @@ prior_c <- c(
 )
 
 # Run prior predictive simulation
-dir.create(here("results", "models"), showWarnings = TRUE)
+dir.create(models_dir, showWarnings = FALSE)
 n_iter <- 4000
 n_warmup <- 1000
 n_chains <- 4
@@ -318,7 +319,7 @@ res_prior <- brm(
   warmup = n_warmup,
   cores = n_chains,
   control = list(adapt_delta = 0.99),
-  file = here("results", "models", "res_prior")
+  file = here(models_dir, "res_prior")
 )
 summary(res_prior)
 # plot(res_prior)
@@ -327,7 +328,7 @@ summary(res_prior)
 res_brm <- update(
   res_prior,
   sample_prior = FALSE,
-  file = here("results", "models", "res_brm")
+  file = here(models_dir, "res_brm")
 )
 summary(res_brm)
 # plot(res_brm)
@@ -485,6 +486,7 @@ dat %>%
   )
 
 # Save the plot
+dir.create(figures_dir, showWarnings = FALSE)
 ggsave(here(figures_dir, "forest.pdf"), width = 12, height = 14)
 ```
 
@@ -519,7 +521,7 @@ res_prior_reg <- brm(
   warmup = n_warmup,
   cores = n_chains,
   control = list(adapt_delta = 0.99),
-  file = here("results", "models", "res_prior_reg")
+  file = here(models_dir, "res_prior_reg")
 )
 summary(res_prior_reg)
 # plot(res_prior_reg)
@@ -528,7 +530,7 @@ summary(res_prior_reg)
 res_brm_reg <- update(
   res_prior_reg,
   sample_prior = FALSE,
-  file = here("results", "models", "res_brm_reg")
+  file = here(models_dir, "res_brm_reg")
 )
 summary(res_brm_reg)
 # plot(res_brm_reg)
@@ -843,7 +845,7 @@ res_prior_gender <- brm(
   warmup = n_warmup,
   cores = n_chains,
   control = list(adapt_delta = 0.99),
-  file = here("results", "models", "res_prior_gender")
+  file = here(models_dir, "res_prior_gender")
 )
 summary(res_prior_gender)
 # plot(res_prior_gender)
@@ -852,7 +854,7 @@ summary(res_prior_gender)
 res_brm_gender <- update(
   res_prior_gender,
   sample_prior = FALSE,
-  file = here("results", "models", "res_brm_gender")
+  file = here(models_dir, "res_brm_gender")
 )
 summary(res_brm_gender)
 # plot(res_brm_gender)
