@@ -86,6 +86,7 @@ RUN \
     lineno \
     ltxcmds \
     makecell \
+    mdwtools \
     ms \
     multirow \
     nowidow \

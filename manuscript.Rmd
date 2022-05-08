@@ -1065,26 +1065,24 @@ Outcome measures and other relevant variables were extracted from each article b
 
 \scriptsize
 
-+-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
-| Available statistics                                                  | Conversion to standardized mean difference (Hedges' $g$)                                 |
-+=======================================================================+==========================================================================================+
-| (1) Cohen's $d$ and sample size $n$                                   | $df=2(n-1)$;\quad                                                                        |
-| [@goulet-pelletier2018; @hedges1985]                                  | $J(df)=\frac{\Gamma(\frac{1}{2}df)}{\sqrt{\frac{df}{2}}\Gamma(\frac{1}{2}(df-1))}$;\quad |
-|                                                                       | $g=d*J(df)$                                                                              |
-+-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
-| (2) $t$-statistic and sample size $n$                                 | $d=\frac{t}{\sqrt{n}}$;\quad                                                             |
-| [@rosenthal1991]                                                      | then (1)                                                                                 |
-+-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
-| (3) Mean difference $m_\text{diff}$ and $SD_\text{diff}$              | $d=\frac{m_\text{diff}}{SD_\text{diff}}$;\quad                                           |
-| [@lakens2013]                                                         | then (1)                                                                                 |
-+-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
-| (4) Mean looking times per condition + $SD$s                          | $SD_\text{av}=\sqrt{\frac{SD_\text{novel}^2+SD_\text{familiar}^2}{2}}$;\quad             |
-| [@cumming2012]                                                        | $d=\frac{m_\text{movel}-m_\text{familiar}}{SD_\text{av}}$;\quad                          |
-|                                                                       | then (1)                                                                                 |
-+-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
-| (5) Mean novelty preference score $m_\text{pref}$ + $SD_\text{pref}$  | $d=\frac{m_\text{pref}}{SD_\text{pref}}$;\quad                                           |
-| [@lakens2013]                                                         | then (1)                                                                                 |
-+-----------------------------------------------------------------------+------------------------------------------------------------------------------------------+
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| Available statistics                                           | Conversion to standardized mean difference (Hedges' $g$)                                    |
++================================================================+=============================================================================================+
+| (1\) Cohen's $d$ and sample size                               | ${df}=2(n-1)$;\quad                                                                         |
+| [@goulet-pelletier2018; @hedges1985]                           | $J({df})=\frac{\Gamma(\frac{1}{2}{df})}{\sqrt{\frac{{df}}{2}}\Gamma(\frac{1}{2}({df}-1))}$; |
+|                                                                | \quad $g_\text{rotation}=d\cdot{J}({df})$                                                   |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| (2\) $t$-statistic and sample size [@rosenthal1991]            | $d=\frac{t}{\sqrt{n}}$;\quad then (1)                                                       |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| (3\) $F$-statistic and sample size [@lakens2013]               | $t=\sqrt{f}$;\quad then (2\)                                                                |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| (4\) Mean difference between conditions [@lakens2013]          | $d=\frac{m_\text{diff}}{{SD}_\text{diff}}$;\quad then (1)                                   |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| (5\) Mean looking time and ${SD}$ per condition [@cumming2012] | ${SD}_\text{av}=\sqrt{\frac{{SD}_\text{novel}^2+{SD}_\text{familiar}^2}{2}}$;\quad          |
+|                                                                | $d=\frac{m_\text{movel}-m_\text{familiar}}{{SD}_\text{av}}$;\quad then (1)                  |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| (6\) Mean novelty preference score [@lakens2013]               | $d=\frac{m_\text{pref}}{{SD}_\text{pref}}$;\quad then (1)                                   |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
 
 Table: Extracted between-article summary statistics and conversion to effect sizes
 
@@ -1094,46 +1092,46 @@ No investigators were contacted for obtaining or confirming additional data and 
 
 ## Effect size measures
 
-One outcome measure per experiment was converted into a standardized mean difference with small sample correction (Hedges’ g) using the formulas provided in Table 1. The standard error $SE_g$ of the outcome measure $g$ for each experiment was computed using the formula provided by @goulet-pelletier2018:
+One outcome measure per experiment was converted into a standardized mean difference with small sample correction (Hedges’ $g$) using the formulas provided in Table 1. The standard error $SE_g$ of the outcome measure $g$ for each experiment was computed using the formula provided by @goulet-pelletier2018:
 
-$$SE_g=\sqrt{\frac{df}{df-2}\frac{2(1-r)}{n}(1+g^2\frac{n}{2(1-r)})-\frac{g^2}{J^2}}$$
+$${SE}_\text{rotation}=\sqrt{\frac{{df}}{{df}-2}\frac{2(1-r)}{n}\left(1+g_\text{rotation}^2\frac{n}{2(1-r)}\right)-\frac{g_\text{rotation}^2}{J^2}}$$
 
-where $n$ is the sample size of the experiment, $df$ are the degrees of freedom (with $df = 2*(n-1)$), $r$ is the correlation between the two dependent measures in the experiment, and $J(df)$ is the correction factor for small samples as described in Table 1. The correlation $r$ was not reported in any of the original articles [@harrer2021]. We therefore always assumed a correlation of $r = .50$ to make our analysis comparable to standard (between-group) meta-analyses [@cohen1988; @lakens2013] and because we were able to infer an average correlation of $r \approx .50$ from a subsample of articles which provided sufficient information (Supplementary Methods 1). A sensitivity analysis indicated that changing the assumed correlation to values from $r = -.90$ via $r = .00$ to $r = .90$ had no meaningful impact on the meta-analytic effect size (Supplementary Table 5).
+where $n$ is the sample size of the experiment, ${df}$ are the degrees of freedom (with ${df} = 2*(n-1)$), $r$ is the correlation between the two dependent measures in the experiment, and $J({df})$ is the correction factor for small samples as described in Table 1. The correlation $r$ was not reported in any of the original articles [@harrer2021]. We therefore always assumed a correlation of $r = .50$ to make our analysis comparable to standard (between-group) meta-analyses [@cohen1988; @lakens2013] and because we were able to infer an average correlation of $r \approx .50$ from a subsample of articles which provided sufficient information (Supplementary Methods 1). A sensitivity analysis indicated that changing the assumed correlation to values from $r = -.90$ via $r = .00$ to $r = .90$ had no meaningful impact on the meta-analytic effect size (Supplementary Table 5).
 
 For the meta-analysis of gender differences within each article, effect sizes were computed according to the following formulas in Table yy, and redundant groups were excluded from the analysis.
 
 \scriptsize
 
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| Available statistics                                                  | Conversion to standardized mean difference (Hedges' $g$)                             |
-+=======================================================================+======================================================================================+
-| (1) Cohen's $d$ and group sample size $n$                             | $df=n_{female}+ n_{male}-1$; \quad                                                   |
-| [@goulet-pelletier2018; @hedges1985]                                  | $j=\frac{\Gamma(\frac{1}{2}df)}{\sqrt{\frac{df}{2}}\Gamma(\frac{1}{2}(df-1))}$;\quad |
-|                                                                       | $g=d*j$                                                                              |
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (2) $t$-statistic and group sample size $n$                           | $d = t \sqrt{\frac{1}{n_{female}} + \frac{1}{n_{male}$;\quad                         |
-| [@lankens2013]                                                        | then (1)                                                                             |
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (3) $F$ statistic and group sample size                               | $d = \sqrt{f} \sqrt{\frac{1}{n_{female}} + \frac{1}{n_{male}$;\quad                  |
-| [@lakens2013]                                                         | then (1)                                                                             |
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (4) Mean difference in looking times per group + $SD$s                | $SD_\text{mean} = \sqrt{\frac{{(n_{female} - 1) \sigma^2_{female} + (n_{male} -1) \sigma^2_{male}}}{df}}$;\quad |
-| [@lankens2013]                                                        | $d=\frac{m_\text{female}-m_\text{male}}{SD_\text{mean}}$;\quad                       |
-|                                                                       | then (1)                                                                             |
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
-| (5) Mean novelty preference score $m_\text{pref}$ + $SD_\text{pref}$  | $SD_\text{pref} = \sqrt{\frac{{(n_{female} - 1) \sigma^2_{female} + (n_{male} -1) \sigma^2_{male}}}{df}}$;\quad |
-|  [@lakens2013]                                                        | $d=\frac{m_\text{female}-m_\text{male}}{SD_\text{pref}}$;\quad                       |
-|                                                                       | then (1)                                                                             |
-+-----------------------------------------------------------------------+--------------------------------------------------------------------------------------+
++----------------------------------------+--------------------------------------------------------------------------------------------------+
+| Available statistics                   | Conversion to standardized mean difference (Hedges' $g$)                                         |
++========================================+==================================================================================================+
+| (1\) Cohen's $d$ and group sizes       | ${df}=n_\text{female}+n_\text{male}-1$; \quad                                                    |
+| [@goulet-pelletier2018; @hedges1985]   | $J({df})=\frac{\Gamma(\frac{1}{2}{df})}{\sqrt{\frac{{df}}{2}}\Gamma(\frac{1}{2}({df}-1))}$;\quad |
+|                                        | $g_\text{gender}=d\cdot{J({df})}$                                                                |
++----------------------------------------+--------------------------------------------------------------------------------------------------+
+| (2\) $t$-statistic and group sizes     | $d=t\sqrt\frac{1}{n_\text{female}}+\frac{1}{n_\text{male}}$;\quad then (1)                       |
+| [@lakens2013]                          |                                                                                                  |
++----------------------------------------+--------------------------------------------------------------------------------------------------+
+| (3\) $F$-statistic and group sizes     | $t=\sqrt{f}$;\quad then (2\)                                                                     |
+| [@lakens2013]                          |                                                                                                  |
++----------------------------------------+--------------------------------------------------------------------------------------------------+
+| (4\) Mean differences between          | ${SD}_\text{pooled}=\sqrt{\frac{(n_\text{female}-1){SD}_\text{female}^2                          |
+| conditions or preference scores        | +(n_\text{male}-1){SD}_\text{male}^2}{df}}$;\quad                                                |
+| [@lakens2013]                          | $d=\frac{m_\text{female}-m_\text{male}}{{SD}_\text{pooled}}$;\quad then (1)                      |
++----------------------------------------+--------------------------------------------------------------------------------------------------+
 
 Table: Extracted within-article summary statistics and conversion to effect sizes
 
 \normalsize
 
 Furthermore, the sampling variance was computed according to the following equation:
-$    \sigma_{between group} = \sqrt{\frac{df}{df-2} \frac{2}{\tilde{n}} (1 + g^2\frac{\tilde{n}}{2}) - frac{g^2}{J^2}}          $
-Where ñ is the harmonic mean of the group sizes and $ñ = \frac{n_{female} n_{male}}{n_{female} + n_{male}}$ and $df$ are given by the equation in Table xxx.
-A sensitivity analysis reported in supplementary xxx highlights the stability of the effect size computed using the Bayesian meta analysis.
+
+$${SE}_\text{gender}=\sqrt{\frac{{df}}{{df}-2}\frac{2}{\tilde{n}}\left(1+g_\text{gender}^2\frac{\tilde{n}}{2}\right)-\frac{g_\text{gender}^2}{J({df})^2}}$$
+
+Where $\tilde{n}$ is the harmonic mean of the group sizes
+(i.e., $\tilde{n}=\frac{n_\text{female}n_\text{male}}{n_\text{female}+n_\text{male}}$)
+and ${df}$ are the degrees of freedom as provided in row (1) of Table 2.
+A sensitivity analysis highlights the stability of the effect size computed using the Bayesian meta analysis (Supplementary Table 5).
 
 ## Bayesian meta-analysis
 
