@@ -813,8 +813,8 @@ gender %>%
 
     # Compute standard error of Cohen's d, using harmonic mean of sample sizes
     ni = female_n + male_n,
-    nhi = (female_n * male_n) / ni,
-    vi = (df * 2 * (1 + (gi^2 * nhi * 0.5))) / ((df - 2) * nhi) - (gi^2 / j^2),
+    nhi = 2 / (1 / female_n + 1 / male_n),
+    vi = (df / (df - 2)) * (2 / nhi) * (1 + gi^2 * (nhi / 2)) - (gi^2 / (j^2)),
     sei = sqrt(vi)
   ) %>%
   # Remove experiments that didn't provide an effect size
@@ -1129,7 +1129,7 @@ Furthermore, the sampling variance was computed according to the following equat
 $${SE}_\text{gender}=\sqrt{\frac{{df}}{{df}-2}\frac{2}{\tilde{n}}\left(1+g_\text{gender}^2\frac{\tilde{n}}{2}\right)-\frac{g_\text{gender}^2}{J({df})^2}}$$
 
 Where $\tilde{n}$ is the harmonic mean of the group sizes
-(i.e., $\tilde{n}=\frac{n_\text{female}n_\text{male}}{n_\text{female}+n_\text{male}}$)
+(i.e., $\tilde{n}=\frac{2}{n_\text{female}^{-1}+n_\text{male}^{-1}}$)
 and ${df}$ are the degrees of freedom as provided in row (1) of Table 2.
 A sensitivity analysis highlights the stability of the effect size computed using the Bayesian meta analysis (Supplementary Table 5).
 
