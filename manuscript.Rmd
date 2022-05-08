@@ -92,6 +92,12 @@ knitr::opts_chunk$set(
   warning = FALSE
 )
 
+# Options for MCMC sampling when fitting Bayesian multilevel models
+n_iter <- 4000 # Posterior samples per chain, including `n_warmup`
+n_warmup <- 1000 # Warmup samples per chain
+n_chains <- 4 # Number of (parallel) chains
+seed <- 1234 # Random seed to make the results reproducible
+
 # Directory paths
 data_dir <- here("data")
 models_dir <- here("results/models")
@@ -305,9 +311,6 @@ prior_c <- c(
 
 # Run prior predictive simulation
 dir.create(models_dir, showWarnings = FALSE)
-n_iter <- 4000
-n_warmup <- 1000
-n_chains <- 4
 res_prior <- brm(
   gi | se(sei) ~ 0 + Intercept + (1 | article / experiment),
   data = dat,
@@ -319,7 +322,9 @@ res_prior <- brm(
   warmup = n_warmup,
   cores = n_chains,
   control = list(adapt_delta = 0.99),
-  file = here(models_dir, "res_prior")
+  seed = seed,
+  file = here(models_dir, "res_prior"),
+  file_refit = "on_change"
 )
 summary(res_prior)
 # plot(res_prior)
@@ -328,7 +333,8 @@ summary(res_prior)
 res_brm <- update(
   res_prior,
   sample_prior = FALSE,
-  file = here(models_dir, "res_brm")
+  file = here(models_dir, "res_brm"),
+  file_refit = "on_change"
 )
 summary(res_brm)
 # plot(res_brm)
@@ -521,7 +527,9 @@ res_prior_reg <- brm(
   warmup = n_warmup,
   cores = n_chains,
   control = list(adapt_delta = 0.99),
-  file = here(models_dir, "res_prior_reg")
+  seed = seed,
+  file = here(models_dir, "res_prior_reg"),
+  file_refit = "on_change"
 )
 summary(res_prior_reg)
 # plot(res_prior_reg)
@@ -530,7 +538,8 @@ summary(res_prior_reg)
 res_brm_reg <- update(
   res_prior_reg,
   sample_prior = FALSE,
-  file = here(models_dir, "res_brm_reg")
+  file = here(models_dir, "res_brm_reg"),
+  file_refit = "on_change"
 )
 summary(res_brm_reg)
 # plot(res_brm_reg)
@@ -845,7 +854,9 @@ res_prior_gender <- brm(
   warmup = n_warmup,
   cores = n_chains,
   control = list(adapt_delta = 0.99),
-  file = here(models_dir, "res_prior_gender")
+  seed = seed,
+  file = here(models_dir, "res_prior_gender"),
+  file_refit = "on_change"
 )
 summary(res_prior_gender)
 # plot(res_prior_gender)
@@ -854,7 +865,8 @@ summary(res_prior_gender)
 res_brm_gender <- update(
   res_prior_gender,
   sample_prior = FALSE,
-  file = here(models_dir, "res_brm_gender")
+  file = here(models_dir, "res_brm_gender"),
+  file_refit = "on_change"
 )
 summary(res_brm_gender)
 # plot(res_brm_gender)
