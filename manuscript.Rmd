@@ -60,6 +60,7 @@ header-includes:
   - \usepackage[all]{nowidow}
   - \usepackage{makecell}
   - \usepackage{setspace}
+  - \renewcommand{\arraystretch}{0.5}
   - \DeclareCaptionLabelSeparator{bar}{ | }
   - \DeclareCaptionTextFormat{tabletext}{\textup{#1}}
   - \captionsetup[table]{font=small,labelfont=bf,labelsep=bar,textfont=bf,textformat=tabletext}
@@ -90,6 +91,12 @@ knitr::opts_chunk$set(
   fig.width = 7.5,
   out.width = "100%",
   warning = FALSE
+)
+
+# Re-run steps that take a long time?
+run <- list(
+  bayesian_models = FALSE,
+  sensitivity_analysis = FALSE
 )
 
 # Options for MCMC sampling when fitting Bayesian multilevel models
@@ -311,6 +318,7 @@ prior_c <- c(
 
 # Run prior predictive simulation
 dir.create(models_dir, showWarnings = FALSE)
+brms_file_refit <- ifelse(run$bayesian_models, "always", "never")
 res_prior <- brm(
   gi | se(sei) ~ 0 + Intercept + (1 | article / experiment),
   data = dat,
@@ -324,7 +332,7 @@ res_prior <- brm(
   control = list(adapt_delta = 0.99),
   seed = seed,
   file = here(models_dir, "res_prior"),
-  file_refit = "on_change"
+  file_refit = brms_file_refit
 )
 summary(res_prior)
 # plot(res_prior)
@@ -334,7 +342,7 @@ res_brm <- update(
   res_prior,
   sample_prior = FALSE,
   file = here(models_dir, "res_brm"),
-  file_refit = "on_change"
+  file_refit = brms_file_refit
 )
 summary(res_brm)
 # plot(res_brm)
@@ -529,7 +537,7 @@ res_prior_reg <- brm(
   control = list(adapt_delta = 0.99),
   seed = seed,
   file = here(models_dir, "res_prior_reg"),
-  file_refit = "on_change"
+  file_refit = brms_file_refit
 )
 summary(res_prior_reg)
 # plot(res_prior_reg)
@@ -539,7 +547,7 @@ res_brm_reg <- update(
   res_prior_reg,
   sample_prior = FALSE,
   file = here(models_dir, "res_brm_reg"),
-  file_refit = "on_change"
+  file_refit = brms_file_refit
 )
 summary(res_brm_reg)
 # plot(res_brm_reg)
@@ -856,7 +864,7 @@ res_prior_gender <- brm(
   control = list(adapt_delta = 0.99),
   seed = seed,
   file = here(models_dir, "res_prior_gender"),
-  file_refit = "on_change"
+  file_refit = brms_file_refit
 )
 summary(res_prior_gender)
 # plot(res_prior_gender)
@@ -866,7 +874,7 @@ res_brm_gender <- update(
   res_prior_gender,
   sample_prior = FALSE,
   file = here(models_dir, "res_brm_gender"),
-  file_refit = "on_change"
+  file_refit = brms_file_refit
 )
 summary(res_brm_gender)
 # plot(res_brm_gender)
