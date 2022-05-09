@@ -13,6 +13,58 @@
 
 # Supplementary information
 
+<!-- Supplementary methods -->
+
+## Supplementary Methods 1 | Correlation between dependent samples
+
+```{r, r_assumed}
+# Compute empirical estimate of the correlation between dependent samples
+dat %>%
+  mutate(
+    # Get effect size from paired samples t-test, one sample t-test, or ANOVA
+    d_diff = case_when(
+      !is.na(d) ~ d,
+      !is.na(d_z_t) ~ d_z_t,
+      !is.na(d_z_f) ~ d_z_f,
+      !is.na(d_z_diff) ~ d_z_diff
+    ),
+    # Compute empirical correlation
+    # Based on the SD of the difference and the SDs within the two conditions
+    sd_diff = mean_diff / d_diff,
+    ri = (sd_diff^2 - sd_novel^2 - sd_familiar^2) /
+      (-2 * sd_novel * sd_familiar)
+  ) %>%
+  pull(ri) -> ri_empirical
+
+# Subset articles that have an empirical estimate for the correlation
+dat_ri_empirical <- filter(dat, !is.na(ri_empirical))
+
+# Summarise the estimated correlations
+(summ_ri_empirical <- print_num(summary(ri_empirical)))
+```
+
+Meta-analytic methods require an estimate of the sampling variance of each included experiment [@harrer2021]. For within-participant experimental designs (i.e., repeated measures on the same individuals in different conditions), this sampling variance needs to reflect that repeated measures from the same participant will be more similar to one another than measures from two randomly selected participants, thus not providing independent information. This is reflected by the correlation term $r$ in the formula of the standard error of the effect size ${SE}_\text{rotation}$ (see Methods) [@goulet-pelletier2018]. This correlation between repeated measures unfortunately tends to go unreported in research articles. In fact, none of the `r descs$n_articles` articles in the present meta-analysis provided a direct numerical estimate for the correlation between infants’ looking times in the novel and familiar rotation object conditions.
+
+However, there were `r nrow(dat_ri_empirical)` experiments taken from seven different articles that included enough statistical information to reconstruct this correlation. This was done using the following procedure:
+
+1. Extract an effect size $d_\text{diff}$ based on a paired $t$-test, a one-sample $t$-test of difference scores, or an ANOVA (see Rows (1) to (4) in Table 1). All three of these tests take the correlation between the repeated measures into account.
+
+2. Extract the mean looking time difference $m_\text{diff}$ (in seconds) between the novel and familiar conditions.
+
+3. Compute the standard deviation of the mean looking time difference:
+
+$${SD}_\text{diff}=\frac{m_\text{diff}}{d_\text{diff}}$$
+
+4. Extract the standard deviations ${SD}_\text{novel}$ and ${SD}_\text{familiar}$ of looking times within each of the two conditions.
+
+5. Compute the observed correlation between conditions based on rearranging an equation by @cohen1988:
+
+$$r=\frac{{SD}_\text{diff}^2-{SD}_\text{novel}^2-{SD}_\text{familiar}}{-2\cdot{SD}_\text{novel}^2\cdot{SD}_\text{familiar}^2}$$
+
+Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed correlation was $r = `r summ_ri_empirical["Mean"]`$ (median $r = `r summ_ri_empirical["Median"]`$, range [`r summ_ri_empirical["Min."]`, `r summ_ri_empirical["Max."]`]). However, we decided to assume a correlation of $r  = .50$ when computing ${SE}_\text{rotation}$ for all `r descs$n_experiments` experiments. This was to ensure the comparability of our methods to meta-analyses of between-participant studies [@cohen1988; @lakens2013; @morris2002]. We ran a sensitivity analysis to test the robustness of our Bayesian meta-analytic model against this assumption (Supplementary Table 4).
+
+<!-- Supplementary tables -->
+
 ```{r, tabs1, include=TRUE}
 # Save within-analysis table of experiments
 dat %>%
@@ -148,27 +200,6 @@ write_csv(tab_freq, file = here(tables_dir, "tabs2_frequentist.csv"))
 ```
 
 ```{r, sensitivity_analysis, eval=FALSE, include=TRUE}
-# Compute empirical estimate of the correlation between dependent samples
-dat %>%
-  mutate(
-    # Get effect size from paired samples t-test, one sample t-test, or ANOVA
-    d_diff = case_when(
-      !is.na(d) ~ d,
-      !is.na(d_z_t) ~ d_z_t,
-      !is.na(d_z_f) ~ d_z_f,
-      !is.na(d_z_diff) ~ d_z_diff
-    ),
-    # Compute empirical correlation
-    # Basesd on the SD of the difference and the SDs within the two conditions
-    sd_diff = mean_diff / d_diff,
-    ri = (sd_diff^2 - sd_novel^2 - sd_familiar^2) /
-      (-2 * sd_novel * sd_familiar)
-  ) %>%
-  pull(ri) -> ri_empirical
-
-# Summarise the estimated correlations
-summary(ri_empirical)
-
 # Re-run the meta-analysis for different values of r_assumed
 seq(-0.9, 0.9, by = 0.3) %>%
   set_names(., str_c("r = ", print_num(.))) %>%
