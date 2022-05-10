@@ -1,7 +1,9 @@
 # General stuff
 .vscode
 .DS_Store
+*.sif
 *.xlsx
+slurm-*
 
 # LaTeX-generated files
 /manuscript.pdf

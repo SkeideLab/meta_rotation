@@ -95,13 +95,13 @@ knitr::opts_chunk$set(
 
 # Re-run steps that take a long time?
 run <- list(
-  bayesian_models = FALSE,
-  sensitivity_analysis = FALSE
+  bayesian_models = TRUE,
+  sensitivity_analysis = TRUE
 )
 
 # Options for MCMC sampling when fitting Bayesian multilevel models
-n_iter <- 4000 # Posterior samples per chain, including `n_warmup`
-n_warmup <- 1000 # Warmup samples per chain
+n_iter <- 20000 # Posterior samples per chain, including `n_warmup`
+n_warmup <- 2000 # Warmup samples per chain
 n_chains <- 4 # Number of (parallel) chains
 seed <- 1234 # Random seed to make the results reproducible
 
@@ -317,7 +317,7 @@ prior_c <- c(
 )
 
 # Run prior predictive simulation
-dir.create(models_dir, showWarnings = FALSE)
+dir.create(models_dir, showWarnings = FALSE, recursive = TRUE)
 brms_file_refit <- ifelse(run$bayesian_models, "always", "never")
 res_prior <- brm(
   gi | se(sei) ~ 0 + Intercept + (1 | article / experiment),
