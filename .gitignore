@@ -12,6 +12,7 @@ slurm-*
 *.fdb_latexmk
 *.fff
 *.fls
+*.log
 *.png
 *.tex
 *.ttt
