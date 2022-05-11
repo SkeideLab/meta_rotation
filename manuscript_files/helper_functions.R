@@ -61,10 +61,10 @@ print_res_table <- function(res,
 
 # Format results of Bayesian meta-regression as a table with optional labels
 print_res_reg_table <- function(res_reg,
-                                label_1,
-                                label_2,
-                                label_col_1,
-                                label_col_2) {
+                                label_1 = NULL,
+                                label_2 = NULL,
+                                label_col_1 = "label_1",
+                                label_col_2 = "label_2") {
   spread_draws(res_reg, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
     transmute(
       `Intercept` = b_Intercept,
@@ -86,6 +86,45 @@ print_res_reg_table <- function(res_reg,
     label_1_tab <- tibble(tmp = c(label_1, rep(NA, nrow(tab) - 1))) %>%
       rename(!!label_col_1 := tmp)
     tab <- cbind(label_1_tab, tab)
+  }
+  return(tab)
+}
+
+# Format results of frequentist meta-analsis as a table with optional labels
+print_res_freq_table <- function(res_freq,
+                                 label_1 = NULL,
+                                 label_2 = NULL,
+                                 label_col_1 = "label_1",
+                                 label_col_2 = "label_2",
+                                 print_sigma2s = TRUE) {
+  tibble(
+    Parameter = rownames(res_freq$b),
+    Estimate = print_num(as.numeric(res_freq$b)),
+    `$SE$` = print_num(res_freq$se),
+    `$z$` = print_num(res_freq$zval),
+    `$p$` = print_num(res_freq$pval, digits = 3),
+    ci_lower = print_num(res_freq$ci.lb),
+    ci_upper = print_num(res_freq$ci.ub)
+  ) %>%
+    mutate(
+      `95\\% CI` = str_c("[", ci_lower, ", ", ci_upper, "]"),
+      .keep = "unused"
+    ) -> tab
+  if (!is.null(label_2)) {
+    label_2_tab <- tibble(tmp = c(label_2, rep(NA, nrow(tab) - 1))) %>%
+      rename(!!label_col_2 := tmp)
+    tab <- cbind(label_2_tab, tab)
+  }
+  if (!is.null(label_1)) {
+    label_1_tab <- tibble(tmp = c(label_1, rep(NA, nrow(tab) - 1))) %>%
+      rename(!!label_col_1 := tmp)
+    tab <- cbind(label_1_tab, tab)
+  }
+  if (print_sigma2s) {
+    tab <- bind_rows(tab, tibble(
+      Parameter = res_freq$s.name,
+      Estimate = print_num(res_freq$sigma2)
+    ))
   }
   return(tab)
 }

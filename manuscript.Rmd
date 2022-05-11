@@ -1146,6 +1146,8 @@ Publication bias was evaluated based on funnel plots and Egger regression tests 
 
 To scrutinize the robustness of the meta-analytic effect size against the influence of any individual experiment (which may or may not be a false-positive), we conducted a jackknife leave-one-out-analysis for the meta-analysis of mental rotation performance [@gee2005; @efron1993]. To this end, we adapted code from the bootstrap R package (Version `r packageVersion("bootstrap")`) [@kostyshak2019]. Specifically, we refitted the Bayesian three-level models repeatedly while leaving out a different one of the original experiments on every iteration. To take into account the variance inherent in Bayesian model estimation, we averaged over $x$ iterations of the jackknife.
 
+We also ran trim-and-fill analyses and selection models to confirm the robustness of the results from the frequentist meta-analyses against publication bias (Supplementary Methods 2; Supplementary Tables 8 and 9) [@duval2000; @vevea1995; @vevea2005].
+
 ## Data availability
 
 The data is available via (OSF link here).
