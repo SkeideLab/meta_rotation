@@ -82,6 +82,9 @@ library(bayestestR)
 library(tidybayes)
 library(cowplot)
 
+# Load custom helper functions
+source(here("manuscript_files", "helper_functions.R"))
+
 # Global chunk options
 knitr::opts_chunk$set(
   include = FALSE,
@@ -265,21 +268,6 @@ dat_both_mixed <- filter(
 # while not biasing the gender results
 dat <- dat_both_mixed
 
-# Helper functions to re-format age from days to months + days
-format_days_months <- function(days, long = FALSE) {
-  m_str <- ifelse(long, " months ", "m ")
-  d_str <- ifelse(long, " days", "d")
-  days_per_month <- 30.417
-  months <- days %/% days_per_month
-  days_left <- as.integer(days - months * days_per_month)
-  str <- paste0(as.character(months), m_str, as.character(days_left), d_str)
-  str[is.na(days)] <- NA
-  return(str)
-}
-
-# Helper function for printing percentages
-print_perc <- function(x) scales::percent(x, accuracy = 0.1)
-
 # Extract some descriptive statistics for usage in the main text
 descs <- list(
   n_articles = length(unique(dat$article)),
@@ -288,7 +276,7 @@ descs <- list(
   percent_female = mean(dat$female_percent, na.rm = TRUE),
   min_age_months = as.integer(min(dat$age_min, na.rm = TRUE) / 30.417),
   max_age_months = as.integer(max(dat$age_max, na.rm = TRUE) / 30.417),
-  mean_age_weighted = format_days_months(
+  mean_age_weighted = print_days_months(
     sum(dat$age_mean * dat$ni) / (sum(dat$ni)),
     long = TRUE
   ),
@@ -379,19 +367,6 @@ spread_draws(res_brm, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
 ```
 
 ```{r, fig1, include=TRUE, fig.height=14, fig.width=12, fig.cap="(ref:fig1-caption)"}
-# Helper functions for printing numbers with exactly 2 decimal points
-print_num <- function(x, digits = 2) {
-  x <- format(round(x, digits), trim = TRUE, nsmall = digits)
-  x[x == "NA"] <- NA
-  return(x)
-}
-
-# Helper function for confidence intervals (optionally adding the mean)
-print_ci <- function(lb, ub, mean = NULL) {
-  mean_str <- ifelse(mean, paste0(print_num(mean), " "))
-  paste0(mean_str, "[", print_num(lb), ", ", print_num(ub), "]")
-}
-
 # Get posterior draws for the effect in each experiment
 epred_draws_brm <- epred_draws(res_brm, dat, ndraws = NULL) %>%
   mutate(experiment_f = factor(experiment))
@@ -407,7 +382,7 @@ dat %>%
     # Compute frequentist confidence intervals
     ci_lb = gi - qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
     ci_ub = gi + qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
-    ci_print = print_ci(ci_lb, ci_ub, mean = gi)
+    ci_print = print_mean_ci(gi, ci_lb, ci_ub)
   ) %>%
   # Prepare plotting canvas
   ggplot(aes(x = gi, y = experiment_f)) +
