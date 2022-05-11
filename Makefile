@@ -28,10 +28,14 @@ docker:
 	$(KNIT_CMD)
 
 # Knit the manuscript via SLURM and Singularity on an HPC cluster
-slurm:
-	sbatch --chdir $(PROJECT_DIR) --cpus-per-task $(SLURM_CPUS) \
-	--mem $(SLURM_MEMORY) --nodes 1 --ntasks 1 --time $(SLURM_TIME) \
-	$(SLURM_SCRIPT) $(PROJECT_DIR) $(REMOTE_DIR) $(IMAGE_FILE)
+sbatch:
+	sbatch --chdir $(PROJECT_DIR) --cpus-per-task 40 \
+	--mem 180G --nodes 1 --ntasks 1 --time 06:00:00 \
+	run_slurm.sh $(PROJECT_DIR) $(REMOTE_DIR) $(IMAGE_FILE)
+srun:
+	srun --chdir $(PROJECT_DIR) --cpus-per-task 1 \
+	--mem 4G --nodes 1 --ntasks 1 --time 01:00:00 \
+	run_slurm.sh $(PROJECT_DIR) $(REMOTE_DIR) $(IMAGE_FILE)
 
 # Convert from LaTeX to PDF after postprocessing, locally or in the container
 latex:
