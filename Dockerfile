@@ -18,6 +18,7 @@ RUN \
     bootstrap \
     brms \
     cowplot \
+    furrr \
     git2r \
     ggnewscale \
     ggridges \

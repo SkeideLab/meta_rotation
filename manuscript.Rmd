@@ -75,6 +75,7 @@ library(readxl)
 library(scales)
 library(tidyverse)
 library(magrittr)
+library(furrr)
 library(metafor)
 library(brms)
 library(bayestestR)
@@ -96,6 +97,7 @@ knitr::opts_chunk$set(
 # Re-run steps that take a long time?
 run <- list(
   bayesian_models = FALSE,
+  jackknife_analysis = FALSE,
   sensitivity_analysis = FALSE
 )
 

@@ -199,6 +199,74 @@ apa_table(
 write_csv(tab_freq, file = here(tables_dir, "tabs2_frequentist.csv"))
 ```
 
+```{r, jackknife, include=TRUE}
+# Helper functions for printing results from Bayesian model as a table
+print_res_table <- function(res,
+                            label_1 = NULL,
+                            label_2 = NULL,
+                            label_col_1 = "label_1",
+                            label_col_2 = "label_2") {
+  spread_draws(res, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
+    transmute(
+      `Hedges' $g$` = b_Intercept,
+      `$\\sigma_\\text{article}^2$` = sd_article__Intercept^2,
+      `$\\sigma_\\text{experiment}^2$` = `sd_article:experiment__Intercept`^2,
+      `${ICC}$` = `$\\sigma_\\text{article}^2$` /
+        (`$\\sigma_\\text{article}^2$` + `$\\sigma_\\text{experiment}^2$`)
+    ) %>%
+    summarize(across(.fns = mean_qi)) %>%
+    map_dfc(~ print_ci(.$ymin, .$ymax, mean = .$y)) -> tab
+  if (!is.null(label_2)) {
+    label_2_tab <- tibble(tmp = c(label_2, rep(NA, nrow(tab) - 1))) %>%
+      rename(!!label_col_2 := tmp)
+    tab <- cbind(label_2_tab, tab)
+  }
+  if (!is.null(label_1)) {
+    label_1_tab <- tibble(tmp = c(label_1, rep(NA, nrow(tab) - 1))) %>%
+      rename(!!label_col_1 := tmp)
+    tab <- cbind(label_1_tab, tab)
+  }
+  return(tab)
+}
+
+# Re-run the jackknife analysis only if requested
+jackknife_file <- here(tables_dir, "jackknife.csv")
+if (run$jackknife_analysis) {
+
+  # Re-fit the meta-analysis, leaving one experiment out at a time
+  # Using parallelization with `furrr`
+  n_cores <- availableCores()
+  n_workers <- n_cores %/% n_chains
+  plan(multisession, workers = n_workers)
+  future_map_dfr(seq_len(nrow(dat[1:2, ])), function(jackknife_index) {
+    dat_jackknife <- dat[-jackknife_index, ]
+    res_jackknife <- update(res_brm, newdata = dat_jackknife, refresh = 0)
+    print_res_table(
+      res_jackknife,
+      label_1 = dat$article[jackknife_index],
+      label_2 = dat$group_long[jackknife_index],
+      label_col_1 = "Article", label_col_2 = "Experiment"
+    )
+  }) -> jackknife_tab
+
+  # Save the table
+  write_csv(jackknife_tab, file = jackknife_file)
+} else {
+
+  # Otherwise we load the pre-computed results
+  jackknife_tab <- read_csv(jackknife_file, col_types = "c")
+}
+
+# Display the table
+apa_table(
+  jackknife_tab,
+  align = "llcccc",
+  caption = "Jackknife (leave-one-out) analysis",
+  font_size = "scriptsize",
+  escape = FALSE
+)
+```
+
 ```{r, sensitivity_analysis}
 # Re-run the sensitivity analyses only if requested
 if (run$sensitivity_analysis) {
@@ -296,26 +364,15 @@ if (run$sensitivity_analysis) {
 \renewcommand{\arraystretch}{1.0}
 
 ```{r, tabs5, include=TRUE}
-# Helper functions for printing results as a table
-print_res_table <- function(res, label_1, label_2) {
-  spread_draws(res, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
-    transmute(
-      `Hedges' $g$` = b_Intercept,
-      `$\\sigma_\\text{article}^2$` = sd_article__Intercept^2,
-      `$\\sigma_\\text{experiment}^2$` = `sd_article:experiment__Intercept`^2,
-      `${ICC}$` = `$\\sigma_\\text{article}^2$` /
-        (`$\\sigma_\\text{article}^2$` + `$\\sigma_\\text{experiment}^2$`)
-    ) %>%
-    summarize(across(.fns = mean_qi)) %>%
-    map_dfc(~ print_ci(.$ymin, .$ymax, mean = .$y)) %>%
-    bind_cols(Manipulation = label_1, ` ` = label_2, .)
-}
-
 # Combine results for the (main) meta-analysis of mental rotation performance
 tab_sens <- res_sens %>%
   select(res, manipulation_name, manipulation_value) %>%
   pmap_dfr(function(res, manipulation_name, manipulation_value) {
-    print_res_table(res, manipulation_name, manipulation_value)
+    print_res_table(
+      res,
+      label_1 = manipulation_name, label_2 = manipulation_value,
+      label_col_1 = "Manipulation", label_col_2 = " "
+    )
   })
 
 # Display the table
@@ -331,7 +388,11 @@ write_csv(tab_sens, file = here(tables_dir, "tabs5_sens.csv"))
 
 ```{r, tabs6, include=TRUE}
 # Helper functions for printing results as a table
-print_res_reg_table <- function(res_reg, label_1, label_2) {
+print_res_reg_table <- function(res_reg,
+                                label_1,
+                                label_2,
+                                label_col_1,
+                                label_col_2) {
   spread_draws(res_reg, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
     transmute(
       `Intercept` = b_Intercept,
@@ -343,15 +404,31 @@ print_res_reg_table <- function(res_reg, label_1, label_2) {
       `[Male - female] $\\times$ age` = `b_gender3M2:age_c`
     ) %>%
     summarize(across(.fns = mean_qi)) %>%
-    map_dfc(~ print_ci(.$ymin, .$ymax, mean = .$y)) %>%
-    bind_cols(Manipulation = label_1, ` ` = label_2, .)
+    map_dfc(~ print_ci(.$ymin, .$ymax, mean = .$y)) -> tab
+  if (!is.null(label_2)) {
+    label_2_tab <- tibble(tmp = c(label_2, rep(NA, nrow(tab) - 1))) %>%
+      rename(!!label_col_2 := tmp)
+    tab <- cbind(label_2_tab, tab)
+  }
+  if (!is.null(label_1)) {
+    label_1_tab <- tibble(tmp = c(label_1, rep(NA, nrow(tab) - 1))) %>%
+      rename(!!label_col_1 := tmp)
+    tab <- cbind(label_1_tab, tab)
+  }
+  return(tab)
 }
 
 # Combine results for the meta-regression of mental rotation performance
 tab_sens_reg <- res_sens %>%
-  select(res_reg, manipulation_name, manipulation_value) %>%
+  select(
+    res_reg, manipulation_name, manipulation_value
+  ) %>%
   pmap_dfr(function(res_reg, manipulation_name, manipulation_value) {
-    print_res_reg_table(res_reg, manipulation_name, manipulation_value)
+    print_res_reg_table(
+      res_reg,
+      label_1 = manipulation_name, label_2 = manipulation_value,
+      label_col_1 = "Manipulation", label_col_2 = " "
+    )
   })
 
 # Display the table
@@ -371,7 +448,11 @@ tab_sens_gender <- res_sens %>%
   filter(!map_lgl(res_gender, is.null)) %>%
   select(res_gender, manipulation_name, manipulation_value) %>%
   pmap_dfr(function(res_gender, manipulation_name, manipulation_value) {
-    print_res_table(res_gender, manipulation_name, manipulation_value)
+    print_res_table(
+      res_gender,
+      label_1 = manipulation_name, label_2 = manipulation_value,
+      label_col_1 = "Manipulation", label_col_2 = " "
+    )
   })
 
 # Display the table
