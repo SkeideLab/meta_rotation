@@ -65,7 +65,7 @@ Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed corr
 # Save within-analysis table of experiments
 dat %>%
   mutate(
-    age_mean = format_days_months(age_mean),
+    age_mean = print_days_months(age_mean),
     age_sd = str_c(as.character(round(age_sd)), "d"),
   ) %>%
   transmute(
@@ -90,8 +90,6 @@ apa_table(
 dir.create(tables_dir, showWarnings = FALSE)
 write_csv(tabs1, file = here(tables_dir, "tabs1_experiments.csv"), na = "n/a")
 ```
-
-\renewcommand{\arraystretch}{1.5}
 
 ```{r, frequentist}
 # Three-level model
@@ -200,35 +198,6 @@ write_csv(tab_freq, file = here(tables_dir, "tabs2_frequentist.csv"))
 ```
 
 ```{r, jackknife, include=TRUE}
-# Helper functions for printing results from Bayesian model as a table
-print_res_table <- function(res,
-                            label_1 = NULL,
-                            label_2 = NULL,
-                            label_col_1 = "label_1",
-                            label_col_2 = "label_2") {
-  spread_draws(res, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
-    transmute(
-      `Hedges' $g$` = b_Intercept,
-      `$\\sigma_\\text{article}^2$` = sd_article__Intercept^2,
-      `$\\sigma_\\text{experiment}^2$` = `sd_article:experiment__Intercept`^2,
-      `${ICC}$` = `$\\sigma_\\text{article}^2$` /
-        (`$\\sigma_\\text{article}^2$` + `$\\sigma_\\text{experiment}^2$`)
-    ) %>%
-    summarize(across(.fns = mean_qi)) %>%
-    map_dfc(~ print_ci(.$ymin, .$ymax, mean = .$y)) -> tab
-  if (!is.null(label_2)) {
-    label_2_tab <- tibble(tmp = c(label_2, rep(NA, nrow(tab) - 1))) %>%
-      rename(!!label_col_2 := tmp)
-    tab <- cbind(label_2_tab, tab)
-  }
-  if (!is.null(label_1)) {
-    label_1_tab <- tibble(tmp = c(label_1, rep(NA, nrow(tab) - 1))) %>%
-      rename(!!label_col_1 := tmp)
-    tab <- cbind(label_1_tab, tab)
-  }
-  return(tab)
-}
-
 # Re-run the jackknife analysis only if requested
 if (run$jackknife_analysis) {
 
@@ -264,43 +233,11 @@ apa_table(
   tab_jackknife,
   align = "llcccc",
   caption = "Jackknife (leave-one-out) analysis",
-  font_size = "scriptsize",
-  escape = FALSE
+  font_size = "scriptsize", landscape = TRUE, escape = FALSE
 )
 ```
 
 ```{r, sensitivity_analysis, include=TRUE}
-# Helper functions for printing results as a table
-print_res_reg_table <- function(res_reg,
-                                label_1,
-                                label_2,
-                                label_col_1,
-                                label_col_2) {
-  spread_draws(res_reg, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
-    transmute(
-      `Intercept` = b_Intercept,
-      `Female - mixed` = b_gender2M1,
-      `Male - female` = b_gender3M2,
-      `Age (per year)` = b_age_c,
-      `Habituation - VoE` = b_task2M1,
-      `[Female - mixed] $\\times$ age` = `b_gender2M1:age_c`,
-      `[Male - female] $\\times$ age` = `b_gender3M2:age_c`
-    ) %>%
-    summarize(across(.fns = mean_qi)) %>%
-    map_dfc(~ print_ci(.$ymin, .$ymax, mean = .$y)) -> tab
-  if (!is.null(label_2)) {
-    label_2_tab <- tibble(tmp = c(label_2, rep(NA, nrow(tab) - 1))) %>%
-      rename(!!label_col_2 := tmp)
-    tab <- cbind(label_2_tab, tab)
-  }
-  if (!is.null(label_1)) {
-    label_1_tab <- tibble(tmp = c(label_1, rep(NA, nrow(tab) - 1))) %>%
-      rename(!!label_col_1 := tmp)
-    tab <- cbind(label_1_tab, tab)
-  }
-  return(tab)
-}
-
 # Re-run the sensitivity analyses only if requested
 if (run$sensitivity_analysis) {
 
@@ -477,7 +414,7 @@ dat_gender %>%
     # Compute frequentist confidence intervals
     ci_lb = gi - qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
     ci_ub = gi + qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
-    ci_print = print_ci(gi, ci_lb, ci_ub)
+    ci_print = print_mean_ci(gi, ci_lb, ci_ub)
   ) %>%
   # Prepare plotting canvas
   ggplot(aes(x = gi, y = experiment_f)) +
