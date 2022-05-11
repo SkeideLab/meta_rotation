@@ -8,8 +8,8 @@ name: Docker
 on:
   push:
     paths:
-      - .github/workflows/*
-      - Dockerfile
+      - '.github/workflows/*'
+      - 'Dockerfile'
     tags: [ 'v*.*.*' ]
   workflow_dispatch:
 
