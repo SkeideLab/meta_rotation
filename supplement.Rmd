@@ -238,7 +238,7 @@ if (run$jackknife_analysis) {
   n_cores <- availableCores()
   n_workers <- n_cores %/% n_chains
   plan(multisession, workers = n_workers)
-  future_map_dfr(seq_len(nrow(dat[1:2, ])), function(jackknife_index) {
+  future_map_dfr(seq_len(nrow(dat)), function(jackknife_index) {
     dat_jackknife <- dat[-jackknife_index, ]
     res_jackknife <- update(res_brm, newdata = dat_jackknife, refresh = 0)
     print_res_table(
