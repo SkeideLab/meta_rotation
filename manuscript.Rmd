@@ -892,12 +892,20 @@ The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_br
 ## Publication bias and certainty assessment
 
 ```{r, publication_bias, echo=TRUE}
-# Classical Egger regression test
-(egger <- regtest(x = dat$gi, sei = dat$sei, model = "lm", predictor = "sei"))
+# Classical Egger regression test for the meta-analysis of rotation performance
+(egger <- with(
+  dat, regtest(x = gi, sei = sei, model = "lm", predictor = "sei")
+))
 (egger_ci <- confint(egger$fit)["Xsei", ])
+
+# Classical Egger regression test for the meta-analysis of gender_differences
+(egger_gender <- with(
+  dat_gender, regtest(x = gi, sei = sei, model = "lm", predictor = "sei")
+))
+(egger_ci_gender <- confint(egger_gender$fit)["Xsei", ])
 ```
 
-By visual inspection of a funnel plot of standard errors and effect sizes we detected a slight asymmetry indicating a small publication bias (Fig. 3). Publication bias was also suggested by the results of an Egger regression test indicating that the slope of a weighted linear regression of the effect sizes on the standard errors is significantly different from zero in a two-sided $t$-test, $b = `r coef(egger$fit)["Xsei"]`$, $t(`r egger$dfs`) = `r egger$zval`$, $p = `r print_p(egger$pval)`$, 95% confidence interval (CI) [`r egger_ci["2.5 %"]`, `r egger_ci["97.5 %"]`]. Nevertheless, a jackknife leave-one-out analysis confirmed that the current results are robust to the effects of individual studies (Supplementary Table 3).
+We inspected funnel plots and performed Egger regression tests to examine the possibility of publication bias in the literature that we had meta-analyzed. For the meta-analysis of mental rotation performance, we observed a slight assymetry in the funnel plot, indicating a small publication bias (Fig. 3). This was confirmed by an Egger regression test that showed a reliable association between experiments' effect sizes and their corresponding standard errors, $b = `r coef(egger$fit)["Xsei"]`$, $t(`r egger$dfs`) = `r egger$zval`$, $p = `r print_p(egger$pval)`$, 95% confidence interval (CI) [`r egger_ci["2.5 %"]`, `r egger_ci["97.5 %"]`] (two-sided test). Nevertheless, a jackknife (leave-one-out analysis) confirmed that the current results are robust to the effects of individual outlier studies (Supplementary Table 3). For the meta-analysis of gender differences in mental rotation performance, the assymetry in the funnel plot was less pronounced and the slope of the Egger regression test was not statistically significant, $b = `r coef(egger_gender$fit)["Xsei"]`$, $t(`r egger_gender$dfs`) = `r egger_gender$zval`$, $p = `r print_p(egger_gender$pval)`$, 95% confidence interval (CI) [`r egger_ci_gender["2.5 %"]`, `r egger_ci_gender["97.5 %"]`] (two-sided test).
 
 ```{r, fig3, include=TRUE, fig.height=3.5, fig.width=12, fig.cap="(ref:fig3-caption)"}
 # Create funnel plots
@@ -990,7 +998,7 @@ plot_grid(
 ggsave(here(figures_dir, "funnel.pdf"), width = 12, height = 3.5)
 ```
 
-(ref:fig3-caption) **Evaluation of publication bias.**  Funnel plots for the meta-analysis of mental rotation performance **(a)** and for the meta-analysis of gender differences within each article **(b)**. The plots show the standard error and effect size for each of the individual experiments as a black square. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect size (vertical black line). Gray shades indicate a 95% pseudo-confidence interval (dark gray) and 99% pseudo-confidence interval (light gray) under the null hypothesis. These shades thus illustrate which of the original studies observed a significant effect. A slight asymmetry induced by the underrepresentation of studies with high standard errors and small effect sizes suggests a small publication bias. 
+(ref:fig3-caption) **Evaluation of publication bias.**  Funnel plots for the meta-analysis of mental rotation performance **(a)** and for the meta-analysis of gender differences in mental rotation performance **(b)**. The plots show the standard error and effect size for each of the individual experiments as a black square. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect size (vertical black line). Gray shades indicate a 95% pseudo-confidence interval (dark gray) and 99% pseudo-confidence interval (light gray) under the null hypothesis. These shades thus illustrate which of the original studies observed a significant effect. For the meta-analysis of mental rotation performance, a slight asymmetry induced by the underrepresentation of studies with high standard errors and small effect sizes suggests a small publication bias.
 
 # Discussion
 
