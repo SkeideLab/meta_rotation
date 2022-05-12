@@ -27,7 +27,6 @@ authornote: |
 
   \addORCIDlink{Shreya Kapoor}{0000-0003-2619-8257}
 
-  The data and code for this study are openly available at ???.
   We have no conflict of interest to disclose.
   There were no ethical concerns since we did not collect any new data.
 
@@ -1144,17 +1143,17 @@ We verified the results obtained from our Bayesian analyses using classical freq
 
 Publication bias was evaluated based on funnel plots and Egger regression tests [@egger1997; @sterne2005]. Funnel plots visualize the relationship between standard errors and effect sizes. They were created by adapting code from the R package metaviz (Version `r packageVersion("metaviz")`) [@kossmeier2020]. The Egger regression test is a formal statistical test for this relationship between standard errors and effect sizes, probing if the weighted linear regression weight of the effect sizes on the standard errors is significantly different from zero. This test was performed using code from the metafor package and applying a two-sided false-positive error rate of $\alpha = .05$.
 
-To scrutinize the robustness of the meta-analytic effect size against the influence of any individual experiment (which may or may not be a false-positive), we conducted a jackknife leave-one-out-analysis for the meta-analysis of mental rotation performance [@gee2005; @efron1993]. To this end, we adapted code from the bootstrap R package (Version `r packageVersion("bootstrap")`) [@kostyshak2019]. Specifically, we refitted the Bayesian three-level models repeatedly while leaving out a different one of the original experiments on every iteration. To take into account the variance inherent in Bayesian model estimation, we averaged over $x$ iterations of the jackknife.
+To scrutinize the robustness of the meta-analytic effect size against the influence of any individual experiment (which may or may not be a false-positive), we conducted a jackknife leave-one-out-analysis for the meta-analysis of mental rotation performance [@gee2005; @efron1993]. To this end, we adapted code from the bootstrap R package (Version `r packageVersion("bootstrap")`) [@kostyshak2019]. Specifically, we refitted the Bayesian three-level model repeatedly while leaving out a different one of the original experiments on every iteration. To take into account the variance inherent in Bayesian model estimation, we averaged over $x$ iterations of the jackknife.
 
 We also ran trim-and-fill analyses and selection models to confirm the robustness of the results from the frequentist meta-analyses against publication bias (Supplementary Methods 2; Supplementary Tables 8 and 9) [@duval2000; @vevea1995; @vevea2005].
 
 ## Data availability
 
-The data is available via (OSF link here).
+The data for this study is available via https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8. Note that this link is intended for peer review only and will be replaced with a public link upon acceptance.
 
 ## Code availability
 
-The code is available via (OSF link here).
+The code for this study is available via https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8. Note that this link is intended for peer review only and will be replaced with a public link upon acceptance.
 
 \newpage
 
