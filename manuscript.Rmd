@@ -59,10 +59,9 @@ header-includes:
   - \usepackage{makecell}
   - \usepackage{setspace}
   - \renewcommand{\arraystretch}{0.6}
-  - \DeclareCaptionLabelSeparator{bar}{ | }
   - \DeclareCaptionTextFormat{tabletext}{\textup{#1}}
-  - \captionsetup[table]{belowskip=20pt,font=small,labelfont=bf,labelsep=bar,textfont=bf,textformat=tabletext}
-  - \captionsetup[figure]{belowskip=10pt,font=small,labelfont=bf,labelsep=bar,name=Fig.,textfont=normalfont}
+  - \captionsetup[table]{belowskip=20pt,font=small,labelfont=bf,labelsep=colon,textfont=bf,textformat=tabletext}
+  - \captionsetup[figure]{belowskip=10pt,font=small,labelfont=bf,labelsep=colon,name=Fig.,textfont=normalfont}
 ---
 
 ```{r, setup, include=FALSE}
@@ -997,7 +996,7 @@ plot_grid(
 ggsave(here(figures_dir, "funnel.pdf"), width = 12, height = 3.5)
 ```
 
-(ref:fig3-caption) **Evaluation of publication bias.**  Funnel plots for the meta-analysis of mental rotation performance **(a)** and for the meta-analysis of gender differences in mental rotation performance **(b)**. The plots show the standard error and effect size for each of the individual experiments as a black square. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect size (vertical black line). Gray shades indicate a 95% pseudo-confidence interval (dark gray) and 99% pseudo-confidence interval (light gray) under the null hypothesis. These shades thus illustrate which of the original studies observed a significant effect. For the meta-analysis of mental rotation performance, a slight asymmetry induced by the underrepresentation of studies with high standard errors and small effect sizes suggests a small publication bias.
+(ref:fig3-caption) **Evaluation of publication bias.**  Funnel plots for the meta-analysis of mental rotation performance (**a**) and for the meta-analysis of gender differences in mental rotation performance (**b**). The plots show the standard error and effect size for each of the individual experiments as a black square. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect size (vertical black line). Gray shades indicate a 95% pseudo-confidence interval (dark gray) and 99% pseudo-confidence interval (light gray) under the null hypothesis. These shades thus illustrate which of the original studies observed a significant effect. For the meta-analysis of mental rotation performance, a slight asymmetry induced by the underrepresentation of studies with high standard errors and small effect sizes suggests a small publication bias.
 
 # Discussion
 
