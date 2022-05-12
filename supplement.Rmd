@@ -15,7 +15,7 @@
 
 <!-- Supplementary methods -->
 
-## Supplementary Methods 1 | Correlation between dependent samples
+## Supplementary Methods 1: Correlation between dependent samples
 
 ```{r, r_assumed}
 # Compute empirical estimate of the correlation between dependent samples
@@ -59,7 +59,7 @@ However, there were `r nrow(dat_ri_empirical)` experiments taken from seven diff
 
 Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed correlation was $r = `r summ_ri_empirical["Mean"]`$ (median $r = `r summ_ri_empirical["Median"]`$, range [`r summ_ri_empirical["Min."]`, `r summ_ri_empirical["Max."]`]). However, we decided to assume a correlation of $r  = .50$ when computing ${SE}_\text{rotation}$ for all `r descs$n_experiments` experiments. This was to ensure the comparability of our methods to meta-analyses of between-participant studies [@cohen1988; @lakens2013; @morris2002]. We ran a sensitivity analysis to test the robustness of our Bayesian meta-analytic model against this assumption (Supplementary Table 4).
 
-## Supplementary Methods 2 | Bias correction and sensitivity analysis for frequentist results
+## Supplementary Methods 2: Bias correction and sensitivity analysis for frequentist results
 
 We used a simplified two-level version (i.e., dropping the article level) of our frequentist three-level model to further correct our results for publication bias. We conducted a trim-and-fill analysis [@duval2000] to impute possible effect sizes of non-published experiments and then observed their influence on the meta-analytic effect size (Supplementary Tables 8 and 9).
 

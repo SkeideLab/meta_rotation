@@ -1165,6 +1165,8 @@ The data for this study is available via the [Open Science Framework](https://os
 
 # References
 
+\bigskip
+
 <div id="refs"></div>
 
 \newpage
