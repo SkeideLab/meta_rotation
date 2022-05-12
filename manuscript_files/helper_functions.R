@@ -102,7 +102,7 @@ print_res_freq_table <- function(res_freq,
     Estimate = print_num(as.numeric(res_freq$b)),
     `$SE$` = print_num(res_freq$se),
     `$z$` = print_num(res_freq$zval),
-    `$p$` = print_num(res_freq$pval, digits = 3),
+    `$p$` = papaja::print_p(res_freq$pval),
     ci_lower = print_num(res_freq$ci.lb),
     ci_upper = print_num(res_freq$ci.ub)
   ) %>%

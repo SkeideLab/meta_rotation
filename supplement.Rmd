@@ -63,7 +63,7 @@ Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed corr
 
 We used a simplified two-level version (i.e., dropping the article level) of our frequentist three-level model to further correct our results for publication bias. We conducted a trim-and-fill analysis [@duval2000] to impute possible effect sizes of non-published experiments and then observed their influence on the meta-analytic effect size (Supplementary Tables 8 and 9).
 
-Next, we used selection models to approximate the selection process of experiments into the meta-analysis under the assumption that experiments that observe significant effects (i.e., with low p-values) are more likely to get published. We ran one selection model assuming a weight function with fixed p-value cutoffs at p = .01, p = .05, and p = 0.3[@vevea1995], as well as multiple models with a priori selection functions that assume bias of varying severity [@vevea2005]. These analyses show that our results are robust to small to medium amounts of publication bias (Supplementary Tables 8 and 9).
+Next, we used selection models to approximate the selection process of experiments into the meta-analysis under the assumption that experiments that observe significant effects (i.e., with low p-values) are more likely to get published. We ran one selection model assuming a weight function with fixed *p*-value cutoffs [@vevea1995] at *p* = .01, *p* = .05, and *p* = .30, as well as multiple models with a priori selection functions that assume bias of varying severity [@vevea2005]. These analyses show that our results are robust to small to medium amounts of publication bias (Supplementary Tables 8 and 9).
 
 <!-- Supplementary tables -->
 
@@ -77,8 +77,8 @@ dat %>%
   transmute(
     Article = if_else(article == lag(article, default = ""), "", article),
     Experiment = group_long,
-    `Sample size` = sample_size,
-    `Females` = round(female_percent * sample_size),
+    `Sample size` = as.integer(sample_size),
+    `Females` = as.integer(round(female_percent * sample_size)),
     Age = str_c(age_mean, "±", age_sd, sep = " "),
     Task = task,
     `Stimulus type` = str_to_sentence(stimuli_presentation),
@@ -183,7 +183,7 @@ apa_table(
 write_csv(tab_freq, file = here(tables_dir, "tabs2_frequentist.csv"))
 ```
 
-```{r, jackknife, include=TRUE}
+```{r, jackknife}
 # Re-run the jackknife analysis only if requested
 if (run$jackknife_analysis) {
 
@@ -201,18 +201,23 @@ if (run$jackknife_analysis) {
       label_2 = dat$group_long[jackknife_index],
       label_col_1 = "Article", label_col_2 = "Experiment"
     )
-  }) -> tab_jackknife
+  }) %>%
+    # Show article labels only for the first experiment per article
+    mutate(
+      Article = if_else(Article == lag(Article, default = ""), "", Article),
+    ) -> tab_jackknife
 
   # Save the table
   write_csv(tab_jackknife, file = here(tables_dir, "jackknife.csv"))
-} else {
-
-  # Otherwise we load the pre-computed results
-  tab_jackknife <- read_csv(
-    here(tables_dir, "jackknife.csv"),
-    col_types = "c", na = character()
-  )
 }
+```
+
+```{r, tabs3, include=TRUE}
+# Read jackknife table from file
+tab_jackknife <- read_csv(
+  here(tables_dir, "jackknife.csv"),
+  col_types = "c", na = character()
+)
 
 # Display the table
 apa_table(
@@ -223,11 +228,11 @@ apa_table(
 )
 ```
 
-```{r, primsa_checklist, include=TRUE}
-# Read the CSV file
+```{r, tabs4, include=TRUE}
+# Read PRISMA checklist from file
 tab_prisma <- read_csv(
   here(data_dir, "prisma_checklist.csv"),
-  col_types = "cic"
+  col_types = "ccc"
 )
 
 # Display the table
@@ -239,7 +244,7 @@ apa_table(
 )
 ```
 
-```{r, sensitivity_analysis, include=TRUE}
+```{r, sensitivity_analysis}
 # Re-run the sensitivity analyses only if requested
 if (run$sensitivity_analysis) {
 
@@ -363,34 +368,47 @@ if (run$sensitivity_analysis) {
       )
     }) -> tab_sens_gender
   write_csv(tab_sens_gender, file = here(tables_dir, "sens_gender.csv"))
-} else {
-
-  # Otherwise we load the pre-computed results
-  tab_sens <- read_csv(
-    here(tables_dir, "sens.csv"),
-    col_types = "c", na = character(), trim_ws = FALSE
-  )
-  tab_sens_reg <- read_csv(
-    here(tables_dir, "sens_reg.csv"),
-    col_types = "c", na = character(), trim_ws = FALSE
-  )
-  tab_sens_gender <- read_csv(
-    here(tables_dir, "sens_gender.csv"),
-    col_types = "c", na = character(), trim_ws = FALSE
-  )
 }
+```
 
-# Display the tables
+```{r, tabs5, include=TRUE}
+# Load sensitivity analysis table from file
+tab_sens <- read_csv(
+  here(tables_dir, "sens.csv"),
+  col_types = "c", na = character(), trim_ws = FALSE
+)
+
+# Display the table
 apa_table(
   tab_sens,
   caption = "Sensitivity analyses for the meta-analysis of mental rotation performance",
   font_size = "scriptsize", escape = FALSE
 )
+```
+
+```{r, tabs6, include=TRUE}
+# Load sensitivity analysis table from file
+tab_sens_reg <- read_csv(
+  here(tables_dir, "sens_reg.csv"),
+  col_types = "c", na = character(), trim_ws = FALSE
+)
+
+# Display the table
 apa_table(
   tab_sens_reg,
   caption = "Sensitivity analyses for the meta-regression of mental rotation performance",
   font_size = "scriptsize", landscape = TRUE, escape = FALSE
 )
+```
+
+```{r, tabs7, include=TRUE}
+# Load sensitivity analysis table from file
+tab_sens_gender <- read_csv(
+  here(tables_dir, "sens_gender.csv"),
+  col_types = "c", na = character(), trim_ws = FALSE
+)
+
+# Display the table
 apa_table(
   tab_sens_gender,
   caption = "Sensitivity analyses for the meta-analysis of gender differences",
@@ -477,7 +495,8 @@ map(names(res_freq_2_lvl), function(name) {
     pmap_dfr(
       ~ print_res_freq_table(
         res_freq = ..1, label_1 = ..2, label_2 = ..3,
-        label_col_1 = "Model", label_col_2 = "Sub-model", print_sigma2s = FALSE
+        label_col_1 = "Model", label_col_2 = "Sub-model",
+        print_sigma2s = FALSE
       )
     ) %>%
     select(-Parameter) %>%
@@ -494,8 +513,10 @@ write_csv(
   tabs_trim_fill_selection$gender,
   file = here(tables_dir, "trim_fill_selection_gender.csv")
 )
+```
 
-# Display the tables
+```{r, tabs8, include=TRUE}
+# Display the table
 apa_table(
   tabs_trim_fill_selection$meta,
   align = "llccccc",
@@ -503,6 +524,10 @@ apa_table(
   font_size = "scriptsize",
   escape = FALSE
 )
+```
+
+```{r, tabs9, include=TRUE}
+# Display the table
 apa_table(
   tabs_trim_fill_selection$gender,
   align = "llccccc",
@@ -772,7 +797,7 @@ map2(res_trim_fill, plots_funnel, function(res, plot) {
   )
 
   # Add new funnel on top of the original funnel plot
-  trim_fill_color <- "#e42536"
+  trim_fill_color <- ifelse(sum(res$fill) >= 1, "#e42536", NA)
   plot +
     # Add trim and fill funnel
     geom_path(
@@ -799,4 +824,4 @@ plot_grid(
 ggsave(here(figures_dir, "funnel_trim_fill.pdf"), width = 12, height = 3.5)
 ```
 
-(ref:figs4-caption) **Trim-and-fill analyses.** As in Figure 3 in the main text, black squares indicate the effect sizes (x-axis) and standard errors (y-axis) of the individual experiments included in the meta-analysis of mental rotation performance **(a)** and in the meta-analysis of gender differences within each article **(b)**. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect sizes (vertical black lines). Gray shades indicate 95% pseudo-confidence intervals (dark gray) and 99% pseudo-confidence intervals (light gray) under the null hypothesis. Red squares show (fictional) experiments that were imputed via the trim-and-fill analyses, compensating for the small publication bias observed in the original funnel plots. Red lines show the meta-analytic effect sizes and its 95% pseudo-confidence interval for the trim-and-fill-corrected meta-analyses.
+(ref:figs4-caption) **Trim-and-fill analyses.** As in Figure 3 in the main text, black squares indicate the effect sizes (x-axis) and standard errors (y-axis) of the individual experiments included in the meta-analysis of mental rotation performance **(a)** and in the meta-analysis of gender differences within each article **(b)**. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect sizes (vertical black lines). Gray shades indicate 95% pseudo-confidence intervals (dark gray) and 99% pseudo-confidence intervals (light gray) under the null hypothesis. Red squares show (fictional) experiments that were imputed via the trim-and-fill analyses, compensating for the small publication bias observed in the original funnel plots. Red lines show the meta-analytic effect sizes and its 95% pseudo-confidence interval for the trim-and-fill-corrected meta-analyses. Note that for the meta-analysis of gender differences, the trim-and-fill analysis suggested that no additional experiments had to be imputed.
