@@ -1157,11 +1157,11 @@ We also ran trim-and-fill analyses and selection models to confirm the robustnes
 
 ## Data availability
 
-The data for this study is available via https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8. Note that this link is intended for peer review only and will be replaced with a public link upon acceptance.
+The data for this study is available via the [Open Science Framework](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. Note that this link is intended for peer review only and will be replaced with a public link upon acceptance.
 
 ## Code availability
 
-The code for this study is available via https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8. Note that this link is intended for peer review only and will be replaced with a public link upon acceptance.
+The data for this study is available via the [Open Science Framework](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. Note that this link is intended for peer review only and will be replaced with a public link upon acceptance.
 
 \newpage
 
