@@ -619,298 +619,166 @@ ggsave(here(figures_dir, "figs3_convergence_freq.pdf"), width = 12, height = 4)
 
 (ref:figs3-caption) **Convergence checks for the frequentist meta-analysis.** Profile likelihood plots [@raue2009; @viechtbauer2010] indicate that restricted maximum likelihood estimation (REML) was able to identify the most likely parameter estimates for the two variance components in the three-level meta-analytic model, that is, for the between-article variance and for the between-experiment (within-article) variance.
 
-```{r, trim_fill_selection}
-# Re-fit frequentist meta-analysis using a two-level model
-res_freq_2 <- rma.uni(yi = dat$gi, vi = dat$vi)
+```{r, trim_fill_selection, include=TRUE}
+# Re-fit the two frequentist meta-analyses using a two-level model
+# This is because `rma.mv()` is not supported for trim-and-fill/selection models
+list(meta = dat, gender = dat_gender) %>%
+  map(function(x) rma.uni(gi, vi, data = x)) -> res_freq_2_lvl
 
-# Run trim-and-fill analysis
-res_trim_fill <- trimfill(res_freq_2)
-print(res_trim_fill)
+# Trim-and-fill analysis
+res_freq_2_lvl %>% map(trimfill) -> res_trim_fill
 
 # Easy weight function selection model (see metafor docs and Lauer et al., 2019)
-res_selection_weights <- selmodel(
-  res_freq_2,
-  type = "stepfun", steps = c(0.01, .05, .3, 1)
-)
-print(res_selection_weights)
+res_freq_2_lvl %>%
+  map(selmodel, type = "stepfun", steps = c(0.01, 0.05, 0.30, 1.00)) ->
+res_selection_weights
 
 # More selection models based on four different step functions
-tibble(
-  delta_one_tailed_moderate = c(
-    1, 0.99, 0.95, 0.80, 0.75, 0.65, 0.60, 0.55,
-    0.50, 0.50, 0.50, 0.50, 0.50, 0.50
-  ),
-  delta_one_tailed_severe = c(
-    1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.40, 0.35,
-    0.30, 0.25, 0.10, 0.10, 0.10, 0.10
-  ),
-  delta_two_tailed_moderate = c(
-    1, 0.99, 0.95, 0.90, 0.80, 0.75, 0.60, 0.60,
-    0.75, 0.80, 0.90, 0.95, 0.99, 1.00
-  ),
-  delta_two_tailed_severe = c(
-    1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.25, 0.25,
-    0.50, 0.60, 0.75, 0.90, 0.99, 1.00
-  )
-) %>%
-  print() %>%
-  map(function(delta) {
-    selmodel(
-      res_freq_2,
-      type = "stepfun",
-      steps = c(
-        0.005, 0.01, 0.05, 0.10, 0.25, 0.35, 0.50,
-        0.65, 0.75, 0.90, 0.95, 0.99, 0.995, 1
-      ),
-      delta = delta
-    )
-  }) -> res_selection_steps
-print(res_selection_steps)
-```
+res_freq_2_lvl %>%
+  map(function(res) {
 
-```{r, tabs8, include=TRUE}
-# Combine all trim-and-fill and selection models into one table
-tibble(
-  res = c(
-    list(res_freq_2, res_trim_fill, res_selection_weights), res_selection_steps
-  ),
-  label_1 = c(
-    "Two-level model", "Trim-and-fill model",
-    "Selection models:", "", "", "", ""
-  ),
-  label_2 = c(
-    "", "", "Weight function [.01, .05, .30]",
-    "One-tailed, moderate bias", "One-tailed, severe bias",
-    "Two-tailed, moderate bias", "Two-tailed, severe bias"
-  )
-) %>%
-  pmap_dfr(
-    ~ print_res_freq_table(
-      res_freq = ..1, label_1 = ..2, label_2 = ..3,
-      label_col_1 = "Model", label_col_2 = " ", print_sigma2s = FALSE
-    )
-  ) %>%
-  select(-Parameter) %>%
-  rename(`Hedges' $g$` = Estimate) -> tab_trim_fill_selection
-
-# Save the table
-write_csv(
-  tab_trim_fill_selection,
-  file = here(tables_dir, "trim_fill_selection.csv")
-)
-
-# Display the table
-apa_table(
-  tab_trim_fill_selection,
-  align = "llccccc",
-  caption = "Trim-and-fill and selection model analyses",
-  font_size = "scriptsize",
-  escape = FALSE
-)
-```
-
-```{r, figs4, include=TRUE, fig.width=6, fig.height=3.5, out.width="50%"}
-# Compute new funnel, taking into account the trim-and-fill results
-funnel_trim_fill <- with(
-  list(
-    z_crit_05 = stats::qnorm(0.975),
-    max_se = max(sqrt(res_trim_fill$vi)) + 0.05
-  ),
-  {
-    data.frame(
-      x = c(
-        res_trim_fill$b - z_crit_05 * sqrt(max_se^2),
-        res_trim_fill$b,
-        res_trim_fill$b + z_crit_05 * sqrt(max_se^2)
-      ),
-      y = c(max_se, 0, max_se)
-    )
-  }
-)
-
-# Create new funnel plot, enhanced by the filled in studies
-trim_fill_color <- "#e42536"
-plots_funnel[[1]] +
-  # Add trim and fill funnel
-  geom_path(
-    data = funnel_trim_fill,
-    aes(x = x, y = y),
-    color = trim_fill_color
-  ) +
-  geom_vline(xintercept = res_trim_fill$b, color = trim_fill_color) +
-  # Add filled in studies
-  geom_point(
-    data = with(res_trim_fill, tibble(gi = yi[fill], sei = sqrt(vi[fill]))),
-    color = trim_fill_color, shape = 0
-  )
-
-# Save the plot
-ggsave(here(figures_dir, "funnel_trim_fill.pdf"), width = 6, height = 3.5)
-```
-
-```{r, trim_and_fill_gender}
-dat <- dat_gender
-
-# random-effects 2 level model
-res_freq_2 <- rma.uni(yi = dat$gi, vi = dat$vi)
-
-# run trim and fill
-res_trim_fill <- trimfill(res_freq_2)
-print(res_trim_fill)
-# res_string <- "The publication-bias-corrected effect size of mental rotation was 0.16"
-
-summ_brm <- list(intercept = res_trim_fill$beta)
-# Compute funnel
-funnel_z_crit <- stats::qnorm(0.975)
-funnel_max_se <- 0.5 # A bit larger than the largest observed `sei` in `dat`
-funnel_tau2 <- 0 # We don't take heterogeneity into account, only the SE
-funnel <- data.frame(
-  x = c(
-    summ_brm$intercept - funnel_z_crit * sqrt(funnel_max_se^2 + funnel_tau2),
-    summ_brm$intercept - funnel_z_crit * sqrt(funnel_tau2),
-    summ_brm$intercept + funnel_z_crit * sqrt(funnel_tau2),
-    summ_brm$intercept + funnel_z_crit * sqrt(funnel_max_se^2 + funnel_tau2)
-  ),
-  y = c(funnel_max_se, 0, 0, funnel_max_se)
-)
-
-# # Create funnel plot
-plotdata <- as.data.frame(list(yi = res_trim_fill$yi, vi = sqrt(res_trim_fill$vi)))
-ggplot(plotdata, aes(x = yi, y = sqrt(vi))) +
-  geom_vline(xintercept = seq(-2, 2, 0.5), color = "grey90") +
-  # Meta-analytic effect size
-  geom_vline(xintercept = summ_brm$intercept, color = "black") +
-  # Experiment-specific effect sizes
-  geom_point(shape = 0) +
-  # Funnel
-  geom_path(data = funnel, aes(x = x, y = y), linetype = "dashed") +
-  # Styling
-  scale_x_continuous(breaks = seq(-2, 2, 0.5)) +
-  scale_y_reverse() +
-  coord_cartesian(
-    xlim = c(-2.5, 2.5),
-    ylim = c(funnel_max_se, 0),
-    expand = FALSE
-  ) +
-  labs(
-    x = expression("Hedges'" ~ italic("g")),
-    y = "Standard error",
-  ) +
-  theme_classic() +
-  theme(
-    axis.line = element_line(colour = "black"),
-    axis.text = element_text(family = "Helvetica", color = "black"),
-    axis.ticks = element_line(color = "black"),
-    text = element_text(family = "Helvetica", color = "black")
-  )
-
-# Save the plot
-ggsave(here(figures_dir, "funnel_taf.pdf"), width = 5.56, height = 3.5)
-```
-
-```{r,selection_models_gender}
-# random-effects 2 level model
-res_freq_2 <- rma.uni(yi = dat$gi, vi = dat$vi)
-
-
-# EASY WEIGHT_FUNCTION MODEL
-# Lauer 2019 "We first implemented the Vevea and Hedges (1995) weightfunction model
-# to estimate the population effect size after adjusting for selection bias."
-# specifying p value cutpoints of 0.01, 0.05, and 0.10
-sel_mod <- selmodel(res_freq_2, type = "stepfun", steps = c(0.01, .05, .3, 1), verbose = TRUE)
-print(sel_mod)
-# print('The publication_bias-corrected estimate of the meta analytic effect is  0.21')
-
-
-# 4 DIFFERENT STEP FUNCTION MODELS
-# Lauer 2019 "We then conducted Vevea and Woods’ (2005) selection model analyses that
-# provide estimates of the mean weighted effect size assuming varying degrees of selection bias."
-tab <- data.frame(
-  steps = c(0.005, 0.01, 0.05, 0.10, 0.25, 0.35, 0.50, 0.65, 0.75, 0.90, 0.95, 0.99, 0.995, 1),
-  delta.mod.1 = c(1, 0.99, 0.95, 0.80, 0.75, 0.65, 0.60, 0.55, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50),
-  delta.sev.1 = c(1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.40, 0.35, 0.30, 0.25, 0.10, 0.10, 0.10, 0.10),
-  delta.mod.2 = c(1, 0.99, 0.95, 0.90, 0.80, 0.75, 0.60, 0.60, 0.75, 0.80, 0.90, 0.95, 0.99, 1.00),
-  delta.sev.2 = c(1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.25, 0.25, 0.50, 0.60, 0.75, 0.90, 0.99, 1.00)
-)
-
-sel_moderateonetailed <- selmodel(res_freq_2, type = "stepfun", steps = tab$steps, delta = tab$delta.mod.1, verbose = TRUE)
-sel_severeonetailed <- selmodel(res_freq_2, type = "stepfun", steps = tab$steps, delta = tab$delta.sev.1, verbose = TRUE)
-sel_moderatetwotailed <- selmodel(res_freq_2, type = "stepfun", steps = tab$steps, delta = tab$delta.mod.2, verbose = TRUE)
-sel_severetwotailed <- selmodel(res_freq_2, type = "stepfun", steps = tab$steps, delta = tab$delta.sev.2, verbose = TRUE)
-
-print(sel_moderateonetailed)
-print(sel_severeonetailed)
-print(sel_moderatetwotailed)
-print(sel_severetwotailed)
-
-# print('The publication_bias-corrected estimate of the meta analytic effect using a moderate one-tailed selection model is  0.1302')
-# print('The publication_bias-corrected estimate of the meta analytic effect using a severe one-tailed selection model is  -0.1421 ')
-# print('The publication_bias-corrected estimate of the meta analytic effect using a moderate two-tailed selection model is  0.2234')
-# print('The publication_bias-corrected estimate of the meta analytic effect using a severe two-tailed selection model is  0.1875')
-
-# interpretation="The analysis of four more selection models  showed that the effect is robustly larger than 0.1, excepting severe publication bias based on p-value"
-```
-
-```{r, tabs_trimfill_selectionmodels_gender, include=TRUE}
-# Format all frequentist results together as a table
-map2_dfr(
-  c(
-    "Two-level random effects model",
-    "Trim-and-fill",
-    "Selection model: weight-function [0.01, 0.05, 0.3]",
-    "Selection model: moderate one-tailed",
-    "Selection model: severe one-tailed",
-    "Selection model: moderate two-tailed",
-    "Selection model: severe two-tailed"
-  ),
-  list(
-    res_freq_2,
-    res_trim_fill,
-    sel_mod,
-    sel_moderateonetailed,
-    sel_severeonetailed,
-    sel_moderatetwotailed,
-    sel_severetwotailed
-  ),
-  function(name, res) {
-    print(name)
-    # Intercept / regression weights
+    # Define custom step functions
     tibble(
-      Model = c(name, rep(NA, length(res$b) - 1)),
-      Parameter = rownames(res$b),
-      Estimate = print_num(as.numeric(res$b)),
-      `$SE$` = print_num(res$se),
-      `$z$` = print_num(res$zval),
-      `$p$` = print_num(res$pval, digits = 3),
-      ci_lower = print_num(res$ci.lb),
-      ci_upper = print_num(res$ci.ub)
+      delta_one_tailed_moderate = c(
+        1, 0.99, 0.95, 0.80, 0.75, 0.65, 0.60, 0.55,
+        0.50, 0.50, 0.50, 0.50, 0.50, 0.50
+      ),
+      delta_one_tailed_severe = c(
+        1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.40, 0.35,
+        0.30, 0.25, 0.10, 0.10, 0.10, 0.10
+      ),
+      delta_two_tailed_moderate = c(
+        1, 0.99, 0.95, 0.90, 0.80, 0.75, 0.60, 0.60,
+        0.75, 0.80, 0.90, 0.95, 0.99, 1.00
+      ),
+      delta_two_tailed_severe = c(
+        1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.25, 0.25,
+        0.50, 0.60, 0.75, 0.90, 0.99, 1.00
+      )
     ) %>%
-      # Re-format confidence interval
-      mutate(
-        `95\\% CI` = str_c("[", ci_lower, ", ", ci_upper, "]"),
-        .keep = "unused"
-      ) %>%
-      bind_rows()
-  }
-) %>%
-  # Rename parameters for readibility
-  mutate(
-    Parameter = c(
-      "Hedges' $g$"
+      # Fit selection model for every step function
+      map(function(delta) {
+        selmodel(
+          res,
+          type = "stepfun",
+          steps = c(
+            0.005, 0.01, 0.05, 0.10, 0.25, 0.35, 0.50,
+            0.65, 0.75, 0.90, 0.95, 0.99, 0.995, 1
+          ),
+          delta = delta
+        )
+      })
+  }) -> res_selection_steps
+
+# Create seperate tables for the two different meta-analyses (rotation/gender)
+# Each table will contain the results of all trim-and-fill and selection models
+map(names(res_freq_2_lvl), function(name) {
+
+  # Combine two-level, trim-and-fill, and selection models
+  tibble(
+    res = c(
+      list(
+        res_freq_2_lvl[[name]],
+        res_trim_fill[[name]],
+        res_selection_weights[[name]]
+      ),
+      res_selection_steps[[name]]
+    ),
+    label_1 = c(
+      "Two-level model", "Trim-and-fill model",
+      "Selection models:", "", "", "", ""
+    ),
+    label_2 = c(
+      "", "", "Weight function [.01, .05, .30]",
+      "One-tailed, moderate bias", "One-tailed, severe bias",
+      "Two-tailed, moderate bias", "Two-tailed, severe bias"
     )
   ) %>%
-  # Replace NAs with blank cells
-  mutate(across(.fns = ~ ifelse(is.na(.), "", .))) -> tab_freq
+    # Combine and format as a table
+    pmap_dfr(
+      ~ print_res_freq_table(
+        res_freq = ..1, label_1 = ..2, label_2 = ..3,
+        label_col_1 = "Model", label_col_2 = " ", print_sigma2s = FALSE
+      )
+    ) %>%
+    select(-Parameter) %>%
+    rename(`Hedges' $g$` = Estimate)
+}) %>%
+  set_names(names(res_freq_2_lvl)) -> tabs_trim_fill_selection
 
-# Display the table
+# Save the tables
+write_csv(
+  tabs_trim_fill_selection$meta,
+  file = here(tables_dir, "trim_fill_selection_meta.csv")
+)
+write_csv(
+  tabs_trim_fill_selection$gender,
+  file = here(tables_dir, "trim_fill_selection_gender.csv")
+)
+
+# Display the tables
 apa_table(
-  tab_freq,
+  tabs_trim_fill_selection$meta,
   align = "llccccc",
-  caption = "Sensitivity/robustness analyses frequentist",
+  caption = "Trim-and-fill and selection models for the meta-analysis of mental rotation performance",
   font_size = "scriptsize",
   escape = FALSE
 )
+apa_table(
+  tabs_trim_fill_selection$gender,
+  align = "llccccc",
+  caption = "Trim-and-fill and selection models for the meta-analysis of gender differences",
+  font_size = "scriptsize",
+  escape = FALSE
+)
+```
 
-# Save the table
-write_csv(tab_freq, file = here(tables_dir, "robustness_freq_gender.csv"))
+```{r, figs4, include=TRUE, fig.width=12, fig.height=3.5}
+# Create new funnel plots that take the trim-and-fill results into account
+map2(res_trim_fill, plots_funnel, function(res, plot) {
+
+  # Compute new funnel
+  funnel_trim_fill <- with(
+    list(
+      z_crit_05 = stats::qnorm(0.975),
+      max_se = max(sqrt(res$vi)) + 0.05
+    ),
+    {
+      data.frame(
+        x = c(
+          res$b - z_crit_05 * sqrt(max_se^2),
+          res$b,
+          res$b + z_crit_05 * sqrt(max_se^2)
+        ),
+        y = c(max_se, 0, max_se)
+      )
+    }
+  )
+
+  # Add new funnel on top of the original funnel plot
+  trim_fill_color <- "#e42536"
+  plot +
+    # Add trim and fill funnel
+    geom_path(
+      data = funnel_trim_fill,
+      aes(x = x, y = y),
+      color = trim_fill_color
+    ) +
+    geom_vline(xintercept = res$b, color = trim_fill_color) +
+    # Add filled in studies
+    geom_point(
+      data = with(res, tibble(gi = yi[fill], sei = sqrt(vi[fill]))),
+      color = trim_fill_color, shape = 0
+    )
+}) -> plots_funnel_trim_fill
+
+# Combine plots and legend
+plot_grid(
+  plotlist = plots_funnel_trim_fill, nrow = 1, labels = "auto",
+  label_size = 11, label_fontfamily = "Helvetica"
+) +
+  draw_plot(legend_funnel, x = -0.39, y = 0.355)
+
+# Save the plot
+ggsave(here(figures_dir, "funnel_trim_fill.pdf"), width = 12, height = 3.5)
 ```
