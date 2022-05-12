@@ -7,10 +7,6 @@ name: Docker
 
 on:
   push:
-    paths:
-      - .github/workflows/*
-      - Dockerfile
-    tags: [ 'v*.*.*' ]
   workflow_dispatch:
 
 env:
