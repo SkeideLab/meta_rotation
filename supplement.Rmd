@@ -223,6 +223,22 @@ apa_table(
 )
 ```
 
+```{r, primsa_checklist, include=TRUE}
+# Read the CSV file
+tab_prisma <- read_csv(
+  here(data_dir, "prisma_checklist.csv"),
+  col_types = "cic"
+)
+
+# Display the table
+apa_table(
+  tab_prisma,
+  align = "lcl",
+  caption = "PRISMA 2020 checklist",
+  font_size = "scriptsize"
+)
+```
+
 ```{r, sensitivity_analysis, include=TRUE}
 # Re-run the sensitivity analyses only if requested
 if (run$sensitivity_analysis) {
@@ -379,6 +395,120 @@ apa_table(
   tab_sens_gender,
   caption = "Sensitivity analyses for the meta-analysis of gender differences",
   font_size = "scriptsize", escape = FALSE
+)
+```
+
+```{r, trim_fill_selection, include=TRUE}
+# Re-fit the two frequentist meta-analyses using a two-level model
+# This is because `rma.mv()` is not supported for trim-and-fill/selection models
+list(meta = dat, gender = dat_gender) %>%
+  map(function(x) rma.uni(gi, vi, data = x)) -> res_freq_2_lvl
+
+# Trim-and-fill analysis
+res_freq_2_lvl %>% map(trimfill) -> res_trim_fill
+
+# Easy weight function selection model (see metafor docs and Lauer et al., 2019)
+res_freq_2_lvl %>%
+  map(selmodel, type = "stepfun", steps = c(0.01, 0.05, 0.30, 1.00)) ->
+res_selection_weights
+
+# More selection models based on four different step functions
+res_freq_2_lvl %>%
+  map(function(res) {
+
+    # Define custom step functions
+    tibble(
+      delta_one_tailed_moderate = c(
+        1, 0.99, 0.95, 0.80, 0.75, 0.65, 0.60, 0.55,
+        0.50, 0.50, 0.50, 0.50, 0.50, 0.50
+      ),
+      delta_one_tailed_severe = c(
+        1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.40, 0.35,
+        0.30, 0.25, 0.10, 0.10, 0.10, 0.10
+      ),
+      delta_two_tailed_moderate = c(
+        1, 0.99, 0.95, 0.90, 0.80, 0.75, 0.60, 0.60,
+        0.75, 0.80, 0.90, 0.95, 0.99, 1.00
+      ),
+      delta_two_tailed_severe = c(
+        1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.25, 0.25,
+        0.50, 0.60, 0.75, 0.90, 0.99, 1.00
+      )
+    ) %>%
+      # Fit selection model for every step function
+      map(function(delta) {
+        selmodel(
+          res,
+          type = "stepfun",
+          steps = c(
+            0.005, 0.01, 0.05, 0.10, 0.25, 0.35, 0.50,
+            0.65, 0.75, 0.90, 0.95, 0.99, 0.995, 1
+          ),
+          delta = delta
+        )
+      })
+  }) -> res_selection_steps
+
+# Create seperate tables for the two different meta-analyses (rotation/gender)
+# Each table will contain the results of all trim-and-fill and selection models
+map(names(res_freq_2_lvl), function(name) {
+
+  # Combine two-level, trim-and-fill, and selection models
+  tibble(
+    res = c(
+      list(
+        res_freq_2_lvl[[name]],
+        res_trim_fill[[name]],
+        res_selection_weights[[name]]
+      ),
+      res_selection_steps[[name]]
+    ),
+    label_1 = c(
+      "Two-level model", "Trim-and-fill model",
+      "Selection models", "", "", "", ""
+    ),
+    label_2 = c(
+      "--", "--", "Weight function [.01, .05, .30]",
+      "One-tailed, moderate bias", "One-tailed, severe bias",
+      "Two-tailed, moderate bias", "Two-tailed, severe bias"
+    )
+  ) %>%
+    # Combine and format as a table
+    pmap_dfr(
+      ~ print_res_freq_table(
+        res_freq = ..1, label_1 = ..2, label_2 = ..3,
+        label_col_1 = "Model", label_col_2 = "Sub-model", print_sigma2s = FALSE
+      )
+    ) %>%
+    select(-Parameter) %>%
+    rename(`Hedges' $g$` = Estimate)
+}) %>%
+  set_names(names(res_freq_2_lvl)) -> tabs_trim_fill_selection
+
+# Save the tables
+write_csv(
+  tabs_trim_fill_selection$meta,
+  file = here(tables_dir, "trim_fill_selection_meta.csv")
+)
+write_csv(
+  tabs_trim_fill_selection$gender,
+  file = here(tables_dir, "trim_fill_selection_gender.csv")
+)
+
+# Display the tables
+apa_table(
+  tabs_trim_fill_selection$meta,
+  align = "llccccc",
+  caption = "Trim-and-fill and selection models for the meta-analysis of mental rotation performance",
+  font_size = "scriptsize",
+  escape = FALSE
+)
+apa_table(
+  tabs_trim_fill_selection$gender,
+  align = "llccccc",
+  caption = "Trim-and-fill and selection models for the meta-analysis of gender differences",
+  font_size = "scriptsize",
+  escape = FALSE
 )
 ```
 
@@ -619,121 +749,7 @@ ggsave(here(figures_dir, "figs3_convergence_freq.pdf"), width = 12, height = 4)
 
 (ref:figs3-caption) **Convergence checks for the frequentist meta-analysis.** Profile likelihood plots [@raue2009; @viechtbauer2010] indicate that restricted maximum likelihood estimation (REML) was able to identify the most likely parameter estimates for the two variance components in the three-level meta-analytic model, that is, for the between-article variance and for the between-experiment (within-article) variance.
 
-```{r, trim_fill_selection, include=TRUE}
-# Re-fit the two frequentist meta-analyses using a two-level model
-# This is because `rma.mv()` is not supported for trim-and-fill/selection models
-list(meta = dat, gender = dat_gender) %>%
-  map(function(x) rma.uni(gi, vi, data = x)) -> res_freq_2_lvl
-
-# Trim-and-fill analysis
-res_freq_2_lvl %>% map(trimfill) -> res_trim_fill
-
-# Easy weight function selection model (see metafor docs and Lauer et al., 2019)
-res_freq_2_lvl %>%
-  map(selmodel, type = "stepfun", steps = c(0.01, 0.05, 0.30, 1.00)) ->
-res_selection_weights
-
-# More selection models based on four different step functions
-res_freq_2_lvl %>%
-  map(function(res) {
-
-    # Define custom step functions
-    tibble(
-      delta_one_tailed_moderate = c(
-        1, 0.99, 0.95, 0.80, 0.75, 0.65, 0.60, 0.55,
-        0.50, 0.50, 0.50, 0.50, 0.50, 0.50
-      ),
-      delta_one_tailed_severe = c(
-        1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.40, 0.35,
-        0.30, 0.25, 0.10, 0.10, 0.10, 0.10
-      ),
-      delta_two_tailed_moderate = c(
-        1, 0.99, 0.95, 0.90, 0.80, 0.75, 0.60, 0.60,
-        0.75, 0.80, 0.90, 0.95, 0.99, 1.00
-      ),
-      delta_two_tailed_severe = c(
-        1, 0.99, 0.90, 0.75, 0.60, 0.50, 0.25, 0.25,
-        0.50, 0.60, 0.75, 0.90, 0.99, 1.00
-      )
-    ) %>%
-      # Fit selection model for every step function
-      map(function(delta) {
-        selmodel(
-          res,
-          type = "stepfun",
-          steps = c(
-            0.005, 0.01, 0.05, 0.10, 0.25, 0.35, 0.50,
-            0.65, 0.75, 0.90, 0.95, 0.99, 0.995, 1
-          ),
-          delta = delta
-        )
-      })
-  }) -> res_selection_steps
-
-# Create seperate tables for the two different meta-analyses (rotation/gender)
-# Each table will contain the results of all trim-and-fill and selection models
-map(names(res_freq_2_lvl), function(name) {
-
-  # Combine two-level, trim-and-fill, and selection models
-  tibble(
-    res = c(
-      list(
-        res_freq_2_lvl[[name]],
-        res_trim_fill[[name]],
-        res_selection_weights[[name]]
-      ),
-      res_selection_steps[[name]]
-    ),
-    label_1 = c(
-      "Two-level model", "Trim-and-fill model",
-      "Selection models:", "", "", "", ""
-    ),
-    label_2 = c(
-      "", "", "Weight function [.01, .05, .30]",
-      "One-tailed, moderate bias", "One-tailed, severe bias",
-      "Two-tailed, moderate bias", "Two-tailed, severe bias"
-    )
-  ) %>%
-    # Combine and format as a table
-    pmap_dfr(
-      ~ print_res_freq_table(
-        res_freq = ..1, label_1 = ..2, label_2 = ..3,
-        label_col_1 = "Model", label_col_2 = " ", print_sigma2s = FALSE
-      )
-    ) %>%
-    select(-Parameter) %>%
-    rename(`Hedges' $g$` = Estimate)
-}) %>%
-  set_names(names(res_freq_2_lvl)) -> tabs_trim_fill_selection
-
-# Save the tables
-write_csv(
-  tabs_trim_fill_selection$meta,
-  file = here(tables_dir, "trim_fill_selection_meta.csv")
-)
-write_csv(
-  tabs_trim_fill_selection$gender,
-  file = here(tables_dir, "trim_fill_selection_gender.csv")
-)
-
-# Display the tables
-apa_table(
-  tabs_trim_fill_selection$meta,
-  align = "llccccc",
-  caption = "Trim-and-fill and selection models for the meta-analysis of mental rotation performance",
-  font_size = "scriptsize",
-  escape = FALSE
-)
-apa_table(
-  tabs_trim_fill_selection$gender,
-  align = "llccccc",
-  caption = "Trim-and-fill and selection models for the meta-analysis of gender differences",
-  font_size = "scriptsize",
-  escape = FALSE
-)
-```
-
-```{r, figs4, include=TRUE, fig.width=12, fig.height=3.5}
+```{r, figs4, include=TRUE, fig.width=12, fig.height=3.5, fig.cap="(ref:figs4-caption)"}
 # Create new funnel plots that take the trim-and-fill results into account
 map2(res_trim_fill, plots_funnel, function(res, plot) {
 
@@ -782,3 +798,5 @@ plot_grid(
 # Save the plot
 ggsave(here(figures_dir, "funnel_trim_fill.pdf"), width = 12, height = 3.5)
 ```
+
+(ref:figs4-caption) **Trim-and-fill analyses.** As in Figure 3 in the main text, black squares indicate the effect sizes (x-axis) and standard errors (y-axis) of the individual experiments included in the meta-analysis of mental rotation performance **(a)** and in the meta-analysis of gender differences within each article **(b)**. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect sizes (vertical black lines). Gray shades indicate 95% pseudo-confidence intervals (dark gray) and 99% pseudo-confidence intervals (light gray) under the null hypothesis. Red squares show (fictional) experiments that were imputed via the trim-and-fill analyses, compensating for the small publication bias observed in the original funnel plots. Red lines show the meta-analytic effect sizes and its 95% pseudo-confidence interval for the trim-and-fill-corrected meta-analyses.
