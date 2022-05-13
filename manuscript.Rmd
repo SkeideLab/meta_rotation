@@ -290,7 +290,7 @@ Previous meta-analyses revealed that males solve mental rotation tasks slightly 
 
 In the present study, we meta-analyzed `r descs$n_experiments` effect sizes derived from looking times in mental rotation tasks conducted by `r formatC(descs$n_infants, big.mark = ",")` infants (`r print_perc(descs$percent_female)` female) aged `r descs$min_age_months` to `r descs$max_age_months` months (mean age of `r descs$mean_age_weighted`; Supplementary Table 1). All tasks were embedded either into habituation experiments (`r descs$n_experiments_habituation`) or violation of expectation experiments (`r descs$n_experiments_voe`) [@fantz1964; @baillargeon1985]. These experiments comprised real world stimuli (e.g., toy objects [@antrilli2016]), three-dimensional digital stimuli (e.g., cube figures [@moore2008]), or two-dimensional digital stimuli (e.g., digits [@quinn2008]). In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object. Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation. In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle. Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle. Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown. Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle. In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
 
-Following previous work in older populations, we hypothesized that looking times in mental rotation experiments are on average significantly longer in male compared to female infants. Effect sizes were assumed to be small.
+Following previous work in older populations, we hypothesized that looking times in mental rotation experiments are on average longer in male compared to female infants. Effect sizes were assumed to be small.
 
 # Results
 
@@ -903,7 +903,7 @@ The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_br
 (egger_ci_gender <- confint(egger_gender$fit)["Xsei", ])
 ```
 
-We inspected funnel plots and performed Egger regression tests to examine the possibility of publication bias in the literature that we had meta-analyzed. For the meta-analysis of mental rotation performance, we observed a slight asymmetry in the funnel plot, indicating a small publication bias (Fig. 3). This was confirmed by an Egger regression test that showed a reliable association between experiments' effect sizes and their corresponding standard errors, $b = `r coef(egger$fit)["Xsei"]`$, $t(`r egger$dfs`) = `r egger$zval`$, $p = `r print_p(egger$pval)`$, 95% confidence interval (CI) [`r egger_ci["2.5 %"]`, `r egger_ci["97.5 %"]`] (two-sided test). Nevertheless, a jackknife (leave-one-out analysis) confirmed that the current results are robust to the effects of individual outlier studies (Supplementary Table 3). For the meta-analysis of gender differences in mental rotation performance, the asymmetry in the funnel plot was less pronounced and the slope of the Egger regression test was not statistically significant, $b = `r coef(egger_gender$fit)["Xsei"]`$, $t(`r egger_gender$dfs`) = `r egger_gender$zval`$, $p = `r print_p(egger_gender$pval)`$, 95% confidence interval (CI) [`r egger_ci_gender["2.5 %"]`, `r egger_ci_gender["97.5 %"]`] (two-sided test).
+We inspected funnel plots and performed Egger regression tests to examine the possibility of publication bias in the literature included here. For the meta-analysis of mental rotation performance (Fig. 3a), we observed a slight asymmetry in the funnel plot, indicating a small publication bias. This was confirmed by an Egger regression test that showed a reliable association between effect sizes and their corresponding standard errors, $b = `r coef(egger$fit)["Xsei"]`$, $t(`r egger$dfs`) = `r egger$zval`$, $p = `r print_p(egger$pval)`$, 95% confidence interval (CI) [`r egger_ci["2.5 %"]`, `r egger_ci["97.5 %"]`] (two-sided test). Nevertheless, a jackknife (leave-one-out analysis) confirmed that the current results are robust to the effects of individual outlier studies (Supplementary Table 3). For the meta-analysis of gender differences in mental rotation performance (Fig. 3a), the asymmetry in the funnel plot was less pronounced and the slope of the Egger regression test was not statistically significant, $b = `r coef(egger_gender$fit)["Xsei"]`$, $t(`r egger_gender$dfs`) = `r egger_gender$zval`$, $p = `r print_p(egger_gender$pval)`$, 95% confidence interval (CI) [`r egger_ci_gender["2.5 %"]`, `r egger_ci_gender["97.5 %"]`] (two-sided test).
 
 ```{r, fig3, include=TRUE, fig.height=3.5, fig.width=12, fig.cap="(ref:fig3-caption)"}
 # Create funnel plots
@@ -1020,7 +1020,7 @@ A number of additional factors have been associated with individual differences 
 
 # Conclusion
 
-The present study robustly revealed that male infants look slightly but significantly longer at novel rotated objects than female infants. Thus, on average, males outperform females in mental rotation already in the first months of life.
+The present study robustly revealed that male infants look longer at novel rotated objects than female infants. Thus, on average, males show more reliable mental rotation behavior already in the first months of life.
 
 # Methods
 
@@ -1033,7 +1033,7 @@ In the present meta-analysis we followed the established PRISMA 2020 guidelines 
 knitr::include_graphics(here("manuscript_files/flowchart.pdf"))
 ```
 
-(ref:fig4-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. aAdditionally, we excluded an article that was based on an uncommon experimental paradigm differing substantially from all other articles (1 article). Finally, we excluded an article that was based on a sample of infants  who were substantially older compared to all other articles (1 article).
+(ref:fig4-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. Additionally, we excluded an article that was based on an uncommon experimental paradigm differing substantially from all other articles (1 article). Finally, we excluded an article that was based on a sample of infants  who were substantially older compared to all other articles (1 article).
 
 ## Eligibility criteria
 
@@ -1090,7 +1090,7 @@ Outcome measures and other relevant variables were extracted from each article b
 | (4\) Mean difference between conditions [@lakens2013]          | $d=\frac{m_\text{diff}}{{SD}_\text{diff}}$;\quad then (1)                                   |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
 | (5\) Mean looking time and ${SD}$ per condition [@cumming2012] | ${SD}_\text{av}=\sqrt{\frac{{SD}_\text{novel}^2+{SD}_\text{familiar}^2}{2}}$;\quad          |
-|                                                                | $d=\frac{m_\text{movel}-m_\text{familiar}}{{SD}_\text{av}}$;\quad then (1)                  |
+|                                                                | $d=\frac{m_\text{novel}-m_\text{familiar}}{{SD}_\text{av}}$;\quad then (1)                  |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
 | (6\) Mean novelty preference score [@lakens2013]               | $d=\frac{m_\text{pref}}{{SD}_\text{pref}}$;\quad then (1)                                   |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
@@ -1149,17 +1149,17 @@ We verified the results obtained from our Bayesian analyses using classical freq
 
 Publication bias was evaluated based on funnel plots and Egger regression tests [@egger1997; @sterne2005]. Funnel plots visualize the relationship between standard errors and effect sizes. They were created by adapting code from the R package metaviz (Version `r packageVersion("metaviz")`) [@kossmeier2020]. The Egger regression test is a formal statistical test for this relationship between standard errors and effect sizes, probing if the weighted linear regression weight of the effect sizes on the standard errors is significantly different from zero. This test was performed using code from the metafor package and applying a two-sided false-positive error rate of $\alpha = .05$.
 
-To scrutinize the robustness of the meta-analytic effect size against the influence of any individual experiment (which may or may not be a false-positive), we conducted a jackknife leave-one-out-analysis for the meta-analysis of mental rotation performance [@gee2005; @efron1993]. To this end, we adapted code from the bootstrap R package (Version `r packageVersion("bootstrap")`) [@kostyshak2019]. Specifically, we refitted the Bayesian three-level model repeatedly while leaving out a different one of the original experiments on every iteration. To take into account the variance inherent in Bayesian model estimation, we averaged over $x$ iterations of the jackknife.
+To scrutinize the robustness of the meta-analytic effect size against the influence of any individual experiment (which may or may not be a false positive), we conducted a jackknife leave-one-out-analysis for the meta-analysis of mental rotation performance [@gee2005; @efron1993]. To this end, we adapted code from the bootstrap R package (Version `r packageVersion("bootstrap")`) [@kostyshak2019]. Specifically, we refitted the Bayesian three-level model repeatedly while leaving out one of the original experiments on every iteration. To take into account the variance inherent in Bayesian model estimation, we averaged over $x$ iterations of the jackknife.
 
-We also ran trim-and-fill analyses and selection models to confirm the robustness of the results from the frequentist meta-analyses against publication bias (Supplementary Methods 2; Supplementary Tables 8 and 9) [@duval2000; @vevea1995; @vevea2005].
+We also performed trim-and-fill analyses and tested selection models to confirm the robustness of the results obtained from the frequentist meta-analyses against publication bias (Supplementary Methods 2; Supplementary Tables 8 and 9; Supplementary Figure 4) [@duval2000; @vevea1995; @vevea2005].
 
 ## Data availability
 
-The data for this study is available via the [Open Science Framework](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. Note that this link is intended for peer review only and will be replaced with a public link upon acceptance.
+The data for this study is available  from an   [Open Science Framework](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) repository [@enge2022a]. This link is intended for peer review only and will be replaced with a public link upon acceptance.
 
 ## Code availability
 
-The data for this study is available via the [Open Science Framework](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. Note that this link is intended for peer review only and will be replaced with a public link upon acceptance.
+The data for this study is available from an  [Open Science Framework](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) repository [@enge2022a].  This link is intended for peer review only and will be replaced with a public link upon acceptance.
 
 \newpage
 
