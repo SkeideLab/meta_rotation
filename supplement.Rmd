@@ -67,6 +67,9 @@ In our next step, we used selection models to approximate the process by which e
 
 <!-- Supplementary tables -->
 
+\singlespacing
+\renewcommand{\arraystretch}{0.97}
+
 ```{r, tabs1, include=TRUE}
 # Save within-analysis table of experiments
 dat %>%
@@ -78,11 +81,14 @@ dat %>%
     Article = if_else(article == lag(article, default = ""), "", article),
     Experiment = group_long,
     `Sample size` = as.integer(sample_size),
-    `Females` = as.integer(round(female_percent * sample_size)),
+    Females = as.integer(round(female_percent * sample_size)),
     Age = str_c(age_mean, "±", age_sd, sep = " "),
     Task = task,
     `Stimulus type` = str_to_sentence(stimuli_presentation),
     `Stimulus dimensions` = stimuli_dimensions
+  ) %>%
+  mutate(
+    across(.fns = function(x) ifelse(is.na(x), "n/a", x))
   ) -> tabs1
 
 # Display the table
@@ -133,6 +139,8 @@ res_gender_freq <- rma.mv(
 )
 print(res_gender_freq)
 ```
+
+\renewcommand{\arraystretch}{1.10}
 
 ```{r, tabs2, include=TRUE}
 # Format all frequentist results together as a table
@@ -212,6 +220,8 @@ if (run$jackknife_analysis) {
 }
 ```
 
+\renewcommand{\arraystretch}{0.97}
+
 ```{r, tabs3, include=TRUE}
 # Read jackknife table from file
 tab_jackknife <- read_csv(
@@ -227,19 +237,20 @@ apa_table(
 )
 ```
 
+\renewcommand{\arraystretch}{1.30}
+
 ```{r, tabs4, include=TRUE}
 # Read PRISMA checklist from file
 tab_prisma <- read_csv(
   here(data_dir, "prisma_checklist.csv"),
-  col_types = "ccc"
+  col_types = "ccc", na = character()
 )
 
 # Display the table
 apa_table(
   tab_prisma,
-  caption = "PRISMA 2020 checklist",
-  font_size = "scriptsize",
-  align = "lrl",
+  caption = "PRISMA 2020 checklist", font_size = "scriptsize",
+  landscape = TRUE, align = "p{1.5cm}p{2.5cm}p{1cm}p{12cm}p{5.5cm}",
 )
 ```
 
@@ -369,6 +380,8 @@ if (run$sensitivity_analysis) {
   write_csv(tab_sens_gender, file = here(tables_dir, "sens_gender.csv"))
 }
 ```
+
+\renewcommand{\arraystretch}{1.10}
 
 ```{r, tabs5, include=TRUE}
 # Load sensitivity analysis table from file
