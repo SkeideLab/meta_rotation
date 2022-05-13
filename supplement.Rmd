@@ -147,7 +147,7 @@ map2_dfr(
     res_freq = .x, label_1 = .y, label_col_1 = "Model", print_sigma2s = TRUE
   )
 ) %>%
-  # Rename parameters for readibility
+  # Rename parameters for readability
   mutate(
     Parameter = c(
       "Hedges' $g$",
@@ -467,7 +467,7 @@ res_freq_2_lvl %>%
       })
   }) -> res_selection_steps
 
-# Create seperate tables for the two different meta-analyses (rotation/gender)
+# Create separate tables for the two different meta-analyses (rotation/gender)
 # Each table will contain the results of all trim-and-fill and selection models
 map(names(res_freq_2_lvl), function(name) {
 

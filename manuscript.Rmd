@@ -142,7 +142,7 @@ included %>%
     d_z_f = sqrt(f) / sqrt(sample_size) * sign_f,
     # Add d_z from mean and standard deviation of the difference
     d_z_diff = mean_diff / sd_diff,
-    # Add d_av from mean difference and standard devations
+    # Add d_av from mean difference and standard deviations
     # See http://dx.doi.org/10.20982/tqmp.14.4.p242
     sd_av = sqrt((sd_novel^2 + sd_familiar^2) / 2),
     d_av = mean_diff / sd_av,
@@ -196,7 +196,7 @@ included %>%
     age_c = age - mean(age, na.rm = TRUE),
     age_sd = age_sd / 365.25,
 
-    # Recode task type as a categorical (factor) variale for meta-regression
+    # Recode task type as a categorical (factor) variable for meta-regression
     task = factor(task, levels = c("Habituation", "VoE")),
 
     # Combine gender and task into one column for plotting
@@ -1090,7 +1090,7 @@ Outcome measures and other relevant variables were extracted from each article b
 | (4\) Mean difference between conditions [@lakens2013]          | $d=\frac{m_\text{diff}}{{SD}_\text{diff}}$;\quad then (1)                                   |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
 | (5\) Mean looking time and ${SD}$ per condition [@cumming2012] | ${SD}_\text{av}=\sqrt{\frac{{SD}_\text{novel}^2+{SD}_\text{familiar}^2}{2}}$;\quad          |
-|                                                                | $d=\frac{m_\text{movel}-m_\text{familiar}}{{SD}_\text{av}}$;\quad then (1)                  |
+|                                                                | $d=\frac{m_\text{novel}-m_\text{familiar}}{{SD}_\text{av}}$;\quad then (1)                  |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
 | (6\) Mean novelty preference score [@lakens2013]               | $d=\frac{m_\text{pref}}{{SD}_\text{pref}}$;\quad then (1)                                   |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
