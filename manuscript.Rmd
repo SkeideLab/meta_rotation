@@ -61,9 +61,10 @@ header-includes:
   - \usepackage{makecell}
   - \usepackage{setspace}
   - \renewcommand{\arraystretch}{0.59}
+  - \DeclareCaptionLabelSeparator{bar}{ | }
   - \DeclareCaptionTextFormat{tabletext}{\textup{#1}}
-  - \captionsetup[table]{belowskip=20pt,font=small,labelfont=bf,labelsep=colon,textfont=bf,textformat=tabletext}
-  - \captionsetup[figure]{belowskip=10pt,font=small,labelfont=bf,labelsep=colon,name=Fig.,textfont=normalfont}
+  - \captionsetup[table]{belowskip=20pt,font=small,labelfont=bf,labelsep=bar,textfont=bf,textformat=tabletext}
+  - \captionsetup[figure]{belowskip=10pt,font=small,labelfont=bf,labelsep=bar,name=Fig.,textfont=normalfont}
 ---
 
 ```{r, setup, include=FALSE}
