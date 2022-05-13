@@ -90,7 +90,7 @@ print_res_reg_table <- function(res_reg,
   return(tab)
 }
 
-# Format results of frequentist meta-analsis as a table with optional labels
+# Format results of frequentist meta-analysis as a table with optional labels
 print_res_freq_table <- function(res_freq,
                                  label_1 = NULL,
                                  label_2 = NULL,
@@ -102,7 +102,9 @@ print_res_freq_table <- function(res_freq,
     Estimate = print_num(as.numeric(res_freq$b)),
     `$SE$` = print_num(res_freq$se),
     `$z$` = print_num(res_freq$zval),
-    `$p$` = papaja::print_p(res_freq$pval),
+    `$p$` = ifelse(
+      res_freq$pval < 0.001, "< 0.001", print_num(res_freq$pval, digits = 3)
+      ),
     ci_lower = print_num(res_freq$ci.lb),
     ci_upper = print_num(res_freq$ci.ub)
   ) %>%

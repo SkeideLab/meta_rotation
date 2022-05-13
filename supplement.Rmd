@@ -43,7 +43,7 @@ dat_ri_empirical <- filter(dat, !is.na(ri_empirical))
 (summ_ri_empirical <- print_num(summary(ri_empirical)))
 ```
 
-Meta-analytic methods require an estimate of the sampling variance of each included experiment [@harrer2021]. For within-participant experimental designs (i.e., repeated measures on the same individuals in different conditions), this sampling variance needs to reflect that repeated measures from the same participant will be more similar to one another than measures from two randomly selected participants, thus not providing independent information. This is reflected by the correlation term $r$ in the formula of the standard error of the effect size ${SE}_\text{rotation}$ (see Methods) [@goulet-pelletier2018]. This correlation between repeated measures unfortunately tends to go unreported in research articles. In fact, none of the `r descs$n_articles` articles in the present meta-analysis provided a direct numerical estimate for the correlation between infants’ looking times in the novel and familiar rotation object conditions.
+Meta-analytic methods require an estimate of the sampling variance of each included experiment [@harrer2021]. For within-participant experimental designs (i.e., repeated measures on the same individuals in different conditions), this sampling variance needs to reflect that repeated measures from the same participant will be more similar to one another than measures from two randomly selected participants, thus not providing independent information. This is reflected by the correlation term $r$ in the formula of the standard error of the effect size ${SE}_\text{rotation}$ (see Methods) [@goulet-pelletier2018]. This correlation between repeated measures unfortunately tends to go unreported in research articles. In fact, none of the `r descs$n_articles` articles in the present meta-analysis provided a direct numerical estimate for the correlation between infants' looking times in the novel and familiar rotation object conditions.
 
 However, there were `r nrow(dat_ri_empirical)` experiments taken from seven different articles that included enough statistical information to reconstruct this correlation. This was done using the following procedure:
 
@@ -173,10 +173,10 @@ map2_dfr(
 # Display the table
 apa_table(
   tab_freq,
-  align = "llccccc",
   caption = "Frequentist meta-analyses and meta-regression",
   font_size = "scriptsize",
-  escape = FALSE
+  escape = FALSE,
+  align = "llrrrrr",
 )
 
 # Save the table
@@ -222,9 +222,8 @@ tab_jackknife <- read_csv(
 # Display the table
 apa_table(
   tab_jackknife,
-  align = "llcccc",
-  caption = "Jackknife (leave-one-out) analysis",
-  font_size = "scriptsize", landscape = TRUE, escape = FALSE
+  caption = "Jackknife (leave-one-out) analysis", font_size = "scriptsize",
+  landscape = TRUE, escape = FALSE, align = "llrrrr"
 )
 ```
 
@@ -238,9 +237,9 @@ tab_prisma <- read_csv(
 # Display the table
 apa_table(
   tab_prisma,
-  align = "lcl",
   caption = "PRISMA 2020 checklist",
-  font_size = "scriptsize"
+  font_size = "scriptsize",
+  align = "lrl",
 )
 ```
 
@@ -269,7 +268,7 @@ if (run$sensitivity_analysis) {
       # Return both as a tibble together with the label
       return(
         tibble(
-          manipulation_value = str_c("$r = ", print_num(ri_sens), "$"),
+          manipulation_value = str_c("$r$ = ", print_num(ri_sens)),
           res = list(res),
           res_reg = list(res_reg),
         )
@@ -382,7 +381,7 @@ tab_sens <- read_csv(
 apa_table(
   tab_sens,
   caption = "Sensitivity analyses for the meta-analysis of mental rotation performance",
-  font_size = "scriptsize", escape = FALSE
+  font_size = "scriptsize", escape = FALSE, align = "llrrrr"
 )
 ```
 
@@ -397,7 +396,8 @@ tab_sens_reg <- read_csv(
 apa_table(
   tab_sens_reg,
   caption = "Sensitivity analyses for the meta-regression of mental rotation performance",
-  font_size = "scriptsize", landscape = TRUE, escape = FALSE
+  font_size = "scriptsize", landscape = TRUE, escape = FALSE,
+  align = "llrrrrrrr"
 )
 ```
 
@@ -412,7 +412,7 @@ tab_sens_gender <- read_csv(
 apa_table(
   tab_sens_gender,
   caption = "Sensitivity analyses for the meta-analysis of gender differences",
-  font_size = "scriptsize", escape = FALSE
+  font_size = "scriptsize", escape = FALSE, align = "llrrrrrrr"
 )
 ```
 
@@ -519,10 +519,8 @@ write_csv(
 # Display the table
 apa_table(
   tabs_trim_fill_selection$meta,
-  align = "llccccc",
-  caption = "Trim-and-fill and selection models for the meta-analysis of mental rotation performance",
-  font_size = "scriptsize",
-  escape = FALSE
+  caption = "Publication bias correction for the meta-analysis of mental rotation performance",
+  font_size = "scriptsize", escape = FALSE, align = "llrrrrr"
 )
 ```
 
@@ -530,10 +528,8 @@ apa_table(
 # Display the table
 apa_table(
   tabs_trim_fill_selection$gender,
-  align = "llccccc",
-  caption = "Trim-and-fill and selection models for the meta-analysis of gender differences",
-  font_size = "scriptsize",
-  escape = FALSE
+  caption = "Publication bias correction for the meta-analysis of gender differences",
+  font_size = "scriptsize", escape = FALSE, align = "llrrrrr",
 )
 ```
 
@@ -653,7 +649,7 @@ dat_gender %>%
 ggsave(here(figures_dir, "figs1_gender.pdf"), width = 12, height = 8)
 ```
 
-(ref:figs1-caption) **Meta-analysis of gender differences.** A Bayesian three-level meta-analysis provided evidence for a small gender difference in mental rotation performance between male and female infants. White squares indicate the effect sizes (Hedges’ $g$) for gender difference in all individual experiments and black lines their 95% confidence intervals. Note that for experiments that observed a non-significant gender difference and did not specify the exact size of this effect, we assumed an effect size of $g = 0.00$. Gray bars indicate the 95% and 50% Bayesian credible interval (CrI) based on a Bayesian three-level random-effects model. Note that these intervals got shrunk towards the meta-analytic effect size because of partial pooling, that is, the three-level model regularizing the impact of experiments with small sample sizes and/or unrealistically large effect sizes. The last line shows the meta-analytic effect size from the three-level model (black dot) together with its 95% CrI (black line) and its posterior distribution (gray curve).
+(ref:figs1-caption) **Meta-analysis of gender differences.** A Bayesian three-level meta-analysis provided evidence for a small gender difference in mental rotation performance between male and female infants. White squares indicate the effect sizes (Hedges' $g$) for gender difference in all individual experiments and black lines their 95% confidence intervals. Note that for experiments that observed a non-significant gender difference and did not specify the exact size of this effect, we assumed an effect size of $g = 0.00$. Gray bars indicate the 95% and 50% Bayesian credible interval (CrI) based on a Bayesian three-level random-effects model. Note that these intervals got shrunk towards the meta-analytic effect size because of partial pooling, that is, the three-level model regularizing the impact of experiments with small sample sizes and/or unrealistically large effect sizes. The last line shows the meta-analytic effect size from the three-level model (black dot) together with its 95% CrI (black line) and its posterior distribution (gray curve).
 
 ```{r, figs2, include=TRUE, fig.height=6, fig.width=12, fig.cap="(ref:figs2-caption)"}
 # Extract convergence statistics from results
@@ -684,7 +680,8 @@ bayesplot::mcmc_trace(
   geom_text(
     aes(y = 0.45, label = name_expr, color = NA),
     conv_stats,
-    y = 0.45, x = -0.042 * n_draws, color = "black", parse = TRUE, angle = 90
+    y = 0.45, x = -0.042 * n_draws, color = "black", parse = TRUE,
+    vjust = 1, angle = 90
   ) +
   geom_text(
     aes(y = y_pos, label = r_hat_expr, color = NA),
@@ -765,6 +762,7 @@ prof_liks_df %>%
     axis.text = element_text(family = "Helvetica", color = "black"),
     axis.ticks = element_line(color = "black"),
     strip.background = element_blank(),
+    strip.text = element_text(family = "Helvetica", color = "black", size = 12),
     text = element_text(family = "Helvetica", color = "black")
   )
 
@@ -772,7 +770,7 @@ prof_liks_df %>%
 ggsave(here(figures_dir, "figs3_convergence_freq.pdf"), width = 12, height = 4)
 ```
 
-(ref:figs3-caption) **Convergence checks for the frequentist meta-analysis.** Profile likelihood plots [@raue2009; @viechtbauer2010] indicate that restricted maximum likelihood estimation (REML) was able to identify the most likely parameter estimates for the two variance components in the three-level meta-analytic model, that is, for the between-article variance and for the between-experiment (within-article) variance.
+(ref:figs3-caption) **Convergence checks for the frequentist meta-analysis.** Black curves show the profile of the restricted log likelihood for the two variance components in the frequentist three-level model. The two peaks indicate that restricted maximum likelihood estimation (REML) was able to converge on the most likely parameter estimates [@raue2009; @viechtbauer2010].
 
 ```{r, figs4, include=TRUE, fig.width=12, fig.height=3.5, fig.cap="(ref:figs4-caption)"}
 # Create new funnel plots that take the trim-and-fill results into account

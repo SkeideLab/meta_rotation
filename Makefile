@@ -38,6 +38,14 @@ srun:
 	run_slurm.sh $(PROJECT_DIR) $(REMOTE_DIR) $(IMAGE_FILE)
 
 # Convert from LaTeX to PDF after postprocessing, locally or in the container
+# Required post-processing includes:
+# 1. Remove `\&` before the name of the alst author in the `author{}` line
+# 2. Place each affiliation into `{}`
+# 3. Remove all newlines between `\CSLLeftMargin{XX. }` and `\CSLRightInline`
+# 4. Remove empty lines after references for ausubel1968, hedges1985,
+#    rosenthal1991, cohen1988, efron1993
+# 5. Replace `\caption*{\normalfont{Table \ref{` with
+#    `\caption*{\normalfont{Supplementary Table \ref{`
 latex:
 	$(LATEX_CMD)
 latex-docker:

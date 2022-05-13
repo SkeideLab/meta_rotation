@@ -16,9 +16,9 @@ author:
     affiliation   : "1"
 affiliation:
   - id            : "1"
-    institution   : "Research Group Learning in Early Childhood, Max Planck Institute for Human Cognitive and Brain Sciences"
+    institution   : "Research Group Learning in Early Childhood, Max Planck Institute for Human Cognitive and Brain Sciences, Stephanstraße 1a, 04103 Leipzig"
   - id            : "2"
-    institution   : "Department of Psychology, Humboldt-Universität zu Berlin"
+    institution   : "Department of Psychology, Humboldt-Universität zu Berlin, Rudower Chaussee 18, 12489 Berlin"
   - id            : "*"
     institution   : "These authors contributed equally"
 
@@ -26,6 +26,8 @@ authornote: |
   \addORCIDlink{Alexander Enge}{0000-0003-0100-2297}
 
   \addORCIDlink{Shreya Kapoor}{0000-0003-2619-8257}
+
+  \addORCIDlink{Anne-Sophie Kieslinger}{https://orcid.org/0000-0001-9240-4077}
 
   We have no conflict of interest to disclose.
   There were no ethical concerns since we did not collect any new data.
@@ -58,7 +60,7 @@ header-includes:
   - \usepackage[all]{nowidow}
   - \usepackage{makecell}
   - \usepackage{setspace}
-  - \renewcommand{\arraystretch}{0.6}
+  - \renewcommand{\arraystretch}{0.59}
   - \DeclareCaptionTextFormat{tabletext}{\textup{#1}}
   - \captionsetup[table]{belowskip=20pt,font=small,labelfont=bf,labelsep=colon,textfont=bf,textformat=tabletext}
   - \captionsetup[figure]{belowskip=10pt,font=small,labelfont=bf,labelsep=colon,name=Fig.,textfont=normalfont}
@@ -291,6 +293,8 @@ Previous meta-analyses revealed that males solve mental rotation tasks slightly 
 In the present study, we meta-analyzed `r descs$n_experiments` effect sizes derived from looking times in mental rotation tasks conducted by `r formatC(descs$n_infants, big.mark = ",")` infants (`r print_perc(descs$percent_female)` female) aged `r descs$min_age_months` to `r descs$max_age_months` months (mean age of `r descs$mean_age_weighted`; Supplementary Table 1). All tasks were embedded either into habituation experiments (`r descs$n_experiments_habituation`) or violation of expectation experiments (`r descs$n_experiments_voe`) [@fantz1964; @baillargeon1985]. These experiments comprised real world stimuli (e.g., toy objects [@antrilli2016]), three-dimensional digital stimuli (e.g., cube figures [@moore2008]), or two-dimensional digital stimuli (e.g., digits [@quinn2008]). In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object. Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation. In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle. Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle. Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown. Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle. In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
 
 Following previous work in older populations, we hypothesized that looking times in mental rotation experiments are on average significantly longer in male compared to female infants. Effect sizes were assumed to be small.
+
+\newpage
 
 # Results
 
@@ -1028,16 +1032,16 @@ The present study robustly revealed that male infants look slightly but signific
 
 In the present meta-analysis we followed the established PRISMA 2020 guidelines (Preferred Reporting Items for Systematic reviews and Meta-Analyses) [@page2021]. The PRISMA flowchart is provided in Fig. 4 and Supplementary Table 4 contains the PRISMA checklist.
 
+## Eligibility criteria
+
+Articles needed to fulfill six criteria for being included in this meta-analysis: (1) The article was written in English or German; (2) The article includes results from a group study with human samples (thus excluding review articles, meta-analyses, case studies, and animal studies); (3) These samples include at least one group of infants (mean age between 0 months and 36 months); (4) Infants were not born preterm and had no clinical diagnosis; (5) Infants performed a mental rotation task; (6) The article contains quantitative scores that could be converted into a standardized mean difference (see Data collection process and items below). We explicitly included works that were not peer reviewed (e.g., dissertations and preprints) to reduce the impact of publication bias.
+
 ```{r, fig4, include=TRUE, fig.width=6, fig.cap="(ref:fig4-caption)", out.width="50%"}
 # Include the flowchart (created with MS PowerPoint)
 knitr::include_graphics(here("manuscript_files/flowchart.pdf"))
 ```
 
 (ref:fig4-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. aAdditionally, we excluded an article that was based on an uncommon experimental paradigm differing substantially from all other articles (1 article). Finally, we excluded an article that was based on a sample of infants  who were substantially older compared to all other articles (1 article).
-
-## Eligibility criteria
-
-Articles needed to fulfill six criteria for being included in this meta-analysis: (1) The article was written in English or German; (2) The article includes results from a group study with human samples (thus excluding review articles, meta-analyses, case studies, and animal studies); (3) These samples include at least one group of infants (mean age between 0 months and 36 months); (4) Infants were not born preterm and had no clinical diagnosis; (5) Infants performed a mental rotation task; (6) The article contains quantitative scores that could be converted into a standardized mean difference (see Data collection process and items below). We explicitly included works that were not peer reviewed (e.g., dissertations and preprints) to reduce the impact of publication bias.
 
 ## Information sources and search strategy
 
@@ -1110,7 +1114,7 @@ We also conducted a meta-analysis of the gender differences in mental rotation p
 | [@goulet-pelletier2018; @hedges1985]   | $J({df})=\frac{\Gamma(\frac{1}{2}{df})}{\sqrt{\frac{{df}}{2}}\Gamma(\frac{1}{2}({df}-1))}$;\quad |
 |                                        | $g_\text{gender}=d\cdot{J({df})}$                                                                |
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
-| (2\) $t$-statistic and group sizes     | $d=t\sqrt\frac{1}{n_\text{female}}+\frac{1}{n_\text{male}}$;\quad then (1)                       |
+| (2\) $t$-statistic and group sizes     | $d=t\sqrt{\frac{1}{n_\text{female}}+\frac{1}{n_\text{male}}}$;\quad then (1)                     |
 | [@lakens2013]                          |                                                                                                  |
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
 | (3\) $F$-statistic and group sizes     | $t=\sqrt{f}$;\quad then (2\)                                                                     |
