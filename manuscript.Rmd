@@ -4,14 +4,14 @@ shorttitle        : "Infant mental rotation"
 
 author:
   - name          : "Alexander Enge"
-    affiliation   : "1,2,*"
+    affiliation   : "1,2"
     corresponding : "yes"
     address       : "Stephanstraße 1a, 04103 Leipzig"
     email         : "enge@cbs.mpg.de"
   - name          : "Shreya Kapoor"
-    affiliation   : "1,*"
+    affiliation   : "1"
   - name          : "Anne-Sophie Kieslinger"
-    affiliation   : "1,*"
+    affiliation   : "1"
   - name          : "Michael A. Skeide"
     affiliation   : "1"
 affiliation:
@@ -19,8 +19,6 @@ affiliation:
     institution   : "Research Group Learning in Early Childhood, Max Planck Institute for Human Cognitive and Brain Sciences, Stephanstraße 1a, 04103 Leipzig"
   - id            : "2"
     institution   : "Department of Psychology, Humboldt-Universität zu Berlin, Rudower Chaussee 18, 12489 Berlin"
-  - id            : "*"
-    institution   : "These authors contributed equally"
 
 authornote: |
   \addORCIDlink{Alexander Enge}{0000-0003-0100-2297}
