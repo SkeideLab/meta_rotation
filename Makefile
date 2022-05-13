@@ -74,5 +74,5 @@ pull:
 	docker pull $(IMAGE_TAG)
 
 # Pull the container with Docker
-pull_singularity:
+pull-singularity:
 	singularity pull --disable-cache --force $(IMAGE_URL)
