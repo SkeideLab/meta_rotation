@@ -318,7 +318,6 @@ res_prior <- brm(
   file_refit = brms_file_refit
 )
 summary(res_prior)
-# plot(res_prior)
 
 # Run Bayesian multilevel model
 res_brm <- update(
@@ -328,18 +327,9 @@ res_brm <- update(
   file_refit = brms_file_refit
 )
 summary(res_brm)
-# plot(res_brm)
 
 # Get posterior probability mass > 0 for the meta-analytic effect
 (hyp_brm <- hypothesis(res_brm, "Intercept > 0")$hypothesis)
-
-# # Summarise fixed effects (incl. Bayes factors)
-# describe_posterior(
-#   res_brm,
-#   centrality = "mean", ci = 0.95, ci_method = "ETI",
-#   test = c("p_direction", "rope", "bayesfactor"),
-#   rope_range = c(-0.1, 0.1)
-# )
 
 # Extract posterior draws for the meta-analytic effects
 spread_draws(res_brm, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
@@ -516,7 +506,6 @@ res_prior_reg <- brm(
   file_refit = brms_file_refit
 )
 summary(res_prior_reg)
-# plot(res_prior_reg)
 
 # Run Bayesian multilevel model
 res_brm_reg <- update(
@@ -526,7 +515,6 @@ res_brm_reg <- update(
   file_refit = brms_file_refit
 )
 summary(res_brm_reg)
-# plot(res_brm_reg)
 
 # Get posterior probability mass > 0 for all regression weights
 (hyps_brm_reg <- list(
@@ -538,14 +526,6 @@ summary(res_brm_reg)
   female_mixed_age = hypothesis(res_brm_reg, "gender2M1:age_c > 0")$hypothesis,
   male_female_age = hypothesis(res_brm_reg, "gender3M2:age_c > 0")$hypothesis
 ))
-
-# # Summarise fixed effects (incl. Bayes factors)
-# describe_posterior(
-#   res_brm_reg,
-#   centrality = "mean", ci = 0.95, ci_method = "ETI",
-#   test = c("p_direction", "rope", "bayesfactor"),
-#   rope_range = c(-0.1, 0.1)
-# )
 
 # Extract posterior draws for the meta-analytic effects
 spread_draws(res_brm_reg, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
@@ -844,7 +824,6 @@ res_prior_gender <- brm(
   file_refit = brms_file_refit
 )
 summary(res_prior_gender)
-# plot(res_prior_gender)
 
 # Run Bayesian multilevel model
 res_brm_gender <- update(
@@ -854,18 +833,9 @@ res_brm_gender <- update(
   file_refit = brms_file_refit
 )
 summary(res_brm_gender)
-# plot(res_brm_gender)
 
 # Get posterior probability mass > 0 for the meta-analytic effect
 (hyp_brm_gender <- hypothesis(res_brm_gender, "Intercept > 0")$hypothesis)
-
-# # Summarise fixed effects (incl. Bayes factors)
-# describe_posterior(
-#   res_brm_gender,
-#   centrality = "mean", ci = 0.95, ci_method = "ETI",
-#   test = c("p_direction", "rope", "bayesfactor"),
-#   rope_range = c(-0.1, 0.1)
-# )
 
 # Extract posterior draws for the meta-analytic effects
 spread_draws(res_brm_gender, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
