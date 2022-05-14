@@ -1150,11 +1150,11 @@ The data for this study is available  from an   [Open Science Framework reposito
 
 # Contributions
 
-M.A.S. conceived, designed, and obtained funding for the study.  
+\noindent M.A.S. conceived, designed, and obtained funding for the study.
 
-A.E., S.K., and A.K. designed and executed the search strategy, performed study selection and screening procedures, managed the database of search results and performed data analysis in consultation with M.A.S. 
+\noindent A.E., S.K., and A.-S.K. designed and executed the search and selection strategies, performed data analysis, conducted robustness checks, and visualized the results in consultation with M.A.S. 
 
-A.E. and M.A.S. wrote the manuscript with feedback from S.K. and A.K.
+\noindent A.E. and M.A.S. wrote the manuscript with additional input from S.K. and A.-S.K.
 
 \newpage
 
