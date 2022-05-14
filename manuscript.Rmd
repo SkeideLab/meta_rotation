@@ -5,9 +5,6 @@ shorttitle        : "Infant mental rotation"
 author:
   - name          : "Alexander Enge"
     affiliation   : "1,2"
-    corresponding : "yes"
-    address       : "Stephanstraße 1a, 04103 Leipzig"
-    email         : "enge@cbs.mpg.de"
   - name          : "Shreya Kapoor"
     affiliation   : "1"
   - name          : "Anne-Sophie Kieslinger"
@@ -16,22 +13,22 @@ author:
     affiliation   : "1"
 affiliation:
   - id            : "1"
-    institution   : "Research Group Learning in Early Childhood, Max Planck Institute for Human Cognitive and Brain Sciences, Stephanstraße 1a, 04103 Leipzig"
+    institution   : "Research Group Learning in Early Childhood, Max Planck Institute for Human Cognitive and Brain Sciences, Stephanstraße 1a, Leipzig, Germany"
   - id            : "2"
-    institution   : "Department of Psychology, Humboldt-Universität zu Berlin, Rudower Chaussee 18, 12489 Berlin"
+    institution   : "Department of Psychology, Humboldt-Universität zu Berlin, Rudower Chaussee 18, Berlin, Germany"
 
 authornote: |
-  \addORCIDlink{Alexander Enge}{0000-0003-0100-2297}
+  \noindent \addORCIDlink{Alexander Enge}{0000-0003-0100-2297}
 
-  \addORCIDlink{Shreya Kapoor}{0000-0003-2619-8257}
+  \noindent \addORCIDlink{Shreya Kapoor}{0000-0003-2619-8257}
 
-  \addORCIDlink{Anne-Sophie Kieslinger}{0000-0001-9240-4077}
+  \noindent \addORCIDlink{Anne-Sophie Kieslinger}{0000-0001-9240-4077}
 
-  We have no conflict of interest to disclose.
-  There were no ethical concerns since we did not collect any new data.
+  \noindent We have no conflict of interest to disclose. There were no ethical concerns since we did not collect any new data.
+  Correspondence concerning this article should be addressed to Alexander Enge, Stephanstraße 1a, 04103 Leipzig, Germany. E-mail: enge@cbs.mpg.de
 
 abstract: |
-  Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3 to 16 months. We robustly found that male infants recognized novel rotated objects more reliably than female infants. The effect size of this average difference was small and did not change with age. These findings indicate that gender differences in mental rotation are already present in the first months of life.
+  Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3 to 16 months. We robustly found that male infants recognized novel rotated objects more reliably than female infants. These findings indicate that gender differences in mental rotation are already present in the first months of life.
 
 keywords          : "mental rotation, spatial cognition, spatial ability, infants, children, gender, meta-analysis"
 
@@ -875,7 +872,7 @@ The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_br
 (egger_ci_gender <- confint(egger_gender$fit)["Xsei", ])
 ```
 
-We inspected funnel plots and performed Egger regression tests to examine the possibility of publication bias in the literature included here. For the meta-analysis of mental rotation performance (Fig. 3a), we observed a slight asymmetry in the funnel plot, indicating a small publication bias. This was confirmed by an Egger regression test that showed a reliable association between effect sizes and their corresponding standard errors, $b = `r coef(egger$fit)["Xsei"]`$, $t(`r egger$dfs`) = `r egger$zval`$, $p = `r print_p(egger$pval)`$, 95% confidence interval (CI) [`r egger_ci["2.5 %"]`, `r egger_ci["97.5 %"]`] (two-sided test). Nevertheless, a jackknife (leave-one-out analysis) confirmed that the current results are robust to the effects of individual outlier studies (Supplementary Table 3). For the meta-analysis of gender differences in mental rotation performance (Fig. 3a), the asymmetry in the funnel plot was less pronounced and the slope of the Egger regression test was not statistically significant, $b = `r coef(egger_gender$fit)["Xsei"]`$, $t(`r egger_gender$dfs`) = `r egger_gender$zval`$, $p = `r print_p(egger_gender$pval)`$, 95% confidence interval (CI) [`r egger_ci_gender["2.5 %"]`, `r egger_ci_gender["97.5 %"]`] (two-sided test).
+We inspected funnel plots and performed Egger regression tests to examine the possibility of publication bias in the literature included here. For the meta-analysis of mental rotation performance (Fig. 3a), we observed a slight asymmetry in the funnel plot, indicating a small publication bias. This was confirmed by an Egger regression test that showed a reliable association between effect sizes and their corresponding standard errors, $b = `r coef(egger$fit)["Xsei"]`$, $t(`r egger$dfs`) = `r egger$zval`$, $p = `r print_p(egger$pval)`$, 95% confidence interval (CI) [`r egger_ci["2.5 %"]`, `r egger_ci["97.5 %"]`] (two-sided test). Nevertheless, a jackknife (leave-one-out analysis) confirmed that the current results are robust to the effects of individual outlier studies (Supplementary Table 3). For the meta-analysis of gender differences in mental rotation performance (Fig. 3b), the asymmetry in the funnel plot was less pronounced and the slope of the Egger regression test was not statistically significant, $b = `r coef(egger_gender$fit)["Xsei"]`$, $t(`r egger_gender$dfs`) = `r egger_gender$zval`$, $p = `r print_p(egger_gender$pval)`$, 95% confidence interval (CI) [`r egger_ci_gender["2.5 %"]`, `r egger_ci_gender["97.5 %"]`] (two-sided test).
 
 ```{r, fig3, include=TRUE, fig.height=3.5, fig.width=12, fig.cap="(ref:fig3-caption)"}
 # Create funnel plots
@@ -968,11 +965,11 @@ plot_grid(
 ggsave(here(figures_dir, "funnel.pdf"), width = 12, height = 3.5)
 ```
 
-(ref:fig3-caption) **Evaluation of publication bias.**  Funnel plots for the meta-analysis of mental rotation performance (**a**) and for the meta-analysis of gender differences in mental rotation performance (**b**). The plots show the standard error and effect size for each of the individual experiments as a black square. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect size (vertical black line). Gray shades indicate a 95% pseudo-confidence interval (dark gray) and 99% pseudo-confidence interval (light gray) under the null hypothesis. These shades thus illustrate which of the original studies observed a significant effect. For the meta-analysis of mental rotation performance, a slight asymmetry induced by the underrepresentation of studies with high standard errors and small effect sizes suggests a small publication bias.
+(ref:fig3-caption) **Evaluation of publication bias.**  Funnel plots for the meta-analysis of mental rotation performance (**a**) and for the meta-analysis of gender differences in mental rotation performance (**b**). The plots show the standard error and effect size for each of the individual experiments as a black square. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect size (vertical black line). Gray shades indicate a 95% pseudo-confidence interval (dark gray) and a 99% pseudo-confidence interval (light gray) under the null hypothesis. These shades thus illustrate which of the original studies observed a significant effect. For the meta-analysis of mental rotation performance, a slight asymmetry induced by the underrepresentation of studies with high standard errors and small effect sizes suggests a small publication bias.
 
 # Discussion
 
-We analyzed looking times during mental rotation in `r formatC(descs$n_infants, big.mark = ",")` infants ranging from `r descs$min_age_months` to `r descs$max_age_months` months of age. To this end, we scrutinized the robustness of `r descs$n_experiments` experimental effect sizes. We found that male infants looked on average slightly longer at novel rotated objects compared to female infants. This effect was small and unrelated to age in the current range.
+We analyzed looking times during mental rotation in `r formatC(descs$n_infants, big.mark = ",")` infants ranging from `r descs$min_age_months` to `r descs$max_age_months` months of age. To this end, we scrutinized the robustness of `r descs$n_experiments` experimental effect sizes. We found that male infants looked on average longer at novel rotated objects compared to female infants. This effect was small and unrelated to age in the current range.
 
 ## Effect size estimates
 
@@ -1038,7 +1035,7 @@ descs_pedrett2020 <- within(descs_pedrett2020, {
 })
 ```
 
-Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria. Interrater agreement for the binary decision to include versus exclude an article was `r print_perc(irr_bin_perc)` ($\kappa_w$ [Cohen's weighted kappa] $= `r irr_bin_kappa_w$estimate`$, 95% CI [`r irr_bin_kappa_w$lower`, `r irr_bin_kappa_w$upper`]). Interrater agreement for the specific eligibility criteria were `r print_perc(irr_code_perc)` ($\kappa_w$ $= `r irr_code_kappa_w$estimate`$, 95% CI [`r irr_code_kappa_w$lower`, `r print_num(irr_code_kappa_w$upper)`]). Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached. One article [@mash2007] was excluded because the authors used a unique mental rotation paradigm that was not comparable to the paradigm used in the other articles. Another article [@pedrett2020] was excluded because the average age of the infants studied (`r print_num(descs_pedrett2020$age_months, 1)` months) was almost twice as high as the average age of the next article (`r print_num(descs_pedrett2020$next_largest_age_months, 1)` months; $z = `r descs_pedrett2020$z`$ compared to all articles). We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life. This procedure led to a total of `r descs$n_articles` articles being included in the meta-analysis (Fig. 4).
+Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria. Interrater agreement for the binary decision to include versus exclude an article was `r print_perc(irr_bin_perc)` ($\kappa_w$ [Cohen's weighted kappa] $= `r irr_bin_kappa_w$estimate`$, 95% CI [`r irr_bin_kappa_w$lower`, `r irr_bin_kappa_w$upper`]). Interrater agreement for the specific eligibility criteria was `r print_perc(irr_code_perc)` ($\kappa_w$ $= `r irr_code_kappa_w$estimate`$, 95% CI [`r irr_code_kappa_w$lower`, `r print_num(irr_code_kappa_w$upper)`]). Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached. One article [@mash2007] was excluded because the authors used a unique mental rotation paradigm that was not comparable to the paradigm used in the other articles. Another article [@pedrett2020] was excluded because the average age of the infants studied (`r print_num(descs_pedrett2020$age_months, 1)` months) was almost twice as high as the average age of the next article (`r print_num(descs_pedrett2020$next_largest_age_months, 1)` months; $z = `r descs_pedrett2020$z`$ compared to all articles). We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life. This procedure led to a total of `r descs$n_articles` articles being included in the meta-analysis (Fig. 4).
 
 Many of these articles consisted of multiple experiments, e.g., using different variations of the mental rotation task or different subsamples of infants. We included all of these experiments in the meta-analysis and accounted for the dependencies between them by means of multilevel modeling with by-article random effects (see Bayesian meta-analysis below). However, we excluded experiments if there was insufficient information to compute a standardized effect size (see Data collection process and items below). Whenever an article reported separate effect sizes for males and females---or other subgroups like crawling and non-crawling infants---but also an effect size combining these groups, we only included the combined effect size. Moreover, we disregarded effect sizes that were clearly based on the same data but reported in different articles. This procedure led to a total of `r descs$n_experiments` experiments being included in the meta-analysis of mental rotation performance (Supplementary Table 1) and 30 articles being included in the meta-analysis of gender differences in mental rotation performance.
 
@@ -1117,7 +1114,7 @@ We synthesized the effect sizes and their sampling variances using a Bayesian mu
 
 ## Bayesian meta-regression
 
-We examined the influence of three moderator variables on the mental rotation outcomes across studies, namely (a) the gender of the sample of infants, (b) the age of the sample of infants, and (c) the type of mental rotation task. Gender was coded as a categorical predictor (mixed-gender sample, all-female sample, all-male sample) and contrast-coded using two successive difference contrasts [@schad2020] so that we could compare all-female versus mixed samples and all-male samples versus all-female samples. Age was coded as a continuous predictor in years and centered by subtracting the average across all studies. Task was coded as a categorical predictor (habituation task, violation of expectation task) and contrast-coded using a scaled sum contrast [@schad2020]. We then included these predictors for gender, age, and task type as well as two predictors for the interaction between gender task type (i.e., [female - mixed] $\times$ age and [male - female] $\times$ age) into a Bayesian meta-regression model. This model used the same random effects structure and sampling parameters as described above.
+We examined the influence of three moderator variables on the mental rotation outcomes across studies, namely (a) the gender of the sample of infants, (b) the age of the sample of infants, and (c) the type of mental rotation task. Gender was coded as a categorical predictor (mixed-gender sample, all-female sample, all-male sample) and contrast-coded using two successive difference contrasts [@schad2020] so that we could compare all-female versus mixed samples and all-male samples versus all-female samples. Age was coded as a continuous predictor in years and centered by subtracting the average across all studies. Task was coded as a categorical predictor (habituation task, violation of expectation task) and contrast-coded using a scaled sum contrast [@schad2020]. We then included these predictors for gender, age, and task type as well as two predictors for the interaction between gender and task type (i.e., [female - mixed] $\times$ age and [male - female] $\times$ age) into a Bayesian meta-regression model. This model was based on the same random effects structure and sampling parameters as described above.
 
 ## Frequentist meta-analysis
 
@@ -1127,17 +1124,17 @@ We verified the results obtained from our Bayesian analyses using classical freq
 
 Publication bias was evaluated based on funnel plots and Egger regression tests [@egger1997; @sterne2005]. Funnel plots visualize the relationship between standard errors and effect sizes. They were created by adapting code from the R package metaviz (Version `r packageVersion("metaviz")`) [@kossmeier2020]. The Egger regression test is a formal statistical test for this relationship between standard errors and effect sizes, probing if the weighted linear regression weight of the effect sizes on the standard errors is significantly different from zero. This test was performed using code from the metafor package and applying a two-sided false-positive error rate of $\alpha = .05$.
 
-To scrutinize the robustness of the meta-analytic effect size against the influence of any individual experiment (which may or may not be a false positive), we conducted a jackknife leave-one-out-analysis for the meta-analysis of mental rotation performance [@gee2005; @efron1993]. To this end, we adapted code from the bootstrap R package (Version `r packageVersion("bootstrap")`) [@kostyshak2019]. Specifically, we refitted the Bayesian three-level model repeatedly while leaving out one of the original experiments on every iteration. To take into account the variance inherent in Bayesian model estimation, we averaged over $x$ iterations of the jackknife.
+To scrutinize the robustness of the meta-analytic effect size against the influence of any individual experiment (which may or may not be a false positive), we conducted a jackknife leave-one-out-analysis for the meta-analysis of mental rotation performance [@gee2005; @efron1993]. To this end, we refitted the Bayesian three-level model repeatedly while leaving out one of the original experiments on every iteration. We then checked if the meta-analytic effect size and heterogeneity remained constant or if it was sensitive against the influence of any individual experiment (Supplementary Table 3).
 
 We also performed trim-and-fill analyses and tested selection models to confirm the robustness of the results obtained from the frequentist meta-analyses against publication bias (Supplementary Methods 2; Supplementary Tables 8 and 9; Supplementary Figure 4) [@duval2000; @vevea1995; @vevea2005].
 
 ## Data availability
 
-The data for this study is available  from an   [Open Science Framework](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) repository [@enge2022a]. This link is intended for peer review only and will be replaced with a public link upon acceptance.
+The data for this study is available  from an   [Open Science Framework repository](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. This link is intended for peer review only and will be replaced with a public link upon acceptance.
 
 ## Code availability
 
-The data for this study is available from an  [Open Science Framework](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) repository [@enge2022a].  This link is intended for peer review only and will be replaced with a public link upon acceptance.
+The data for this study is available  from an   [Open Science Framework repository](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. This link is intended for peer review only and will be replaced with a public link upon acceptance.
 
 \newpage
 \nolinenumbers
