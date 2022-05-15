@@ -203,7 +203,12 @@ if (run$jackknife_analysis) {
   plan(multisession, workers = n_workers)
   future_map_dfr(seq_len(nrow(dat_meta)), function(jackknife_index) {
     dat_jackknife <- dat_meta[-jackknife_index, ]
-    res_jackknife <- update(res_meta, newdata = dat_jackknife, refresh = 0)
+    res_jackknife <- update(
+      res_meta,
+      newdata = dat_jackknife,
+      seed = seed,
+      refresh = 0
+    )
     print_res_table(
       res_jackknife,
       label_1 = dat_meta$article[jackknife_index],
@@ -272,10 +277,20 @@ if (run$sensitivity_analysis) {
       ) -> dat_ri_sens
 
       # Re-run meta-analysis of mental rotation performance
-      res_meta <- update(res_meta, newdata = dat_ri_sens, refresh = 0)
+      res_meta <- update(
+        res_meta,
+        newdata = dat_ri_sens,
+        seed = seed,
+        refresh = 0
+      )
 
       # Re-run meta-regression of mental rotation performance
-      res_reg <- update(res_reg, newdata = dat_ri_sens, refresh = 0)
+      res_reg <- update(
+        res_reg,
+        newdata = dat_ri_sens,
+        seed = seed,
+        refresh = 0
+      )
 
       # Return both as a tibble and add a label
       return(
@@ -320,13 +335,28 @@ if (run$sensitivity_analysis) {
     map2_dfr(names(.), function(prior_sens, prior_name) {
 
       # Re-run meta-analysis of mental rotation performance
-      res_meta <- update(res_meta, prior = prior_sens, refresh = 0)
+      res_meta <- update(
+        res_meta,
+        prior = prior_sens,
+        seed = seed,
+        refresh = 0
+      )
 
       # Re-run meta-regression of mental rotation performance
-      res_reg <- update(res_reg, prior = prior_sens, refresh = 0)
+      res_reg <- update(
+        res_reg,
+        prior = prior_sens,
+        seed = seed,
+        refresh = 0
+      )
 
       # Re-run meta-analysis of gender differences
-      res_gender <- update(res_gender, prior = prior_sens, refresh = 0)
+      res_gender <- update(
+        res_gender,
+        prior = prior_sens,
+        seed = seed,
+        refresh = 0
+      )
 
       # Return both as a tibble together with the label
       return(

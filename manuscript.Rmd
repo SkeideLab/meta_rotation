@@ -79,7 +79,7 @@ source(here("manuscript_files", "helper_functions.R"))
 
 # Re-run steps that take a long time?
 run <- list(
-  bayesian_models = FALSE,
+  bayesian_models = TRUE,
   jackknife_analysis = FALSE,
   sensitivity_analysis = FALSE
 )
@@ -318,6 +318,7 @@ summary(res_prior_meta)
 res_meta <- update(
   res_prior_meta,
   sample_prior = FALSE,
+  seed = seed,
   file = here(models_dir, "res_meta"),
   file_refit = brms_file_refit
 )
@@ -506,6 +507,7 @@ summary(res_prior_reg)
 res_reg <- update(
   res_prior_reg,
   sample_prior = FALSE,
+  seed = seed,
   file = here(models_dir, "res_reg"),
   file_refit = brms_file_refit
 )
@@ -828,6 +830,7 @@ summary(res_prior_gender)
 res_gender <- update(
   res_prior_gender,
   sample_prior = FALSE,
+  seed = seed,
   file = here(models_dir, "res_gender"),
   file_refit = brms_file_refit
 )
