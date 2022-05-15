@@ -19,7 +19,7 @@
 
 ```{r, r_assumed}
 # Compute empirical estimate of the correlation between dependent samples
-dat %>%
+dat_meta %>%
   mutate(
     # Get effect size from paired samples t-test, one sample t-test, or ANOVA
     d_diff = case_when(
@@ -37,13 +37,13 @@ dat %>%
   pull(ri) -> ri_empirical
 
 # Subset articles that have an empirical estimate for the correlation
-dat_ri_empirical <- filter(dat, !is.na(ri_empirical))
+dat_ri_empirical <- filter(dat_meta, !is.na(ri_empirical))
 
 # Summarise the estimated correlations
 (summ_ri_empirical <- print_num(summary(ri_empirical)))
 ```
 
-Meta-analytic methods require an estimate of the sampling variance of each included experiment [@harrer2021]. For within-participant experimental designs, this sampling variance needs to account for the fact that repeated measures are taken from the same individuals in different conditions. Repeated measures from the same participant will be more similar to one another than measures from two randomly selected participants and thus do not provide independent information. This is accounted for by the correlation term $r$ in the formula of the standard error of the effect size ${SE}_\text{rotation}$ (see Methods) [@goulet-pelletier2018]. However, the correlation between repeated measures tends to go unreported in research articles. In fact, none of the `r descs$n_articles` articles in the present meta-analysis provided a direct numerical estimate for the correlation between infants' looking times in the novel and familiar rotation object conditions.
+Meta-analytic methods require an estimate of the sampling variance of each included experiment [@harrer2021]. For within-participant experimental designs, this sampling variance needs to account for the fact that repeated measures are taken from the same individuals in different conditions. Repeated measures from the same participant will be more similar to one another than measures from two randomly selected participants and thus do not provide independent information. This is accounted for by the correlation term $r$ in the formula of the standard error of the effect size ${SE}_\text{rotation}$ (see Methods) [@goulet-pelletier2018]. However, the correlation between repeated measures tends to go unreported in research articles. In fact, none of the `r descriptives$n_articles` articles in the present meta-analysis provided a direct numerical estimate for the correlation between infants' looking times in the novel and familiar rotation object conditions.
 
 However, there were `r nrow(dat_ri_empirical)` experiments taken from seven different articles that included enough statistical information to reconstruct this correlation. This was done using the following procedure:
 
@@ -57,7 +57,7 @@ However, there were `r nrow(dat_ri_empirical)` experiments taken from seven diff
 
 5. Compute the observed correlation between conditions based on a rearranged equation by @cohen1988: $$r=\frac{{SD}_\text{diff}^2-{SD}_\text{novel}^2-{SD}_\text{familiar}}{-2\cdot{SD}_\text{novel}^2\cdot{SD}_\text{familiar}^2}$$
 
-Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed correlation was $r = `r summ_ri_empirical["Mean"]`$ (median $r = `r summ_ri_empirical["Median"]`$, range [`r summ_ri_empirical["Min."]`, `r summ_ri_empirical["Max."]`]). However, we decided to assume a correlation of $r  = .50$ when computing the effect size ${SE}_\text{rotation}$ for all `r descs$n_experiments` experiments. This was to ensure the comparability of our methods to meta-analyses of between-participant studies [@cohen1988; @lakens2013; @morris2002]. To  evaluate the robustness of our Bayesian meta-analytic model against the assumption of a correlation of $r  = .50$ we ran a sensitivity analysis (Supplementary Table 4).
+Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed correlation was $r = `r summ_ri_empirical["Mean"]`$ (median $r = `r summ_ri_empirical["Median"]`$, range [`r summ_ri_empirical["Min."]`, `r summ_ri_empirical["Max."]`]). However, we decided to assume a correlation of $r  = .50$ when computing the effect size ${SE}_\text{rotation}$ for all `r descriptives$n_experiments` experiments. This was to ensure the comparability of our methods to meta-analyses of between-participant studies [@cohen1988; @lakens2013; @morris2002]. To  evaluate the robustness of our Bayesian meta-analytic model against the assumption of a correlation of $r  = .50$ we ran a sensitivity analysis (Supplementary Table 4).
 
 ## Supplementary Methods 2 | Bias correction and sensitivity analysis for frequentist results
 
@@ -71,8 +71,8 @@ In our next step, we used selection models to approximate the process by which e
 \renewcommand{\arraystretch}{0.97}
 
 ```{r, tabs1, include=TRUE}
-# Save within-analysis table of experiments
-dat %>%
+# Save table of experiments for the meta-analysis of rotation
+dat_meta %>%
   mutate(
     age_mean = print_days_months(age_mean),
     age_sd = str_c(as.character(round(age_sd)), "d"),
@@ -104,40 +104,40 @@ write_csv(tabs1, file = here(tables_dir, "tabs1_experiments.csv"), na = "n/a")
 ```
 
 ```{r, frequentist}
-# Three-level model
-res_freq <- rma.mv(
+# Compute frequentist three-level model for the meta-analysis of rotation
+res_freq_meta <- rma.mv(
   gi, vi,
   random = ~ 1 | article / experiment,
-  data = dat,
+  data = dat_meta,
   slab = experiment
 )
-print(res_freq)
+print(res_freq_meta)
 
 # Check share of variance at each level of the model
-round(res_freq$sigma2[1] / sum(res_freq$sigma2), 3) # Between-art. (ICC)
-round(res_freq$sigma2[2] / sum(res_freq$sigma2), 3) # Within-art. (between-exp.)
+round(res_freq_meta$sigma2[1] / sum(res_freq_meta$sigma2), 3)
+round(res_freq_meta$sigma2[2] / sum(res_freq_meta$sigma2), 3)
 
 # Get profile likelihoods for sigmas to check that REML has converged
-prof_liks <- profile(res_freq, plot = FALSE)
+prof_liks <- profile(res_freq_meta, plot = FALSE)
 
-# Meta-regression with gender, age, and task
-res_reg_freq <- rma.mv(
+# Compute frequentist meta-regression with gender, age, and task
+res_freq_reg <- rma.mv(
   gi, vi,
   mods = ~ gender * age_c + task,
   random = ~ 1 | article / experiment,
-  data = dat,
+  data = dat_meta,
   slab = experiment
 )
-print(res_reg_freq)
+print(res_freq_reg)
 
-# Meta-analysis of gender differences
-res_gender_freq <- rma.mv(
+# Compute frequentist three-level model for the meta-analysis of gender
+res_freq_gender <- rma.mv(
   gi, vi,
   random = ~ 1 | article / experiment,
   data = dat_gender,
   slab = experiment
 )
-print(res_gender_freq)
+print(res_freq_gender)
 ```
 
 \renewcommand{\arraystretch}{1.10}
@@ -145,17 +145,18 @@ print(res_gender_freq)
 ```{r, tabs2, include=TRUE}
 # Format all frequentist results together as a table
 map2_dfr(
-  list(res_freq, res_reg_freq, res_gender_freq),
+  list(res_freq_meta, res_freq_reg, res_freq_gender),
   c(
     "Meta-analysis of mental rotation",
     "Meta-regression of mental rotation",
     "Meta-analysis of gender differences"
   ),
   ~ print_res_freq_table(
-    res_freq = .x, label_1 = .y, label_col_1 = "Model", print_sigma2s = TRUE
+    res_freq = .x, label_1 = .y, label_col_1 = "Model",
+    print_sigma2s = TRUE
   )
 ) %>%
-  # Rename parameters for readability
+  # Rename parameter labels
   mutate(
     Parameter = c(
       "Hedges' $g$",
@@ -176,11 +177,11 @@ map2_dfr(
     )
   ) %>%
   # Replace NAs with blank cells
-  mutate(across(.fns = ~ ifelse(is.na(.), "", .))) -> tab_freq
+  mutate(across(.fns = ~ ifelse(is.na(.), "", .))) -> tabs2
 
 # Display the table
 apa_table(
-  tab_freq,
+  tabs2,
   caption = "Frequentist meta-analyses and meta-regression",
   font_size = "scriptsize",
   escape = FALSE,
@@ -188,35 +189,35 @@ apa_table(
 )
 
 # Save the table
-write_csv(tab_freq, file = here(tables_dir, "tabs2_frequentist.csv"))
+write_csv(tabs2, file = here(tables_dir, "tabs2_frequentist.csv"))
 ```
 
 ```{r, jackknife}
-# Re-run the jackknife analysis only if requested
+# Re-run the jackknife analysis if requested
 if (run$jackknife_analysis) {
 
-  # Re-fit the meta-analysis, leaving one experiment out at a time
+  # Re-fit the meta-analysis, leaving out one experiment at a time
   # Using parallelization with `furrr`
   n_cores <- availableCores()
   n_workers <- n_cores %/% n_chains
   plan(multisession, workers = n_workers)
-  future_map_dfr(seq_len(nrow(dat)), function(jackknife_index) {
-    dat_jackknife <- dat[-jackknife_index, ]
-    res_jackknife <- update(res_brm, newdata = dat_jackknife, refresh = 0)
+  future_map_dfr(seq_len(nrow(dat_meta)), function(jackknife_index) {
+    dat_jackknife <- dat_meta[-jackknife_index, ]
+    res_jackknife <- update(res_meta, newdata = dat_jackknife, refresh = 0)
     print_res_table(
       res_jackknife,
-      label_1 = dat$article[jackknife_index],
-      label_2 = dat$group_long[jackknife_index],
+      label_1 = dat_meta$article[jackknife_index],
+      label_2 = dat_meta$group_long[jackknife_index],
       label_col_1 = "Article", label_col_2 = "Experiment"
     )
   }) %>%
-    # Show article labels only for the first experiment per article
+    # Show article labels only for the first experiment (row) per article
     mutate(
       Article = if_else(Article == lag(Article, default = ""), "", Article),
-    ) -> tab_jackknife
+    ) -> tabs3
 
   # Save the table
-  write_csv(tab_jackknife, file = here(tables_dir, "jackknife.csv"))
+  write_csv(tabs3, file = here(tables_dir, "tabs3_jackknife.csv"))
 }
 ```
 
@@ -224,14 +225,14 @@ if (run$jackknife_analysis) {
 
 ```{r, tabs3, include=TRUE}
 # Read jackknife table from file
-tab_jackknife <- read_csv(
-  here(tables_dir, "jackknife.csv"),
+tabs3 <- read_csv(
+  here(tables_dir, "tabs3_jackknife.csv"),
   col_types = "c", na = character()
 )
 
 # Display the table
 apa_table(
-  tab_jackknife,
+  tabs3,
   caption = "Jackknife (leave-one-out) analysis", font_size = "scriptsize",
   landscape = TRUE, escape = FALSE, align = "llrrrr"
 )
@@ -241,21 +242,21 @@ apa_table(
 
 ```{r, tabs4, include=TRUE}
 # Read PRISMA checklist from file
-tab_prisma <- read_csv(
+tabs4 <- read_csv(
   here(data_dir, "prisma_checklist.csv"),
   col_types = "ccc", na = character()
 )
 
 # Display the table
 apa_table(
-  tab_prisma,
+  tabs4,
   caption = "PRISMA 2020 checklist", font_size = "scriptsize",
   landscape = TRUE, align = "p{1.5cm}p{2.5cm}p{1cm}p{12cm}p{5.5cm}",
 )
 ```
 
-```{r, sensitivity_analysis}
-# Re-run the sensitivity analyses only if requested
+```{r, sensitivity}
+# Re-run the sensitivity analyses if requested
 if (run$sensitivity_analysis) {
 
   # Re-run the meta-analysis for different values of r_assumed
@@ -264,23 +265,23 @@ if (run$sensitivity_analysis) {
 
       # Re-compute standard errors of the effect sizes
       mutate(
-        dat,
+        dat_meta,
         vi = (dfi / (dfi - 2)) * ((2 * (1 - ri_sens)) / ni) *
           (1 + gi^2 * (ni / (2 * (1 - ri_sens)))) - (gi^2 / ji^2),
         sei = sqrt(vi)
       ) -> dat_ri_sens
 
-      # Re-run meta-analysis
-      res <- update(res_brm, newdata = dat_ri_sens, refresh = 0)
+      # Re-run meta-analysis of mental rotation performance
+      res_meta <- update(res_meta, newdata = dat_ri_sens, refresh = 0)
 
-      # Re-run meta-regression
-      res_reg <- update(res_brm_reg, newdata = dat_ri_sens, refresh = 0)
+      # Re-run meta-regression of mental rotation performance
+      res_reg <- update(res_reg, newdata = dat_ri_sens, refresh = 0)
 
-      # Return both as a tibble together with the label
+      # Return both as a tibble and add a label
       return(
         tibble(
           manipulation_value = str_c("$r$ = ", print_num(ri_sens)),
-          res = list(res),
+          res_meta = list(res_meta),
           res_reg = list(res_reg),
         )
       )
@@ -291,21 +292,25 @@ if (run$sensitivity_analysis) {
 
   # Prior sensitivity analysis
   list(
+    # Less informative prior for the intercept
     `$b\\sim\\mathcal{U}(-10,10)$` = c(
       set_prior("uniform(-10, 10)", class = "b", coef = "Intercept"),
       set_prior("normal(0, 0.5)", class = "b"),
       set_prior("cauchy(0, 0.3)", class = "sd")
     ),
+    # More informative prior for the intercept
     `$b\\sim\\mathcal{N}(0,0.2)$` = c(
       set_prior("normal(0, 0.2)", class = "b", coef = "Intercept"),
       set_prior("normal(0, 0.5)", class = "b"),
       set_prior("cauchy(0, 0.3)", class = "sd")
     ),
+    # Less informative prior for the standard deviations
     `$\\sigma\\sim\\mathcal{U}(0,10)$` = c(
       set_prior("normal(0, 1)", class = "b", coef = "Intercept"),
       set_prior("normal(0, 0.5)", class = "b"),
       set_prior("uniform(0, 10)", class = "sd")
     ),
+    # More informative prior for the standard deviations
     `$\\sigma\\sim\\text{Student-}t(10,0,0.2)$` = c(
       set_prior("normal(0, 1)", class = "b", coef = "Intercept"),
       set_prior("normal(0, 0.5)", class = "b"),
@@ -315,19 +320,19 @@ if (run$sensitivity_analysis) {
     map2_dfr(names(.), function(prior_sens, prior_name) {
 
       # Re-run meta-analysis of mental rotation performance
-      res <- update(res_brm, prior = prior_sens, refresh = 0)
+      res_meta <- update(res_meta, prior = prior_sens, refresh = 0)
 
       # Re-run meta-regression of mental rotation performance
-      res_reg <- update(res_brm_reg, prior = prior_sens, refresh = 0)
+      res_reg <- update(res_reg, prior = prior_sens, refresh = 0)
 
       # Re-run meta-analysis of gender differences
-      res_gender <- update(res_brm_gender, prior = prior_sens, refresh = 0)
+      res_gender <- update(res_gender, prior = prior_sens, refresh = 0)
 
       # Return both as a tibble together with the label
       return(
         tibble(
           manipulation_value = prior_name,
-          res = list(res),
+          res_meta = list(res_meta),
           res_reg = list(res_reg),
           res_gender = list(res_gender)
         )
@@ -340,7 +345,7 @@ if (run$sensitivity_analysis) {
   # Combine results from all sensitivity analyses
   sens <- bind_rows(sens_ri, sens_prior)
 
-  # Create table for the (main) meta-analysis of mental rotation performance
+  # Create table for the meta-analysis of mental rotation performance
   sens %>%
     select(res, manipulation_name, manipulation_value) %>%
     pmap_dfr(function(res, manipulation_name, manipulation_value) {
@@ -349,8 +354,8 @@ if (run$sensitivity_analysis) {
         label_1 = manipulation_name, label_2 = manipulation_value,
         label_col_1 = "Manipulation", label_col_2 = " "
       )
-    }) -> tab_sens
-  write_csv(tab_sens, file = here(tables_dir, "sens.csv"))
+    }) -> tabs5
+  write_csv(tabs5, file = here(tables_dir, "tabs5_sens_meta.csv"))
 
   # Create table for the meta-regression of mental rotation performance
   sens %>%
@@ -363,8 +368,8 @@ if (run$sensitivity_analysis) {
         label_1 = manipulation_name, label_2 = manipulation_value,
         label_col_1 = "Manipulation", label_col_2 = " "
       )
-    }) -> tab_sens_reg
-  write_csv(tab_sens_reg, file = here(tables_dir, "sens_reg.csv"))
+    }) -> tabs6
+  write_csv(tabs6, file = here(tables_dir, "tabs6_sens_reg.csv"))
 
   # Create table for the meta-analysis of gender differences
   sens %>%
@@ -376,8 +381,8 @@ if (run$sensitivity_analysis) {
         label_1 = manipulation_name, label_2 = manipulation_value,
         label_col_1 = "Manipulation", label_col_2 = " "
       )
-    }) -> tab_sens_gender
-  write_csv(tab_sens_gender, file = here(tables_dir, "sens_gender.csv"))
+    }) -> tabs7
+  write_csv(tabs7, file = here(tables_dir, "tabs7_sens_gender.csv"))
 }
 ```
 
@@ -385,14 +390,14 @@ if (run$sensitivity_analysis) {
 
 ```{r, tabs5, include=TRUE}
 # Load sensitivity analysis table from file
-tab_sens <- read_csv(
-  here(tables_dir, "sens.csv"),
+tabs5 <- read_csv(
+  here(tables_dir, "tabs5_sens_meta.csv"),
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
 # Display the table
 apa_table(
-  tab_sens,
+  tabs5,
   caption = "Sensitivity analyses for the meta-analysis of mental rotation performance",
   font_size = "scriptsize", escape = FALSE, align = "llrrrr"
 )
@@ -400,14 +405,14 @@ apa_table(
 
 ```{r, tabs6, include=TRUE}
 # Load sensitivity analysis table from file
-tab_sens_reg <- read_csv(
-  here(tables_dir, "sens_reg.csv"),
+tabs6 <- read_csv(
+  here(tables_dir, "tabs6_sens_reg.csv"),
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
 # Display the table
 apa_table(
-  tab_sens_reg,
+  tabs6,
   caption = "Sensitivity analyses for the meta-regression of mental rotation performance",
   font_size = "scriptsize", landscape = TRUE, escape = FALSE,
   align = "llrrrrrrr"
@@ -416,23 +421,23 @@ apa_table(
 
 ```{r, tabs7, include=TRUE}
 # Load sensitivity analysis table from file
-tab_sens_gender <- read_csv(
-  here(tables_dir, "sens_gender.csv"),
+tabs7 <- read_csv(
+  here(tables_dir, "tabs7_sens_gender.csv"),
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
 # Display the table
 apa_table(
-  tab_sens_gender,
+  tabs7,
   caption = "Sensitivity analyses for the meta-analysis of gender differences",
   font_size = "scriptsize", escape = FALSE, align = "llrrrrrrr"
 )
 ```
 
-```{r, trim_fill_selection, include=TRUE}
+```{r, correction}
 # Re-fit the two frequentist meta-analyses using a two-level model
 # This is because `rma.mv()` is not supported for trim-and-fill/selection models
-list(meta = dat, gender = dat_gender) %>%
+list(meta = dat_meta, gender = dat_gender) %>%
   map(function(x) rma.uni(gi, vi, data = x)) -> res_freq_2_lvl
 
 # Trim-and-fill analysis
@@ -515,23 +520,23 @@ map(names(res_freq_2_lvl), function(name) {
     select(-Parameter) %>%
     rename(`Hedges' $g$` = Estimate)
 }) %>%
-  set_names(names(res_freq_2_lvl)) -> tabs_trim_fill_selection
+  set_names(names(res_freq_2_lvl)) -> tabs_correction
 
 # Save the tables
 write_csv(
-  tabs_trim_fill_selection$meta,
-  file = here(tables_dir, "trim_fill_selection_meta.csv")
+  tabs_correction$meta,
+  file = here(tables_dir, "tabs8_correction_meta.csv")
 )
 write_csv(
-  tabs_trim_fill_selection$gender,
-  file = here(tables_dir, "trim_fill_selection_gender.csv")
+  tabs_correction$gender,
+  file = here(tables_dir, "tabs9_correction_gender.csv")
 )
 ```
 
 ```{r, tabs8, include=TRUE}
 # Display the table
 apa_table(
-  tabs_trim_fill_selection$meta,
+  tabs_correction$meta,
   caption = "Publication bias correction for the meta-analysis of mental rotation performance",
   font_size = "scriptsize", escape = FALSE, align = "llrrrrr"
 )
@@ -540,7 +545,7 @@ apa_table(
 ```{r, tabs9, include=TRUE}
 # Display the table
 apa_table(
-  tabs_trim_fill_selection$gender,
+  tabs_correction$gender,
   caption = "Publication bias correction for the meta-analysis of gender differences",
   font_size = "scriptsize", escape = FALSE, align = "llrrrrr",
 )
@@ -549,8 +554,8 @@ apa_table(
 <!-- Supplementary figures -->
 
 ```{r, figs1, include=TRUE, fig.height=10, fig.width=12, fig.cap="(ref:figs1-caption)"}
-# Get posterior draws for the effect in each experiment
-epred_draws_brm_gender <- epred_draws(res_brm_gender, dat_gender, ndraws = NULL) %>%
+# Get posterior draws for the effect *in each experiment*
+epred_draws_gender <- epred_draws(res_gender, dat_gender, ndraws = NULL) %>%
   mutate(experiment_f = factor(experiment))
 
 # Create forest plot
@@ -559,7 +564,7 @@ dat_gender %>%
   arrange(experiment) %>%
   mutate(
     experiment_f = fct_rev(fct_expand(factor(experiment), "model")),
-    # Show article labels only for the first experiment per article
+    # Show article labels only for the first experiment (row) per article
     article = if_else(article == lag(article, default = ""), "", article),
     # Compute frequentist confidence intervals
     ci_lb = gi - qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
@@ -576,10 +581,10 @@ dat_gender %>%
   geom_text(aes(x = 3.7, label = print_num(gi)), hjust = 1) +
   geom_text(aes(x = 4.4, label = print_num(ci_lb)), hjust = 1) +
   geom_text(aes(x = 5.1, label = print_num(ci_ub)), hjust = 1) +
-  # Add Bayesian highest posterior density intervals for each experiment
+  # Add Bayesian credible intervals for each experiment
   stat_interval(
     aes(x = .epred),
-    data = epred_draws_brm_gender,
+    data = epred_draws_gender,
     alpha = .8,
     point_interval = "mean_qi",
     .width = c(0.5, 0.95),
@@ -594,7 +599,7 @@ dat_gender %>%
   # Add posterior distribution for the meta-analytic effect
   stat_halfeye(
     aes(x = intercept, y = -1),
-    draws_brm_gender,
+    draws_gender,
     point_interval = "mean_qi",
     .width = c(0.95)
   ) +
@@ -604,15 +609,15 @@ dat_gender %>%
     y = -0.5,
     label = c(
       "Three-level model",
-      print_num(summ_brm_gender$intercept),
-      print_num(summ_brm_gender$intercept.lower),
-      print_num(summ_brm_gender$intercept.upper)
+      print_num(summ_gender$intercept),
+      print_num(summ_gender$intercept.lower),
+      print_num(summ_gender$intercept.upper)
     ),
     hjust = c(0, 1, 1, 1),
     fontface = "bold"
   ) +
-  # Add headers for each of the for columns
-  annotate( # Just to make the grid lines disappear
+  # Add column headers
+  annotate(
     "rect",
     xmin = -Inf,
     xmax = Inf,
@@ -665,8 +670,8 @@ ggsave(here(figures_dir, "figs1_gender.pdf"), width = 12, height = 8)
 (ref:figs1-caption) **Meta-analysis of gender differences.** A Bayesian three-level meta-analysis provided evidence for a small gender difference in mental rotation performance between male and female infants. White squares indicate the effect sizes (Hedges' $g$) of gender differences in all individual experiments and black lines indicate their 95% confidence intervals. For experiments resulting in a non-significant gender difference and for which the authors did not specify the exact size of this effect, we assumed an effect size of $g = 0.00$. Gray bars depict the 95% and 50% Bayesian credible interval (CrI) based on a Bayesian three-level random-effects model. These intervals got shrunk towards the meta-analytic effect size because of partial pooling, that is, the three-level model regularizing the impact of experiments with small sample sizes and/or unrealistically large effect sizes. The bold line at the bottom of the figure shows the meta-analytic effect size obtained from the three-level model (black dot) together with its 95% CrI (black line) and its posterior distribution (gray curve).
 
 ```{r, figs2, include=TRUE, fig.height=6, fig.width=12, fig.cap="(ref:figs2-caption)"}
-# Extract convergence statistics from results
-conv_stats <- with(summary(res_brm), tibble(
+# Extract convergence statistics (Rhat, Neff) from Bayesian results
+conv_stats <- with(summary(res_meta), tibble(
   parameter = c(
     "b_Intercept", "sd_article__Intercept", "sd_article:experiment__Intercept"
   ),
@@ -687,20 +692,23 @@ conv_stats <- with(summary(res_brm), tibble(
 # Create trace plot
 n_draws <- n_iter - n_warmup
 bayesplot::mcmc_trace(
-  res_brm,
+  res_meta,
   pars = conv_stats$parameter, facet_args = list(ncol = 1)
 ) +
+  # Parameter label
   geom_text(
     aes(y = 0.45, label = name_expr, color = NA),
     conv_stats,
     y = 0.45, x = -0.042 * n_draws, color = "black", parse = TRUE,
     vjust = 1, angle = 90
   ) +
+  # Rhat label
   geom_text(
     aes(y = y_pos, label = r_hat_expr, color = NA),
     conv_stats,
     x = 0.684 * n_draws, hjust = 1, color = "black", parse = TRUE,
   ) +
+  # Neff labels
   geom_text(
     aes(y = y_pos, label = bulk_ess_expr, color = NA),
     conv_stats,
@@ -711,6 +719,7 @@ bayesplot::mcmc_trace(
     conv_stats,
     x = n_draws, hjust = 1, color = "black", parse = TRUE,
   ) +
+  # Styling
   labs(x = "Sample number", y = NULL, color = "MCMC\nchain") +
   coord_cartesian(expand = FALSE, clip = "off") +
   scale_x_continuous(limits = c(0, n_draws), breaks = seq(0, n_draws, 2000)) +
@@ -734,7 +743,7 @@ ggsave(here(figures_dir, "figs2_convergence.pdf"), width = 12, height = 6)
 (ref:figs2-caption) **Convergence checks for the Bayesian meta-analysis.** For each of the three parameters in the three-level meta-analytic model, gray traces show the exploration of the posterior distribution by four independent Markov Chain Monte Carlo (MCMC) chains. Overlap of the gray traces as well as random upward and downward fluctuations (rather than systematic drifts) indicate efficient exploration of the posterior distribution. $R_\text{hat}$ = potential scale reduction factor, with values close to 1.0 indicating convergence of the chains, $N_\text{eff(bulk)}$ = bulk effective sample size, with larger values indicating better sampling efficiency in the bulk of the distribution (e.g., for estimating the posterior mean), $N_\text{eff(tail)}$ = tail effective sample size, with larger values indicating better sampling efficiency in the tails of the distribution (e.g., for estimating the 95% credible interval [CrI]). Details about these convergence criteria can be found in @vehtari2021.
 
 ```{r, figs3, include=TRUE, fig.height=4, fig.width=12, fig.cap="(ref:figs3-caption)"}
-# Combine profile likelihood results into one data frame
+# Combine frequentist profile likelihood results into one data frame
 prof_liks %>%
   head(-1) %>% # Remove the `comp` element
   map(~ tibble(sigma2 = .$sigma2, ll = .$ll)) %>%
@@ -810,14 +819,14 @@ map2(res_trim_fill, plots_funnel, function(res, plot) {
   # Add new funnel on top of the original funnel plot
   trim_fill_color <- ifelse(sum(res$fill) >= 1, "#e42536", NA)
   plot +
-    # Add trim and fill funnel
+    # Add trim-and-fill funnel
     geom_path(
       data = funnel_trim_fill,
       aes(x = x, y = y),
       color = trim_fill_color
     ) +
     geom_vline(xintercept = res$b, color = trim_fill_color) +
-    # Add filled in studies
+    # Add trim-and-fill studies
     geom_point(
       data = with(res, tibble(gi = yi[fill], sei = sqrt(vi[fill]))),
       color = trim_fill_color, shape = 0

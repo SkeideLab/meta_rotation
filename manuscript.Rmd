@@ -68,16 +68,21 @@ library(here)
 library(readxl)
 library(scales)
 library(tidyverse)
-library(magrittr)
 library(furrr)
 library(metafor)
 library(brms)
-library(bayestestR)
 library(tidybayes)
 library(cowplot)
 
 # Load custom helper functions
 source(here("manuscript_files", "helper_functions.R"))
+
+# Re-run steps that take a long time?
+run <- list(
+  bayesian_models = FALSE,
+  jackknife_analysis = FALSE,
+  sensitivity_analysis = FALSE
+)
 
 # Global chunk options
 knitr::opts_chunk$set(
@@ -89,13 +94,6 @@ knitr::opts_chunk$set(
   fig.width = 7.5,
   out.width = "100%",
   warning = FALSE
-)
-
-# Re-run steps that take a long time?
-run <- list(
-  bayesian_models = FALSE,
-  jackknife_analysis = FALSE,
-  sensitivity_analysis = FALSE
 )
 
 # Options for MCMC sampling when fitting Bayesian multilevel models
@@ -110,19 +108,19 @@ models_dir <- here("results/models")
 figures_dir <- here("results/figures")
 tables_dir <- here("results/tables")
 
-# Download literature search spreadsheet from Google Drive
+# Download spreadsheets from the literature search from Google Drive
 excel_url <- "https://docs.google.com/spreadsheets/d/1xnC0NlQYTXavXaeqQidhi7UKb1pCGAl9Ry3h3Uz3mi0"
 excel_file <- here(data_dir, "literature_search.xlsx")
 # googledrive::drive_auth(use_oob = TRUE)
 # googledrive::drive_download(excel_url, excel_file, overwrite = TRUE)
 
-# Read sheets
-screening <- read_excel(excel_file, sheet = "screening")
-included <- read_excel(excel_file, sheet = "included", na = "NA")
-gender <- read_excel(excel_file, sheet = "gender_differences", na = "NA")
+# Read the sheets
+raw_screening <- read_excel(excel_file, sheet = "screening")
+raw_meta <- read_excel(excel_file, sheet = "included", na = "NA")
+raw_gender <- read_excel(excel_file, sheet = "gender_differences", na = "NA")
 
-# Add columns to the table of included experiments
-included %>%
+# Add columns to the table of experiments for the meta-analysis
+raw_meta %>%
   mutate(
 
     # Add unique experiment identifier
@@ -133,9 +131,9 @@ included %>%
       !is.na(mean_diff) ~ mean_diff,
       TRUE ~ mean_novel - mean_familiar
     ),
-    # Add d_z from paired t test of condition means (Rosenthal, 1991)
+    # Add d_z from paired-samples t-test of condition means (Rosenthal, 1991)
     d_z_t = t / sqrt(sample_size),
-    # Add d_z from ANOVA F value via conversion to a t value
+    # Add d_z from ANOVA F-statistic via conversion to a t-statistic
     d_z_f = sqrt(f) / sqrt(sample_size) * sign_f,
     # Add d_z from mean and standard deviation of the difference
     d_z_diff = mean_diff / sd_diff,
@@ -143,16 +141,16 @@ included %>%
     # See http://dx.doi.org/10.20982/tqmp.14.4.p242
     sd_av = sqrt((sd_novel^2 + sd_familiar^2) / 2),
     d_av = mean_diff / sd_av,
-    # Add d from one-sample t test of novelty preference scores
+    # Add d from one-sample t-test of novelty preference scores
     d_nov_pref = (nov_pref - 0.5) / sd_nov_pref,
 
     # Choose one type of outcome variable for each experiment
     di = case_when(
       # 1. If d was reported directed
       !is.na(d) ~ d,
-      # 2. If a paired sample t test was reported
+      # 2. If a paired-samples t-test was reported
       !is.na(d_z_t) ~ d_z_t,
-      # 3. If ANOVA was reported
+      # 3. If an ANOVA was reported
       !is.na(d_z_f) ~ d_z_f,
       # 4. If the difference between means and its SD were reported
       !is.na(d_z_diff) ~ d_z_diff,
@@ -188,7 +186,7 @@ included %>%
       TRUE ~ "Mixed"
     ) %>% factor(levels = c("Mixed", "Female", "Male")),
 
-    # Recode mean sample age in years (centered) for meta-regression
+    # Recode mean sample age in years (mean-centered) for meta-regression
     age = age_mean / 365.25,
     age_c = age - mean(age, na.rm = TRUE),
     age_sd = age_sd / 365.25,
@@ -210,7 +208,7 @@ included %>%
   # Order rows by experiment ID
   arrange(experiment) -> dat_all
 
-# Overview of the different effect sizes
+# Get an overview of the different effect sizes
 dat_all %>%
   select(
     article,
@@ -228,9 +226,9 @@ dat_all %>%
   ) %>%
   print(n = Inf)
 
-# Compute standard error of Cohen's d based on assumed correlation
+# Compute standard errors of the effect sizes based on assumed correlation
 # See Hedges' formula on p. 253 in http://dx.doi.org/10.20982/tqmp.14.4.p242
-# This will need a sensitivity analysis regarding the values of `r_assumed`
+# You'll find a sensitivity analysis for `r_assumed` in the `supplement.Rmd`
 r_assumed <- 0.5
 dat_all %>%
   mutate(
@@ -239,43 +237,43 @@ dat_all %>%
       (1 + gi^2 * (ni / (2 * (1 - r_assumed)))) - (gi^2 / ji^2),
     sei = sqrt(vi)
   ) %>%
-  filter(!is.na(gi)) -> dat_all_r
+  filter(!is.na(gi)) -> dat_meta_all
 
-# Show number of experiments per gender grouping strategy
-table(dat_all_r$gender_split)
+# Show number of experiments per gender grouping strategy (mixed/split)
+table(dat_meta_all$gender_split)
 
-# Extract split or mixed experiments only
-dat_split <- filter(dat_all_r, gender_split %in% c("split", "split_only"))
-dat_mixed <- filter(dat_all_r, gender_split %in% c("mixed", "mixed_only"))
+# Extract either split or mixed experiments only
+dat_split <- filter(dat_meta_all, gender_split %in% c("split", "split_only"))
+dat_mixed <- filter(dat_meta_all, gender_split %in% c("mixed", "mixed_only"))
 
-# Combine both strategies, preferring split experiments
+# Combine both strategies but preferring split experiments
 dat_both_split <- filter(
-  dat_all_r, gender_split %in% c("split", "mixed_only", "split_only")
+  dat_meta_all, gender_split %in% c("split", "mixed_only", "split_only")
 )
 
-# Combine both strategies, preferring mixed experiments
+# Combine both strategies but preferring mixed experiments
 dat_both_mixed <- filter(
-  dat_all_r, gender_split %in% c("mixed", "mixed_only", "split_only")
+  dat_meta_all, gender_split %in% c("mixed", "mixed_only", "split_only")
 )
 
-# We go ahead with the last solution as to use the maximum amount of information
-# while not biasing the gender results
-dat <- dat_both_mixed
+# We go ahead with the last solution (i.e., prefer mixed experiments) as to use
+# the maximum amount of information while not biasing the gender results
+dat_meta <- dat_both_mixed
 
-# Extract some descriptive statistics for usage in the main text
-descs <- list(
-  n_articles = length(unique(dat$article)),
-  n_experiments = nrow(dat),
-  n_infants = sum(dat$sample_size),
-  percent_female = mean(dat$female_percent, na.rm = TRUE),
-  min_age_months = as.integer(min(dat$age_min, na.rm = TRUE) / 30.417),
-  max_age_months = as.integer(max(dat$age_max, na.rm = TRUE) / 30.417),
+# Extract some descriptive statistics so we can paste them in the main text
+descriptives <- list(
+  n_articles = length(unique(dat_meta$article)),
+  n_experiments = nrow(dat_meta),
+  n_infants = sum(dat_meta$sample_size),
+  percent_female = mean(dat_meta$female_percent, na.rm = TRUE),
+  min_age_months = as.integer(min(dat_meta$age_min, na.rm = TRUE) / 30.417),
+  max_age_months = as.integer(max(dat_meta$age_max, na.rm = TRUE) / 30.417),
   mean_age_weighted = print_days_months(
-    sum(dat$age_mean * dat$ni) / (sum(dat$ni)),
+    sum(dat_meta$age_mean * dat_meta$ni) / (sum(dat_meta$ni)),
     long = TRUE
   ),
-  n_experiments_habituation = nrow(filter(dat, task == "Habituation")),
-  n_experiments_voe = nrow(filter(dat, task == "VoE"))
+  n_experiments_habituation = nrow(filter(dat_meta, task == "Habituation")),
+  n_experiments_voe = nrow(filter(dat_meta, task == "VoE"))
 )
 ```
 
@@ -285,13 +283,13 @@ The cognitive ability to move visual object representations in mind for recognit
 
 Previous meta-analyses revealed that males solve mental rotation tasks slightly faster than females on average [@linn1985; @voyer1995; @voyer2011; @maeda2013]. Effect sizes of this difference, however, are heterogeneous and often only medium in size (mean weighted $g = 0.37\text{--}0.73$). Interestingly, a recent meta-analysis [@lauer2019a] in 3-17-year-old children and adolescents suggests even only a small-to-medium difference (mean weighted $g = 0.39$). Whether gender differences in mental rotation behavior already emerge during infancy remains unknown.
 
-In the present study, we meta-analyzed `r descs$n_experiments` effect sizes derived from looking times in mental rotation tasks conducted by `r formatC(descs$n_infants, big.mark = ",")` infants (`r print_perc(descs$percent_female)` female) aged `r descs$min_age_months` to `r descs$max_age_months` months (mean age of `r descs$mean_age_weighted`; Supplementary Table 1). All tasks were embedded either into habituation experiments (`r descs$n_experiments_habituation`) or violation of expectation experiments (`r descs$n_experiments_voe`) [@fantz1964; @baillargeon1985]. These experiments comprised real world stimuli (e.g., toy objects [@antrilli2016]), three-dimensional digital stimuli (e.g., cube figures [@moore2008]), or two-dimensional digital stimuli (e.g., digits [@quinn2008]). In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object. Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation. In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle. Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle. Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown. Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle. In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
+In the present study, we meta-analyzed `r descriptives$n_experiments` effect sizes derived from looking times in mental rotation tasks conducted by `r formatC(descriptives$n_infants, big.mark = ",")` infants (`r print_perc(descriptives$percent_female)` female) aged `r descriptives$min_age_months` to `r descriptives$max_age_months` months (mean age of `r descriptives$mean_age_weighted`; Supplementary Table 1). All tasks were embedded either into habituation experiments (`r descriptives$n_experiments_habituation`) or violation of expectation experiments (`r descriptives$n_experiments_voe`) [@fantz1964; @baillargeon1985]. These experiments comprised real world stimuli (e.g., toy objects [@antrilli2016]), three-dimensional digital stimuli (e.g., cube figures [@moore2008]), or two-dimensional digital stimuli (e.g., digits [@quinn2008]). In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object. Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation. In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle. Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle. Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown. Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle. In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
 
 Following previous work in older populations, we hypothesized that looking times in mental rotation experiments are on average longer in male compared to female infants. Effect sizes were assumed to be small.
 
-```{r, meta_analysis}
+```{r, meta}
 # Specify priors
-prior_c <- c(
+prior_meta <- c(
   set_prior("normal(0, 1)", class = "b"),
   set_prior("cauchy(0, 0.3)", class = "sd")
 )
@@ -299,10 +297,10 @@ prior_c <- c(
 # Run prior predictive simulation
 dir.create(models_dir, showWarnings = FALSE, recursive = TRUE)
 brms_file_refit <- ifelse(run$bayesian_models, "always", "never")
-res_prior <- brm(
+res_prior_meta <- brm(
   gi | se(sei) ~ 0 + Intercept + (1 | article / experiment),
-  data = dat,
-  prior = prior_c,
+  data = dat_meta,
+  prior = prior_meta,
   sample_prior = "only",
   save_pars = save_pars(all = TRUE),
   chains = n_chains,
@@ -311,26 +309,26 @@ res_prior <- brm(
   cores = n_chains,
   control = list(adapt_delta = 0.99),
   seed = seed,
-  file = here(models_dir, "res_prior"),
+  file = here(models_dir, "res_prior_meta"),
   file_refit = brms_file_refit
 )
-summary(res_prior)
+summary(res_prior_meta)
 
 # Run Bayesian multilevel model
-res_brm <- update(
-  res_prior,
+res_meta <- update(
+  res_prior_meta,
   sample_prior = FALSE,
-  file = here(models_dir, "res_brm"),
+  file = here(models_dir, "res_meta"),
   file_refit = brms_file_refit
 )
-summary(res_brm)
+summary(res_meta)
 
 # Get posterior probability mass > 0 for the meta-analytic effect
-(hyp_brm <- hypothesis(res_brm, "Intercept > 0")$hypothesis)
+(hyp_meta <- hypothesis(res_meta, "Intercept > 0")$hypothesis)
 
 # Extract posterior draws for the meta-analytic effects
-spread_draws(res_brm, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
-  # Compute variances and ICC
+spread_draws(res_meta, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
+  # Compute variances and ICC from standard deviations
   mutate(
     intercept = b_Intercept,
     sigma_article = sd_article__Intercept,
@@ -340,26 +338,26 @@ spread_draws(res_brm, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
     sigma2_total = sigma2_article + sigma2_experiment,
     icc = sigma2_article / sigma2_total,
     .keep = "unused"
-  ) -> draws_brm
+  ) -> draws_meta
 
-# Summarize as mean and 95% credible intervals
-(summ_brm <- as.list(mean_qi(draws_brm)))
+# Summarize as means and 95% credible intervals
+(summ_meta <- as.list(mean_qi(draws_meta)))
 ```
 
 ```{r, fig1, include=TRUE, fig.height=14, fig.width=12, fig.cap="(ref:fig1-caption)"}
-# Get posterior draws for the effect in each experiment
-epred_draws_brm <- epred_draws(res_brm, dat, ndraws = NULL) %>%
+# Get posterior draws for the effect *in each experiment*
+epred_draws_meta <- epred_draws(res_meta, dat_meta, ndraws = NULL) %>%
   mutate(experiment_f = factor(experiment))
 
 # Create forest plot
-dat %>%
+dat_meta %>%
   # Make sure the plot will be ordered alphabetically by experiment IDs
   arrange(experiment) %>%
   mutate(
     experiment_f = fct_rev(fct_expand(factor(experiment), "model")),
-    # Show article labels only for the first experiment per article
+    # Show article labels only for the first experiment (row) per article
     article = if_else(article == lag(article, default = ""), "", article),
-    # Compute frequentist confidence intervals
+    # Compute frequentist confidence intervals for each experiment
     ci_lb = gi - qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
     ci_ub = gi + qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
     ci_print = print_mean_ci(gi, ci_lb, ci_ub)
@@ -374,10 +372,10 @@ dat %>%
   geom_text(aes(x = 3.7, label = print_num(gi)), hjust = 1) +
   geom_text(aes(x = 4.4, label = print_num(ci_lb)), hjust = 1) +
   geom_text(aes(x = 5.1, label = print_num(ci_ub)), hjust = 1) +
-  # Add Bayesian highest posterior density intervals for each experiment
+  # Add Bayesian credible intervals for each experiment
   stat_interval(
     aes(x = .epred),
-    data = epred_draws_brm,
+    data = epred_draws_meta,
     alpha = .8,
     point_interval = "mean_qi",
     .width = c(0.5, 0.95),
@@ -392,7 +390,7 @@ dat %>%
   # Add posterior distribution for the meta-analytic effect
   stat_halfeye(
     aes(x = intercept, y = -1),
-    draws_brm,
+    draws_meta,
     point_interval = "mean_qi",
     .width = c(0.95)
   ) +
@@ -402,26 +400,26 @@ dat %>%
     y = -0.5,
     label = c(
       "Three-level model",
-      print_num(summ_brm$intercept),
-      print_num(summ_brm$intercept.lower),
-      print_num(summ_brm$intercept.upper)
+      print_num(summ_meta$intercept),
+      print_num(summ_meta$intercept.lower),
+      print_num(summ_meta$intercept.upper)
     ),
     hjust = c(0, 1, 1, 1),
     fontface = "bold"
   ) +
-  # Add headers for each of the for columns
+  # Add column headers
   annotate(
     "rect",
     xmin = -Inf,
     xmax = Inf,
-    ymin = descs$n_experiments + 0.5,
+    ymin = descriptives$n_experiments + 0.5,
     ymax = Inf,
     fill = "white"
   ) +
   annotate(
     "text",
     x = c(-9.9, -7.1, 0, 3.7, 4.4, 5.1),
-    y = descs$n_experiments + 1.5,
+    y = descriptives$n_experiments + 1.5,
     label = c(
       "Article",
       "Experiment",
@@ -435,7 +433,7 @@ dat %>%
   ) +
   # Styling
   coord_cartesian(
-    ylim = c(-1.5, descs$n_experiments + 2), expand = FALSE, clip = "off"
+    ylim = c(-1.5, descriptives$n_experiments + 2), expand = FALSE, clip = "off"
   ) +
   scale_x_continuous(breaks = seq(-3, 3, 0.5)) +
   annotate("segment", x = -3.3, xend = 3.3, y = -1.5, yend = -1.5) +
@@ -458,7 +456,7 @@ dat %>%
 
 # Save the plot
 dir.create(figures_dir, showWarnings = FALSE)
-ggsave(here(figures_dir, "forest.pdf"), width = 12, height = 14)
+ggsave(here(figures_dir, "fig1_meta.pdf"), width = 12, height = 14)
 ```
 
 \newpage
@@ -469,17 +467,17 @@ ggsave(here(figures_dir, "forest.pdf"), width = 12, height = 14)
 
 (ref:fig1-caption) **Mental rotation performance.** A Bayesian three-level meta-analysis provided evidence for mental rotation ability in infants. White squares depict the effect sizes (Hedges' $g$) for infants' mental rotation performance in all individual experiments and black lines depict their 95% confidence intervals. Gray bars indicate the 95% and 50% Bayesian credible intervals (CrI). These intervals got shrunk towards the meta-analytic effect size because of partial pooling which regularized the impact of experiments with small sample sizes or unrealistically large effect sizes to prevent overfitting the model. The last line shows the meta-analytic effect size (black dot) together with its 95% CrI (black line) and its posterior distribution (gray curve).
 
-For our first meta-analytic model effect sizes were quantified as the standardized mean difference in infants' looking times for novel and familiar rotated objects. Using this effect size index we ran a Bayesian three-level random-effects model to test if there was evidence that infants did perform mental rotation. Across studies, infants indeed looked longer at novel rotated objects than at familiar rotated objects, with a standardized mean difference of $g = `r summ_brm$intercept`$, 95% credible interval (CrI) [`r summ_brm$intercept.lower`, `r summ_brm$intercept.upper`] (Fig. 1). The probability for this effect being greater than zero was `r print_perc(hyp_brm$Post.Prob)`. The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_brm$sigma2_experiment`$, 95% CrI [`r summ_brm$sigma2_experiment.lower`, `r summ_brm$sigma2_experiment.upper`], at the experiment level and $\sigma_{\text{Article}}^2 = `r summ_brm$sigma2_article`$, 95% CrI [`r summ_brm$sigma2_article.lower`, `r summ_brm$sigma2_article.upper`] at the article level. Therefore, approximately `r print_perc(1 - summ_brm$icc)` of the heterogeneity between effect sizes was attributable to differences between experiments *within* articles and `r print_perc(summ_brm$icc)` was attributable to differences *between* articles.
+For our first meta-analytic model effect sizes were quantified as the standardized mean difference in infants' looking times for novel and familiar rotated objects. Using this effect size index we ran a Bayesian three-level random-effects model to test if there was evidence that infants did perform mental rotation. Across studies, infants indeed looked longer at novel rotated objects than at familiar rotated objects, with a standardized mean difference of $g = `r summ_meta$intercept`$, 95% credible interval (CrI) [`r summ_meta$intercept.lower`, `r summ_meta$intercept.upper`] (Fig. 1). The probability for this effect being greater than zero was `r print_perc(hyp_meta$Post.Prob)`. The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_meta$sigma2_experiment`$, 95% CrI [`r summ_meta$sigma2_experiment.lower`, `r summ_meta$sigma2_experiment.upper`], at the experiment level and $\sigma_{\text{Article}}^2 = `r summ_meta$sigma2_article`$, 95% CrI [`r summ_meta$sigma2_article.lower`, `r summ_meta$sigma2_article.upper`] at the article level. Therefore, approximately `r print_perc(1 - summ_meta$icc)` of the heterogeneity between effect sizes was attributable to differences between experiments *within* articles and `r print_perc(summ_meta$icc)` was attributable to differences *between* articles.
 
 ## Effects of gender, age, and task type
 
-```{r, meta_regression}
+```{r, reg}
 # Set numerical contrasts for factor variables
-contrasts(dat$gender) <- MASS::contr.sdif(3)
-contrasts(dat$task) <- MASS::contr.sdif(2)
+contrasts(dat_meta$gender) <- MASS::contr.sdif(3)
+contrasts(dat_meta$task) <- MASS::contr.sdif(2)
 
 # Specify priors
-prior_c <- c(
+prior_reg <- c(
   set_prior("normal(0, 1)", class = "b", coef = "Intercept"),
   set_prior("normal(0, 0.5)", class = "b"),
   set_prior("cauchy(0, 0.3)", class = "sd")
@@ -489,8 +487,8 @@ prior_c <- c(
 res_prior_reg <- brm(
   gi | se(sei) ~ 0 + Intercept + gender * age_c + task +
     (1 | article / experiment),
-  data = dat,
-  prior = prior_c,
+  data = dat_meta,
+  prior = prior_reg,
   sample_prior = "only",
   save_pars = save_pars(all = TRUE),
   chains = n_chains,
@@ -505,28 +503,28 @@ res_prior_reg <- brm(
 summary(res_prior_reg)
 
 # Run Bayesian multilevel model
-res_brm_reg <- update(
+res_reg <- update(
   res_prior_reg,
   sample_prior = FALSE,
-  file = here(models_dir, "res_brm_reg"),
+  file = here(models_dir, "res_reg"),
   file_refit = brms_file_refit
 )
-summary(res_brm_reg)
+summary(res_reg)
 
 # Get posterior probability mass > 0 for all regression weights
 (hyps_brm_reg <- list(
-  intercept = hypothesis(res_brm_reg, "Intercept > 0")$hypothesis,
-  female_mixed = hypothesis(res_brm_reg, "gender2M1 < 0")$hypothesis,
-  male_female = hypothesis(res_brm_reg, "gender3M2 > 0")$hypothesis,
-  age = hypothesis(res_brm_reg, "age_c > 0")$hypothesis,
-  voe_habituation = hypothesis(res_brm_reg, "task2M1 > 0")$hypothesis,
-  female_mixed_age = hypothesis(res_brm_reg, "gender2M1:age_c > 0")$hypothesis,
-  male_female_age = hypothesis(res_brm_reg, "gender3M2:age_c > 0")$hypothesis
+  intercept = hypothesis(res_reg, "Intercept > 0")$hypothesis,
+  female_mixed = hypothesis(res_reg, "gender2M1 < 0")$hypothesis,
+  male_female = hypothesis(res_reg, "gender3M2 > 0")$hypothesis,
+  age = hypothesis(res_reg, "age_c > 0")$hypothesis,
+  voe_habituation = hypothesis(res_reg, "task2M1 > 0")$hypothesis,
+  female_mixed_age = hypothesis(res_reg, "gender2M1:age_c > 0")$hypothesis,
+  male_female_age = hypothesis(res_reg, "gender3M2:age_c > 0")$hypothesis
 ))
 
 # Extract posterior draws for the meta-analytic effects
-spread_draws(res_brm_reg, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
-  # Compute variances and ICC
+spread_draws(res_reg, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
+  # Compute variances and ICC from standard deviations
   mutate(
     intercept = b_Intercept,
     female_mixed = b_gender2M1,
@@ -541,40 +539,44 @@ spread_draws(res_brm_reg, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
     sigma2_experiment = `sd_article:experiment__Intercept`^2,
     sigma2_total = sigma2_article + sigma2_experiment,
     icc = sigma2_article / sigma2_total,
-  ) -> draws_brm_reg
+  ) -> draws_reg
 
-# Summarize as mean and 95% credible intervals
-(summ_brm_reg <- as.list(mean_qi(draws_brm_reg)))
+# Summarize as means and 95% credible intervals
+(summ_reg <- as.list(mean_qi(draws_reg)))
 ```
 
 As a next step, we conducted a meta-regression analysis to test if the gender of the infants, their age, or the type of mental rotation task was related to mental rotation performance (Fig. 2).
-Indeed, experiments with all-male samples revealed larger looking time differences than experiments with all-female samples, $b = `r summ_brm_reg$male_female`$, 95% CrI [`r summ_brm_reg$male_female.lower`, `r summ_brm_reg$male_female.upper`].
+Indeed, experiments with all-male samples revealed larger looking time differences than experiments with all-female samples, $b = `r summ_reg$male_female`$, 95% CrI [`r summ_reg$male_female.lower`, `r summ_reg$male_female.upper`].
 The probability for this effect being larger than zero was `r print_perc(hyps_brm_reg$male_female$Post.Prob)`.
-We found no difference between mixed-gender and all-female samples, $b = `r -summ_brm_reg$female_mixed`$, 95% CrI [`r -summ_brm_reg$female_mixed.lower`, `r -summ_brm_reg$female_mixed.upper`] (`r print_perc(hyps_brm_reg$female_mixed$Post.Prob)` probability of an effect larger than zero).
-Additionally, mean age was not related to mental rotation performance, with a change per year of $b = `r summ_brm_reg$age`$, 95% [`r summ_brm_reg$age.lower`, `r summ_brm_reg$age.upper`].
-We also did not detect an interaction between gender and age ([females - mixed] $\times$ age: $b = `r summ_brm_reg$female_mixed_age`$, 95% CrI [`r summ_brm_reg$female_mixed_age.lower`, `r summ_brm_reg$female_mixed_age.upper`]; [males - females] $\times$ age: $b = `r summ_brm_reg$male_female_age`$, 95% CrI [`r summ_brm_reg$male_female_age.lower`, `r summ_brm_reg$male_female_age.upper`]).
-Finally, there was weak evidence that violation of expectation tasks yielded larger effects than habituation tasks, $b = `r summ_brm_reg$voe_habituation`$, 95% [`r summ_brm_reg$voe_habituation.lower`, `r summ_brm_reg$voe_habituation.upper`].
+We found no difference between mixed-gender and all-female samples, $b = `r -summ_reg$female_mixed`$, 95% CrI [`r -summ_reg$female_mixed.lower`, `r -summ_reg$female_mixed.upper`] (`r print_perc(hyps_brm_reg$female_mixed$Post.Prob)` probability of an effect larger than zero).
+Additionally, mean age was not related to mental rotation performance, with a change per year of $b = `r summ_reg$age`$, 95% [`r summ_reg$age.lower`, `r summ_reg$age.upper`].
+We also did not detect an interaction between gender and age ([females - mixed] $\times$ age: $b = `r summ_reg$female_mixed_age`$, 95% CrI [`r summ_reg$female_mixed_age.lower`, `r summ_reg$female_mixed_age.upper`]; [males - females] $\times$ age: $b = `r summ_reg$male_female_age`$, 95% CrI [`r summ_reg$male_female_age.lower`, `r summ_reg$male_female_age.upper`]).
+Finally, there was weak evidence that violation of expectation tasks yielded larger effects than habituation tasks, $b = `r summ_reg$voe_habituation`$, 95% [`r summ_reg$voe_habituation.lower`, `r summ_reg$voe_habituation.upper`].
 The probability for this effect being greater than zero was `r print_perc(hyps_brm_reg$voe_habituation$Post.Prob)`.
 
 ```{r, fig2, include=TRUE, fig.height=5, fig.width=12, fig.cap="(ref:fig2-caption)"}
-# Get draws from the posterior distribution
-draws_reg <- epred_draws(
-  res_brm_reg,
-  dat,
+# Get draws from the posterior distribution *for each experiment*
+epred_draws_reg <- epred_draws(
+  res_reg,
+  dat_meta,
   ndraws = NULL,
   re_formula = NA
 )
 
 # Use colors as proposed in https://arxiv.org/abs/2107.02270
-habi_colors <- c(
-  "Female, Habituation" = "#5790fc",
-  "Male, Habituation" = "#f89c20",
-  "Mixed, Habituation" = "#e42536"
+# The four colors code for a combination of tasks (Habituation, VoE) and gender
+# (female, male, mixed)
+plot_reg_colors <- list(
+  habituation = c(
+    "Female, Habituation" = "#5790fc",
+    "Male, Habituation" = "#f89c20",
+    "Mixed, Habituation" = "#e42536"
+  ),
+  voe = c("Mixed, VoE" = "#964a8b")
 )
-voe_colors <- c("Mixed, VoE" = "#964a8b")
 
-# Regression plot
-dat %>%
+# Create regression plot
+dat_meta %>%
   ggplot(aes(x = age * 12, y = gi)) +
   geom_hline(yintercept = seq(-1, 2, 0.5), color = "grey90") +
   annotate(
@@ -582,19 +584,19 @@ dat %>%
     xmin = 5.5, xmax = Inf, ymin = 1.25, ymax = Inf,
     color = NA, fill = "white"
   ) +
-  # Regression lines and HPDIs - Habituation tasks
+  # Regression lines and CrIs for Habituation tasks
   stat_lineribbon(
     aes(y = .epred, color = gender_task),
-    data = draws_reg,
+    data = epred_draws_reg,
     alpha = .4,
     point_interval = "mean_qi",
     .width = c(0.5, 0.95)
   ) +
-  # Individual study effect sizes - Habituation tasks
+  # Individual study effect sizes for Habituation tasks
   geom_point(aes(color = gender_task, size = ni), shape = 0) +
   scale_color_manual(
-    values = habi_colors,
-    breaks = names(habi_colors),
+    values = plot_reg_colors$habituation,
+    breaks = names(plot_reg_colors$habituation),
     labels = c("Females", "Males", "Mixed gender"),
     na.value = NA
   ) +
@@ -603,21 +605,21 @@ dat %>%
     override.aes = list(fill = NA),
     order = 1
   )) +
-  # Regression lines and HPDIs - VoE tasks
+  # Regression lines and CrIs for VoE tasks
   ggnewscale::new_scale_color() +
   stat_lineribbon(
     aes(y = .epred, color = gender_task),
-    data = draws_reg,
+    data = epred_draws_reg,
     fill = NA,
     alpha = .4,
     point_interval = "mean_qi",
     .width = c(0.5, 0.95)
   ) +
-  # Individual study effect sizes - VoE tasks
+  # Individual study effect sizes for VoE tasks
   geom_point(aes(color = gender_task, size = ni), shape = 0) +
   scale_color_manual(
-    values = voe_colors,
-    breaks = names(voe_colors),
+    values = plot_reg_colors$voe,
+    breaks = names(plot_reg_colors$voe),
     labels = c("Mixed gender"),
     na.value = NA
   ) +
@@ -647,7 +649,7 @@ dat %>%
     text = element_text(family = "Helvetica", color = "black")
   ) -> plot_reg
 
-# Extract the legend so that we can put it inside the plotting area
+# Extract the legend so that we can put it inside the plot later on
 plot_reg_legend <- get_legend(plot_reg + theme(legend.position = "top"))
 
 # Define new labels for the regression coefficients
@@ -662,14 +664,17 @@ coef_colnames <- c(
 )
 
 # Plot posterior distributions of the regression coefficients
-draws_reg_coef <- tidy_draws(res_brm_reg)
-draws_reg_coef %>%
+epred_draws_reg_coef <- tidy_draws(res_reg)
+epred_draws_reg_coef %>%
+  # Convert to long format
   select(all_of(names(coef_colnames))) %>%
   gather() %>%
   mutate(coef = factor(key, levels = names(coef_colnames))) %>%
+  # Plot coefficients as "half eyes" (mean + CrIs + distribution)
   ggplot(aes(x = value, y = fct_rev(coef))) +
   geom_vline(xintercept = seq(-1, 1, 0.5), color = "grey90") +
   stat_halfeye(point_interval = "mean_qi", .width = c(0.5, 0.95)) +
+  # Styling
   coord_cartesian(xlim = c(-1.25, 1.25), clip = "off") +
   scale_x_continuous(breaks = seq(-1, 1, 0.5)) +
   scale_y_discrete(labels = coef_colnames) +
@@ -694,7 +699,7 @@ draws_reg_coef %>%
     text = element_text(family = "Helvetica", color = "black")
   ) -> plot_coef
 
-# Combine plots
+# Combine the two regression plots
 plot_grid(
   plot_reg, plot_coef,
   nrow = 1, rel_widths = c(3, 2), labels = "auto",
@@ -704,15 +709,15 @@ plot_grid(
   draw_plot(plot_reg_legend, x = 0.385, y = 0.865, hjust = 0.5, vjust = 0.5)
 
 # Save plot
-ggsave(here(figures_dir, "regression_coef.pdf"), width = 12, height = 5)
+ggsave(here(figures_dir, "fig2_reg.pdf"), width = 12, height = 5)
 ```
 
 (ref:fig2-caption) **Effects of gender, age, and task.** **a,** Squares show the effect size (Hedges' $g$) for infants' mental rotation performance in each of the 59 individual experiments. Squares are color-coded according to the type of habituation task and the gender of the infants (blue = habituation task, all-female sample, yellow = habituation task, all-male sample, red = habituation task, mixed-gender sample, purple = violation of expectation [VoE] task, mixed-gender sample). Lines indicate the best-fit regression estimates according to a Bayesian three-level meta-regression model and gray ribbons indicate their corresponding 95% and 50% credible interval (CrI). **b,** Fixed effect estimates obtained from the Bayesian three-level meta-regression model are depicted as black dots together with their 95% Crl (thin black lines) and 50% Crl (thick black lines). Gray curves indicate the posterior distribution for each effect.
 
-```{r, gender_differences}
-# Extract relevant effect sizes
-gender %>%
-  # Remove redundant samples
+```{r, gender}
+# Compute relevant effect sizes for the meta-analysis of gender differences
+raw_gender %>%
+  # Remove effect sizes from experiments with redundant samples
   filter(!redundant) %>%
   # Add columns
   mutate(
@@ -720,14 +725,14 @@ gender %>%
     # Add unique experiment identifier
     experiment = str_c(year, article, group_long, sep = ", "),
 
-    # Re-code non-significant f values as an effect of 0
+    # Re-code non-significant F-statistics as an effect size of d = 0
     f = as.numeric(f),
     f_assumed = ifelse(is.nan(f), 0, f),
 
-    # Add d from two-samples t test (Lakens, 2013)
+    # Add d from two-samples t-test (Lakens, 2013)
     d_t = t * sqrt(1 / female_n + 1 / male_n),
 
-    # Add d from ANOVA F value via conversion to a t value
+    # Add d from ANOVA F-statistic via conversion to a t-statistic
     d_f = sqrt(f_assumed) * sqrt(1 / female_n + 1 / male_n),
 
     # Add d from mean difference and pooled standard deviation
@@ -738,7 +743,7 @@ gender %>%
     sd_diff_pooled = sqrt(sd_diff_pooled_numerator / df),
     d_diff = mean_diff / sd_diff_pooled,
 
-    # Add d from one-sample t test of novelty preference scores
+    # Add d from one-sample t-test of novelty preference scores
     mean_nov_pref = novelty_pref_males_mean - novelty_pref_females_mean,
     sd_nov_pref_pooled_numerator = (male_n - 1) * (novelty_pref_males_sd^2) +
       (female_n) * (novelty_pref_females_sd^2),
@@ -749,9 +754,9 @@ gender %>%
     di = case_when(
       # 1. If d was reported directed
       !is.na(d) ~ d,
-      # 2. If a t test was reported
+      # 2. If a t-test was reported
       !is.na(d_t) ~ d_t,
-      # 3. If ANOVA was reported
+      # 3. If an ANOVA was reported
       !is.na(d_f) ~ d_f,
       # 4. If the difference between means and their SDs were reported
       !is.na(d_diff) ~ d_diff,
@@ -779,10 +784,10 @@ gender %>%
     vi = (df / (df - 2)) * (2 / nhi) * (1 + gi^2 * (nhi / 2)) - (gi^2 / (j^2)),
     sei = sqrt(vi)
   ) %>%
-  # Remove experiments that didn't provide an effect size
+  # Remove experiments that didn't provide any effect size
   filter(!is.na(gi)) -> dat_gender
 
-# Overview of the different effect sizes
+# Get an overview of the different effect sizes
 dat_gender %>%
   select(
     article,
@@ -798,17 +803,14 @@ dat_gender %>%
   ) %>%
   print(n = Inf)
 
-# Specify priors
-prior_c <- c(
-  set_prior("normal(0, 1)", class = "b"),
-  set_prior("cauchy(0, 0.3)", class = "sd")
-)
+# Use the same priors as for the main meta-analysis
+prior_gender <- prior_meta
 
 # Run prior predictive simulation
 res_prior_gender <- brm(
   gi | se(sei) ~ 0 + Intercept + (1 | article / experiment),
   data = dat_gender,
-  prior = prior_c,
+  prior = prior_gender,
   sample_prior = "only",
   save_pars = save_pars(all = TRUE),
   chains = n_chains,
@@ -823,20 +825,20 @@ res_prior_gender <- brm(
 summary(res_prior_gender)
 
 # Run Bayesian multilevel model
-res_brm_gender <- update(
+res_gender <- update(
   res_prior_gender,
   sample_prior = FALSE,
-  file = here(models_dir, "res_brm_gender"),
+  file = here(models_dir, "res_gender"),
   file_refit = brms_file_refit
 )
-summary(res_brm_gender)
+summary(res_gender)
 
 # Get posterior probability mass > 0 for the meta-analytic effect
-(hyp_brm_gender <- hypothesis(res_brm_gender, "Intercept > 0")$hypothesis)
+(hyp_gender <- hypothesis(res_gender, "Intercept > 0")$hypothesis)
 
 # Extract posterior draws for the meta-analytic effects
-spread_draws(res_brm_gender, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
-  # Compute variances and ICC
+spread_draws(res_gender, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
+  # Compute variances and ICC from standard deviations
   mutate(
     intercept = b_Intercept,
     sigma_article = sd_article__Intercept,
@@ -846,24 +848,24 @@ spread_draws(res_brm_gender, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
     sigma2_total = sigma2_article + sigma2_experiment,
     icc = sigma2_article / sigma2_total,
     .keep = "unused"
-  ) -> draws_brm_gender
+  ) -> draws_gender
 
-# Summarize as mean and 95% credible intervals
-(summ_brm_gender <- as.list(mean_qi(draws_brm_gender)))
+# Summarize as means and 95% credible intervals
+(summ_gender <- as.list(mean_qi(draws_gender)))
 ```
 
 To confirm the gender difference between males and females we set up another Bayesian meta-analysis, this time focusing on the looking-time contrasts between all-male and all-female groups reported *within* each experiment by the original authors.
-Our additional analysis revealed a meta-analytic effect size of $g = `r summ_brm_gender$intercept`$, 95% Crl [`r summ_brm_gender$intercept.lower`, `r summ_brm_gender$intercept.upper`] (Supplementary Fig. 1) and a probability of this effect being greater than zero of `r print_perc(hyp_brm_gender$Post.Prob)`.
-The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_brm_gender$sigma2_experiment`$, 95% CrI [`r summ_brm_gender$sigma2_experiment.lower`, `r summ_brm_gender$sigma2_experiment.upper`], at the experiment level and $\sigma_{\text{Article}}^2 = `r summ_brm_gender$sigma2_article`$, 95% CrI [`r summ_brm_gender$sigma2_article.lower`, `r summ_brm_gender$sigma2_article.upper`] at the article level. This means that `r print_perc(summ_brm_gender$icc)` of the total variance can be attributed to differences *between* articles and `r print_perc(1 - summ_brm_gender$icc)` to differences between experiments *within* articles.
+Our additional analysis revealed a meta-analytic effect size of $g = `r summ_gender$intercept`$, 95% Crl [`r summ_gender$intercept.lower`, `r summ_gender$intercept.upper`] (Supplementary Fig. 1) and a probability of this effect being greater than zero of `r print_perc(hyp_gender$Post.Prob)`.
+The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_gender$sigma2_experiment`$, 95% CrI [`r summ_gender$sigma2_experiment.lower`, `r summ_gender$sigma2_experiment.upper`], at the experiment level and $\sigma_{\text{Article}}^2 = `r summ_gender$sigma2_article`$, 95% CrI [`r summ_gender$sigma2_article.lower`, `r summ_gender$sigma2_article.upper`] at the article level. This means that `r print_perc(summ_gender$icc)` of the total variance can be attributed to differences *between* articles and `r print_perc(1 - summ_gender$icc)` to differences between experiments *within* articles.
 
 ## Publication bias and certainty assessment
 
-```{r, publication_bias, echo=TRUE}
+```{r, bias, echo=TRUE}
 # Classical Egger regression test for the meta-analysis of rotation performance
-(egger <- with(
-  dat, regtest(x = gi, sei = sei, model = "lm", predictor = "sei")
+(egger_meta <- with(
+  dat_meta, regtest(x = gi, sei = sei, model = "lm", predictor = "sei")
 ))
-(egger_ci <- confint(egger$fit)["Xsei", ])
+(egger_ci_meta <- confint(egger_meta$fit)["Xsei", ])
 
 # Classical Egger regression test for the meta-analysis of gender_differences
 (egger_gender <- with(
@@ -872,15 +874,17 @@ The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_br
 (egger_ci_gender <- confint(egger_gender$fit)["Xsei", ])
 ```
 
-We inspected funnel plots and performed Egger regression tests to examine the possibility of publication bias in the literature included here. For the meta-analysis of mental rotation performance (Fig. 3a), we observed a slight asymmetry in the funnel plot, indicating a small publication bias. This was confirmed by an Egger regression test that showed a reliable association between effect sizes and their corresponding standard errors, $b = `r coef(egger$fit)["Xsei"]`$, $t(`r egger$dfs`) = `r egger$zval`$, $p = `r print_p(egger$pval)`$, 95% confidence interval (CI) [`r egger_ci["2.5 %"]`, `r egger_ci["97.5 %"]`] (two-sided test). Nevertheless, a jackknife (leave-one-out analysis) confirmed that the current results are robust to the effects of individual outlier studies (Supplementary Table 3). For the meta-analysis of gender differences in mental rotation performance (Fig. 3b), the asymmetry in the funnel plot was less pronounced and the slope of the Egger regression test was not statistically significant, $b = `r coef(egger_gender$fit)["Xsei"]`$, $t(`r egger_gender$dfs`) = `r egger_gender$zval`$, $p = `r print_p(egger_gender$pval)`$, 95% confidence interval (CI) [`r egger_ci_gender["2.5 %"]`, `r egger_ci_gender["97.5 %"]`] (two-sided test).
+We inspected funnel plots and performed Egger regression tests to examine the possibility of publication bias in the literature included here. For the meta-analysis of mental rotation performance (Fig. 3a), we observed a slight asymmetry in the funnel plot, indicating a small publication bias. This was confirmed by an Egger regression test that showed a reliable association between effect sizes and their corresponding standard errors, $b = `r coef(egger_meta$fit)["Xsei"]`$, $t(`r egger_meta$dfs`) = `r egger_meta$zval`$, $p = `r print_p(egger_meta$pval)`$, 95% confidence interval (CI) [`r egger_ci_meta["2.5 %"]`, `r egger_ci_meta["97.5 %"]`] (two-sided test). Nevertheless, a jackknife (leave-one-out analysis) confirmed that the current results are robust to the effects of individual outlier studies (Supplementary Table 3). For the meta-analysis of gender differences in mental rotation performance (Fig. 3b), the asymmetry in the funnel plot was less pronounced and the slope of the Egger regression test was not statistically significant, $b = `r coef(egger_gender$fit)["Xsei"]`$, $t(`r egger_gender$dfs`) = `r egger_gender$zval`$, $p = `r print_p(egger_gender$pval)`$, 95% confidence interval (CI) [`r egger_ci_gender["2.5 %"]`, `r egger_ci_gender["97.5 %"]`] (two-sided test).
 
 ```{r, fig3, include=TRUE, fig.height=3.5, fig.width=12, fig.cap="(ref:fig3-caption)"}
-# Create funnel plots
-list(dat, dat_gender) %>%
-  map(function(plot_dat) {
+# Create funnel plots for the two meta-analyses
+map2(
+  list(dat_meta, dat_gender),
+  list(summ_meta, summ_meta),
+  function(dat, summ) {
 
-    # Define maximul SE of interest (a bit larger than the largest observed one)
-    max_se <- max(plot_dat$sei) + 0.05
+    # Define maximul SE of interest (a bit larger than the largest observed SE)
+    max_se <- max(dat$sei) + 0.05
 
     # Compute a 95% funnel under the null hypothesis
     z_crit_05 <- stats::qnorm(0.975)
@@ -901,11 +905,11 @@ list(dat, dat_gender) %>%
     # Create a third pseudo-funnel under the null hypothesis just for the legend
     funnel_smaller_01 <- mutate(funnel_greater_05, level = "smaller_01")
 
-    # Compute a 95% funnel around the observed meta-analytic effect size
-    funnel_observed <- mutate(funnel_greater_05, x = x + summ_brm$intercept)
+    # Compute a 95% funnel around the *observed* meta-analytic effect size
+    funnel_observed <- mutate(funnel_greater_05, x = x + summ$intercept)
 
-    # Plot the funnel(s)
-    ggplot(plot_dat, aes(x = gi, y = sei)) +
+    # Plot the funnels
+    ggplot(dat, aes(x = gi, y = sei)) +
       # Funnels under the null hypothesis
       geom_polygon(data = funnel_smaller_01, aes(x = x, y = y, fill = level)) +
       geom_polygon(data = funnel_smaller_05, aes(x = x, y = y, fill = level)) +
@@ -924,7 +928,7 @@ list(dat, dat_gender) %>%
       # Observed_funnel
       geom_path(data = funnel_observed, aes(x = x, y = y)) +
       # Meta-analytic effect size
-      geom_vline(xintercept = summ_brm$intercept, color = "black") +
+      geom_vline(xintercept = summ$intercept, color = "black") +
       # Experiment-specific effect sizes
       geom_point(shape = 0) +
       # Styling
@@ -947,7 +951,8 @@ list(dat, dat_gender) %>%
         legend.position = "none",
         text = element_text(family = "Helvetica", color = "black")
       )
-  }) -> plots_funnel
+  }
+) -> plots_funnel
 
 # Extract legend
 legend_funnel <- get_legend(
@@ -962,18 +967,18 @@ plot_grid(
   draw_plot(legend_funnel, x = -0.39, y = 0.355)
 
 # Save the plot
-ggsave(here(figures_dir, "funnel.pdf"), width = 12, height = 3.5)
+ggsave(here(figures_dir, "fig3_funnel.pdf"), width = 12, height = 3.5)
 ```
 
 (ref:fig3-caption) **Evaluation of publication bias.**  Funnel plots for the meta-analysis of mental rotation performance (**a**) and for the meta-analysis of gender differences in mental rotation performance (**b**). The plots show the standard error and effect size for each of the individual experiments as a black square. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect size (vertical black line). Gray shades indicate a 95% pseudo-confidence interval (dark gray) and a 99% pseudo-confidence interval (light gray) under the null hypothesis. These shades thus illustrate which of the original studies observed a significant effect. For the meta-analysis of mental rotation performance, a slight asymmetry induced by the underrepresentation of studies with high standard errors and small effect sizes suggests a small publication bias.
 
 # Discussion
 
-We analyzed looking times during mental rotation in `r formatC(descs$n_infants, big.mark = ",")` infants ranging from `r descs$min_age_months` to `r descs$max_age_months` months of age. To this end, we scrutinized the robustness of `r descs$n_experiments` experimental effect sizes. We found that male infants looked on average longer at novel rotated objects compared to female infants. This effect was small and unrelated to age in the current range.
+We analyzed looking times during mental rotation in `r formatC(descriptives$n_infants, big.mark = ",")` infants ranging from `r descriptives$min_age_months` to `r descriptives$max_age_months` months of age. To this end, we scrutinized the robustness of `r descriptives$n_experiments` experimental effect sizes. We found that male infants looked on average longer at novel rotated objects compared to female infants. This effect was small and unrelated to age in the current range.
 
 ## Effect size estimates
 
-We interpret the meta-regression-based estimate of the gender difference ($b = `r summ_brm_reg$male_female`$, where $b = \Delta{g}$) as an upper bound of the true effect size since this estimate is based on experiments that reported only separate effect sizes for males and females. The gender effect of these experiments can be considered as positively biased when assuming that authors who observe a statistically significant gender difference more likely report separate effect sizes for males and females. In contrast, the meta-analytic estimate derived from the observed gender differences within each experiment ($g = `r summ_brm_gender$intercept`$) can be viewed as a lower bound of the true effect size. This view is plausible because the unknown effect sizes of experiments without significant gender differences were set to zero although non-zero differences were likely also observed but just not reported because of missing power to render these effects statistically significant.
+We interpret the meta-regression-based estimate of the gender difference ($b = `r summ_reg$male_female`$, where $b = \Delta{g}$) as an upper bound of the true effect size since this estimate is based on experiments that reported only separate effect sizes for males and females. The gender effect of these experiments can be considered as positively biased when assuming that authors who observe a statistically significant gender difference more likely report separate effect sizes for males and females. In contrast, the meta-analytic estimate derived from the observed gender differences within each experiment ($g = `r summ_gender$intercept`$) can be viewed as a lower bound of the true effect size. This view is plausible because the unknown effect sizes of experiments without significant gender differences were set to zero although non-zero differences were likely also observed but just not reported because of missing power to render these effects statistically significant.
 
 ## Gender differences
 
@@ -1002,7 +1007,7 @@ In the present meta-analysis we followed the established PRISMA 2020 guidelines 
 Articles needed to fulfill six criteria for being included in this meta-analysis: (1) The article was written in English or German; (2) The article includes results from a group study with human samples (thus excluding review articles, meta-analyses, case studies, and animal studies); (3) These samples include at least one group of infants (mean age between 0 months and 36 months); (4) Infants were not born preterm and had no clinical diagnosis; (5) Infants performed a mental rotation task; (6) The article contains quantitative scores that could be converted into a standardized mean difference (see Data collection process and items below). We explicitly included works that were not peer reviewed (e.g., dissertations and preprints) to reduce the impact of publication bias.
 
 ```{r, fig4, include=TRUE, fig.width=6, fig.cap="(ref:fig4-caption)", out.width="50%"}
-# Include the flowchart (created with MS PowerPoint)
+# Include the flowchart (which was created manually with MS PowerPoint)
 knitr::include_graphics(here("manuscript_files/flowchart.pdf"))
 ```
 
@@ -1016,28 +1021,36 @@ We entered the search terms (“mental rotation” OR “mental transformation�
 
 ```{r, selection_process}
 # Compute interrater agreement for binary decision (include vs. exclude)
-(irr_bin_perc <- with(screening, mean(bin_1 == bin_2)))
-(irr_bin_kappa <- with(screening, psych::cohen.kappa(cbind(bin_1, bin_2))))
+(irr_bin_perc <- with(
+  raw_screening, mean(bin_1 == bin_2)
+))
+(irr_bin_kappa <- with(
+  raw_screening, psych::cohen.kappa(cbind(bin_1, bin_2))
+))
 irr_bin_kappa_w <- as.list(irr_bin_kappa$confid["weighted kappa", ])
 
 # Compute interrater agreement for specific exclusion codes
-(irr_code_perc <- with(screening, mean(code_1 == code_2)))
-(irr_code_kappa <- with(screening, psych::cohen.kappa(cbind(code_1, code_2))))
+(irr_code_perc <- with(
+  raw_screening, mean(code_1 == code_2)
+))
+(irr_code_kappa <- with(
+  raw_screening, psych::cohen.kappa(cbind(code_1, code_2))
+))
 irr_code_kappa_w <- as.list(irr_code_kappa$confid["weighted kappa", ])
 
 # Justify exclusion of @pedrett2020 based on outlier mean age
 descs_pedrett2020 <- list(age_years = 2.56)
 descs_pedrett2020 <- within(descs_pedrett2020, {
   age_months <- age_years * 12
-  next_largest_age_months <- max(dat$age_mean) / 30.417
+  next_largest_age_months <- max(dat_meta$age_mean) / 30.417
   age <- age_years * 365.25
-  z <- (age - mean(dat$age_mean)) / sd(dat$age_mean)
+  z <- (age - mean(dat_meta$age_mean)) / sd(dat_meta$age_mean)
 })
 ```
 
-Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria. Interrater agreement for the binary decision to include versus exclude an article was `r print_perc(irr_bin_perc)` ($\kappa_w$ [Cohen's weighted kappa] $= `r irr_bin_kappa_w$estimate`$, 95% CI [`r irr_bin_kappa_w$lower`, `r irr_bin_kappa_w$upper`]). Interrater agreement for the specific eligibility criteria was `r print_perc(irr_code_perc)` ($\kappa_w$ $= `r irr_code_kappa_w$estimate`$, 95% CI [`r irr_code_kappa_w$lower`, `r print_num(irr_code_kappa_w$upper)`]). Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached. One article [@mash2007] was excluded because the authors used a unique mental rotation paradigm that was not comparable to the paradigm used in the other articles. Another article [@pedrett2020] was excluded because the average age of the infants studied (`r print_num(descs_pedrett2020$age_months, 1)` months) was almost twice as high as the average age of the next article (`r print_num(descs_pedrett2020$next_largest_age_months, 1)` months; $z = `r descs_pedrett2020$z`$ compared to all articles). We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life. This procedure led to a total of `r descs$n_articles` articles being included in the meta-analysis (Fig. 4).
+Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria. Interrater agreement for the binary decision to include versus exclude an article was `r print_perc(irr_bin_perc)` ($\kappa_w$ [Cohen's weighted kappa] $= `r irr_bin_kappa_w$estimate`$, 95% CI [`r irr_bin_kappa_w$lower`, `r irr_bin_kappa_w$upper`]). Interrater agreement for the specific eligibility criteria was `r print_perc(irr_code_perc)` ($\kappa_w$ $= `r irr_code_kappa_w$estimate`$, 95% CI [`r irr_code_kappa_w$lower`, `r print_num(irr_code_kappa_w$upper)`]). Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached. One article [@mash2007] was excluded because the authors used a unique mental rotation paradigm that was not comparable to the paradigm used in the other articles. Another article [@pedrett2020] was excluded because the average age of the infants studied (`r print_num(descs_pedrett2020$age_months, 1)` months) was almost twice as high as the average age of the next article (`r print_num(descs_pedrett2020$next_largest_age_months, 1)` months; $z = `r descs_pedrett2020$z`$ compared to all articles). We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life. This procedure led to a total of `r descriptives$n_articles` articles being included in the meta-analysis (Fig. 4).
 
-Many of these articles consisted of multiple experiments, e.g., using different variations of the mental rotation task or different subsamples of infants. We included all of these experiments in the meta-analysis and accounted for the dependencies between them by means of multilevel modeling with by-article random effects (see Bayesian meta-analysis below). However, we excluded experiments if there was insufficient information to compute a standardized effect size (see Data collection process and items below). Whenever an article reported separate effect sizes for males and females---or other subgroups like crawling and non-crawling infants---but also an effect size combining these groups, we only included the combined effect size. Moreover, we disregarded effect sizes that were clearly based on the same data but reported in different articles. This procedure led to a total of `r descs$n_experiments` experiments being included in the meta-analysis of mental rotation performance (Supplementary Table 1) and 30 articles being included in the meta-analysis of gender differences in mental rotation performance.
+Many of these articles consisted of multiple experiments, e.g., using different variations of the mental rotation task or different subsamples of infants. We included all of these experiments in the meta-analysis and accounted for the dependencies between them by means of multilevel modeling with by-article random effects (see Bayesian meta-analysis below). However, we excluded experiments if there was insufficient information to compute a standardized effect size (see Data collection process and items below). Whenever an article reported separate effect sizes for males and females---or other subgroups like crawling and non-crawling infants---but also an effect size combining these groups, we only included the combined effect size. Moreover, we disregarded effect sizes that were clearly based on the same data but reported in different articles. This procedure led to a total of `r descriptives$n_experiments` experiments being included in the meta-analysis of mental rotation performance (Supplementary Table 1) and 30 articles being included in the meta-analysis of gender differences in mental rotation performance.
 
 ## Data collection process and items
 

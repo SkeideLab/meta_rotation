@@ -30,7 +30,7 @@ print_mean_ci <- function(mean, lb, ub) {
   paste(print_num(mean), print_ci(lb, ub))
 }
 
-# Format results of Bayesian meta-analsis as a table with optional labels
+# Format results of Bayesian meta-analysis as a table with optional labels
 print_res_table <- function(res,
                             label_1 = NULL,
                             label_2 = NULL,
@@ -104,7 +104,7 @@ print_res_freq_table <- function(res_freq,
     `$z$` = print_num(res_freq$zval),
     `$p$` = ifelse(
       res_freq$pval < 0.001, "< 0.001", print_num(res_freq$pval, digits = 3)
-      ),
+    ),
     ci_lower = print_num(res_freq$ci.lb),
     ci_upper = print_num(res_freq$ci.ub)
   ) %>%
