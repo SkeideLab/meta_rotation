@@ -46,6 +46,7 @@ srun:
 #    rosenthal1991, cohen1988, efron1993
 # 5. Replace `\caption*{\normalfont{Table \ref{` with
 #    `\caption*{\normalfont{Supplementary Table \ref{`
+# 6. Detel all instances of `\textit{Note.} `
 latex:
 	$(LATEX_CMD)
 latex-docker:
