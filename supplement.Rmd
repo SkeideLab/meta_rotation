@@ -17,7 +17,7 @@
 
 ## Supplementary Methods 1 | Correlation between dependent samples
 
-```{r, r_assumed}
+```{r, correlation}
 # Compute empirical estimate of the correlation between dependent samples
 dat_meta %>%
   mutate(
@@ -82,8 +82,8 @@ dat_meta %>%
     Experiment = group_long,
     `Sample size` = as.integer(sample_size),
     Females = as.integer(round(female_percent * sample_size)),
-    Age = str_c(age_mean, "±", age_sd, sep = " "),
-    Task = task,
+    `Age ($M$ ± $SD$)` = str_c(age_mean, "±", age_sd, sep = " "),
+    Task = as.character(task),
     `Stimulus type` = str_to_sentence(stimuli_presentation),
     `Stimulus dimensions` = stimuli_dimensions
   ) %>%
@@ -91,16 +91,27 @@ dat_meta %>%
     across(.fns = function(x) ifelse(is.na(x), "n/a", x))
   ) -> tabs1
 
+# Save the table
+dir.create(tables_dir, showWarnings = FALSE)
+write_csv(tabs1, file = here(tables_dir, "tabs1_experiments.csv"), na = "n/a")
+
+# Add footnotes
+colnames(tabs1)[5] <- str_c(colnames(tabs1)[5], "\\textsuperscript{a}")
+tabs1$Females[1] <- str_c(tabs1$Females[1], "\\textsuperscript{b}")
+tabs1$Task[3] <- str_c(tabs1$Task[3], "\\textsuperscript{c}")
+
 # Display the table
 apa_table(
   tabs1,
   caption = "Experiments included in the main analysis",
-  landscape = TRUE, font_size = "scriptsize"
+  note = str_c(
+    "\\scriptsize",
+    "\\textsuperscript{a} = mean ± standard deviation, ",
+    "\\textsuperscript{b} = not available, ",
+    "\\textsuperscript{c} = violation of expectation."
+  ),
+  landscape = TRUE, font_size = "scriptsize", escape = FALSE
 )
-
-# Save the table
-dir.create(tables_dir, showWarnings = FALSE)
-write_csv(tabs1, file = here(tables_dir, "tabs1_experiments.csv"), na = "n/a")
 ```
 
 ```{r, frequentist}
@@ -179,17 +190,27 @@ map2_dfr(
   # Replace NAs with blank cells
   mutate(across(.fns = ~ ifelse(is.na(.), "", .))) -> tabs2
 
+
+# Save the table
+write_csv(tabs2, file = here(tables_dir, "tabs2_frequentist.csv"))
+
+# Add footnotes
+colnames(tabs2)[4] <- str_c(colnames(tabs2)[4], "\\textsuperscript{a}")
+colnames(tabs2)[7] <- str_c(colnames(tabs2)[7], "\\textsuperscript{b}")
+
 # Display the table
 apa_table(
   tabs2,
   caption = "Frequentist meta-analyses and meta-regression",
+  note = str_c(
+    "\\scriptsize",
+    "\\textsuperscript{a} = standard error, ",
+    "\\textsuperscript{b} = 95\\% confidence interval."
+  ),
   font_size = "scriptsize",
   escape = FALSE,
-  align = "llrrrrr",
+  align = "llrrrrr"
 )
-
-# Save the table
-write_csv(tabs2, file = here(tables_dir, "tabs2_frequentist.csv"))
 ```
 
 ```{r, jackknife}
@@ -235,10 +256,14 @@ tabs3 <- read_csv(
   col_types = "c", na = character()
 )
 
+# Add footnotes
+colnames(tabs3)[6] <- str_c(colnames(tabs3)[6], "\\textsuperscript{a}")
+
 # Display the table
 apa_table(
   tabs3,
   caption = "Jackknife (leave-one-out) analysis", font_size = "scriptsize",
+  note = "\\scriptsize\\textsuperscript{a} = intraclass correlation.",
   landscape = TRUE, escape = FALSE, align = "llrrrr"
 )
 ```
@@ -425,10 +450,25 @@ tabs5 <- read_csv(
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
+# Add footnotes
+colnames(tabs5)[6] <- str_c(colnames(tabs5)[6], "\\textsuperscript{a}")
+tabs5$` `[8] <- str_c(tabs5$` `[8], "\\textsuperscript{b}")
+tabs5$` `[9] <- str_c(tabs5$` `[9], "\\textsuperscript{c}")
+tabs5$` `[10] <- str_c(tabs5$` `[10], "\\textsuperscript{d}")
+tabs5$` `[11] <- str_c(tabs5$` `[11], "\\textsuperscript{e}")
+
 # Display the table
 apa_table(
   tabs5,
   caption = "Sensitivity analyses for the meta-analysis of mental rotation performance",
+  note = str_c(
+    "\\scriptsize",
+    "\\textsuperscript{a} = intraclass correlation, ",
+    "\\textsuperscript{b} = an uninformative (uniform) prior on the mean effect, ",
+    "\\textsuperscript{c} = an informative (normal) prior on the mean effect, ",
+    "\\textsuperscript{d} = an uninformative (uniform) prior on the standard deviations, ",
+    "\\textsuperscript{e} = an informative (Student-$t$) prior on the standard deviations."
+  ),
   font_size = "scriptsize", escape = FALSE, align = "llrrrr"
 )
 ```
@@ -440,10 +480,23 @@ tabs6 <- read_csv(
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
+# Add footnotes
+tabs6$` `[8] <- str_c(tabs6$` `[8], "\\textsuperscript{a}")
+tabs6$` `[9] <- str_c(tabs6$` `[9], "\\textsuperscript{b}")
+tabs6$` `[10] <- str_c(tabs6$` `[10], "\\textsuperscript{c}")
+tabs6$` `[11] <- str_c(tabs6$` `[11], "\\textsuperscript{d}")
+
 # Display the table
 apa_table(
   tabs6,
   caption = "Sensitivity analyses for the meta-regression of mental rotation performance",
+  note = str_c(
+    "\\scriptsize",
+    "\\textsuperscript{a} = an uninformative (uniform) prior on the mean effect, ",
+    "\\textsuperscript{b} = an informative (normal) prior on the mean effect, ",
+    "\\textsuperscript{c} = an uninformative (uniform) prior on the standard deviations, ",
+    "\\textsuperscript{d} = an informative (Student-$t$) prior on the standard deviations."
+  ),
   font_size = "scriptsize", landscape = TRUE, escape = FALSE,
   align = "llrrrrrrr"
 )
@@ -456,10 +509,25 @@ tabs7 <- read_csv(
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
+# Add footnotes
+colnames(tabs7)[6] <- str_c(colnames(tabs7)[6], "\\textsuperscript{a}")
+tabs7$` `[1] <- str_c(tabs7$` `[1], "\\textsuperscript{b}")
+tabs7$` `[2] <- str_c(tabs7$` `[2], "\\textsuperscript{c}")
+tabs7$` `[3] <- str_c(tabs7$` `[3], "\\textsuperscript{d}")
+tabs7$` `[4] <- str_c(tabs7$` `[4], "\\textsuperscript{e}")
+
 # Display the table
 apa_table(
   tabs7,
   caption = "Sensitivity analyses for the meta-analysis of gender differences",
+  note = str_c(
+    "\\scriptsize",
+    "\\textsuperscript{a} = intraclass correlation, ",
+    "\\textsuperscript{b} = an uninformative (uniform) prior on the mean effect, ",
+    "\\textsuperscript{c} = an informative (normal) prior on the mean effect, ",
+    "\\textsuperscript{d} = an uninformative (uniform) prior on the standard deviations, ",
+    "\\textsuperscript{e} = an informative (Student-$t$) prior on the standard deviations."
+  ),
   font_size = "scriptsize", escape = FALSE, align = "llrrrrrrr"
 )
 ```
@@ -553,30 +621,44 @@ map(names(res_freq_2_lvl), function(name) {
   set_names(names(res_freq_2_lvl)) -> tabs_correction
 
 # Save the tables
-write_csv(
-  tabs_correction$meta,
-  file = here(tables_dir, "tabs8_correction_meta.csv")
-)
-write_csv(
-  tabs_correction$gender,
-  file = here(tables_dir, "tabs9_correction_gender.csv")
-)
+tabs8 <- tabs_correction$meta
+tabs9 <- tabs_correction$gender
+write_csv(tabs8, file = here(tables_dir, "tabs8_correction_meta.csv"))
+write_csv(tabs9, file = here(tables_dir, "tabs9_correction_gender.csv"))
 ```
 
 ```{r, tabs8, include=TRUE}
+# Add footnotes
+colnames(tabs8)[4] <- str_c(colnames(tabs8)[4], "\\textsuperscript{a}")
+colnames(tabs8)[7] <- str_c(colnames(tabs8)[7], "\\textsuperscript{b}")
+
 # Display the table
 apa_table(
-  tabs_correction$meta,
+  tabs8,
   caption = "Publication bias correction for the meta-analysis of mental rotation performance",
+  note = str_c(
+    "\\scriptsize",
+    "\\textsuperscript{a} = standard error, ",
+    "\\textsuperscript{b} = 95\\% confidence interval."
+  ),
   font_size = "scriptsize", escape = FALSE, align = "llrrrrr"
 )
 ```
 
 ```{r, tabs9, include=TRUE}
+# Add footnotes
+colnames(tabs9)[4] <- str_c(colnames(tabs9)[4], "\\textsuperscript{a}")
+colnames(tabs9)[7] <- str_c(colnames(tabs9)[7], "\\textsuperscript{b}")
+
 # Display the table
 apa_table(
-  tabs_correction$gender,
+  tabs9,
   caption = "Publication bias correction for the meta-analysis of gender differences",
+  note = str_c(
+    "\\scriptsize",
+    "\\textsuperscript{a} = standard error, ",
+    "\\textsuperscript{b} = 95\\% confidence interval."
+  ),
   font_size = "scriptsize", escape = FALSE, align = "llrrrrr",
 )
 ```
