@@ -24,9 +24,6 @@ authornote: |
 
   \noindent \addORCIDlink{Anne-Sophie Kieslinger}{0000-0001-9240-4077}
 
-  \noindent We have no conflict of interest to disclose. There were no ethical concerns since we did not collect any new data.
-  Correspondence concerning this article should be addressed to Alexander Enge, Stephanstraße 1a, 04103 Leipzig, Germany. E-mail: enge@cbs.mpg.de
-
 abstract: |
   Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3 to 16 months. We robustly found that male infants recognized novel rotated objects more reliably than female infants. These findings indicate that gender differences in mental rotation are already present in the first months of life.
 
@@ -1167,11 +1164,11 @@ We also performed trim-and-fill analyses and tested selection models to confirm 
 
 ## Data availability
 
-The data for this study is available  from an   [Open Science Framework repository](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. This link is intended for peer review only and will be replaced with a public link upon acceptance.
+The datasets generated and analyzed during the current study are available in an Open Science Framework repository, [https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. This link is intended for peer review only and will be replaced with a public link upon acceptance.
 
 ## Code availability
 
-The data for this study is available  from an   [Open Science Framework repository](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. This link is intended for peer review only and will be replaced with a public link upon acceptance.
+The analysis code for the current study is available in an Open Science Framework repository, [https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. This link is intended for peer review only and will be replaced with a public link upon acceptance.
 
 \newpage
 \nolinenumbers
@@ -1186,13 +1183,22 @@ The data for this study is available  from an   [Open Science Framework reposito
 \newpage
 \linenumbers
 
-# Contributions
+# Author contributions
 
 \noindent M.A.S. conceived, designed, and obtained funding for the study.
 
 \noindent A.E., S.K., and A.-S.K. designed and executed the search and selection strategies, performed data analysis, conducted robustness checks, and visualized the results in consultation with M.A.S. 
 
 \noindent A.E. and M.A.S. wrote the manuscript with additional input from S.K. and A.-S.K.
+
+# Competing interests
+
+\noindent The authors declare no competing interests.
+
+# Corresponding author
+
+\noindent Correspondence concerning this article should be addressed to Alexander Enge, Stephanstraße 1a, 04103 Leipzig, Germany. E-mail: [enge@cbs.mpg.de](mailto:enge@cbs.mpg.de)
+
 
 \newpage
 
