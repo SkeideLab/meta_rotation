@@ -18,8 +18,8 @@ Methods,Eligibility criteria ,5,Specify the inclusion and exclusion criteria for
 ,,13d,"Describe any methods used to synthesize results and provide a rationale for the choice(s). If meta-analysis was performed, describe the model(s), method(s) to identify the presence and extent of statistical heterogeneity, and software package(s) used.",Methods: Bayesian meta-analysis; Methods: Frequentist meta-analysis
 ,,13e,"Describe any methods used to explore possible causes of heterogeneity among study results (e.g. subgroup analysis, meta-regression).",Methods: Bayesian meta-regression
 ,,13f,Describe any sensitivity analyses conducted to assess robustness of the synthesized results.,Methods: Bayesian meta-analysis; Supplementary Methods 1
-,Reporting bias assessment,14,Describe any methods used to assess risk of bias due to missing results in a synthesis (arising from reporting biases).,Methods: Reporting bias and certainty asssessment
-,Certainty assessment,15,Describe any methods used to assess certainty (or confidence) in the body of evidence for an outcome.,Methods: Reporting bias and certainty asssessment
+,Reporting bias assessment,14,Describe any methods used to assess risk of bias due to missing results in a synthesis (arising from reporting biases).,Methods: Publication bias asssessment
+,Certainty assessment,15,Describe any methods used to assess certainty (or confidence) in the body of evidence for an outcome.,Methods: Publication bias asssessment
 Results,Study selection ,16a,"Describe the results of the search and selection process, from the number of records identified in the search to the number of studies included in the review, ideally using a flow diagram.",Introduction; Results: Mental rotation performance; Methods: Fig. 4
 ,,16b,"Cite studies that might appear to meet the inclusion criteria, but which were excluded, and explain why they were excluded.",Methods: Selection process
 ,Study characteristics ,17,Cite each included study and present its characteristics.,Supplementary Table 1
@@ -29,7 +29,7 @@ Results,Study selection ,16a,"Describe the results of the search and selection p
 ,,20b,"Present results of all statistical syntheses conducted. If meta-analysis was done, present for each the summary estimate and its precision (e.g. confidence/credible interval) and measures of statistical heterogeneity. If comparing groups, describe the direction of the effect.",Results: Mental rotation performance
 ,,20c,Present results of all investigations of possible causes of heterogeneity among study results.,"Results: Effects of gender, age, and task"
 ,,20d,Present results of all sensitivity analyses conducted to assess the robustness of the synthesized results.,"Supplementary Tables 5, 6, and 7"
-,Reporting biases,21,Present assessments of risk of bias due to missing results (arising from reporting biases) for each synthesis assessed.,"Supplementary Methods 2; Supplementary Tables 3, 8 and 9"
+,Reporting biases,21,Present assessments of risk of bias due to missing results (arising from reporting biases) for each synthesis assessed.,"Results: Publication bias assessment; Supplementary Methods 2; Supplementary Tables 3, 8 and 9"
 ,Certainty of evidence ,22,Present assessments of certainty (or confidence) in the body of evidence for each outcome assessed.,Results: Fig. 1; Results: Fig. 2
 Discussion,Discussion ,23a,Provide a general interpretation of the results in the context of other evidence.,Discussion
 ,,23b,Discuss any limitations of the evidence included in the review.,Discussion

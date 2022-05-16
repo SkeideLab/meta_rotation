@@ -861,7 +861,7 @@ To confirm the gender difference between males and females we set up another Bay
 Our additional analysis revealed a meta-analytic effect size of $g = `r summ_gender$intercept`$, 95% Crl [`r summ_gender$intercept.lower`, `r summ_gender$intercept.upper`] (Supplementary Fig. 1) and a probability of this effect being greater than zero of `r print_perc(hyp_gender$Post.Prob)`.
 The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_gender$sigma2_experiment`$, 95% CrI [`r summ_gender$sigma2_experiment.lower`, `r summ_gender$sigma2_experiment.upper`], at the experiment level and $\sigma_{\text{Article}}^2 = `r summ_gender$sigma2_article`$, 95% CrI [`r summ_gender$sigma2_article.lower`, `r summ_gender$sigma2_article.upper`] at the article level. This means that `r print_perc(summ_gender$icc)` of the total variance can be attributed to differences *between* articles and `r print_perc(1 - summ_gender$icc)` to differences between experiments *within* articles.
 
-## Publication bias and certainty assessment
+## Publication bias assessment
 
 ```{r, bias, echo=TRUE}
 # Classical Egger regression test for the meta-analysis of rotation performance
@@ -1136,7 +1136,7 @@ We examined the influence of three moderator variables on the mental rotation ou
 
 We verified the results obtained from our Bayesian analyses using classical frequentist meta-analysis and meta-regression. To this end, we used the metafor package (Version `r packageVersion("metafor")`) [@viechtbauer2010] in R to specify the same three-level models as described above but without the Bayesian priors (Supplementary Table 5). These models were fitted using restricted maximum likelihood estimation (REML). To verify that the REML converged on the correct estimates, we examined profile likelihood plots [@raue2009; @viechtbauer2010] for the two variance components in the model (i.e., the between-experiment variance and the between-article variance; Supplementary Fig. 3).
 
-## Reporting bias and certainty assessment
+## Publication bias assessment
 
 Publication bias was evaluated based on funnel plots and Egger regression tests [@egger1997; @sterne2005]. Funnel plots visualize the relationship between standard errors and effect sizes. They were created by adapting code from the R package metaviz (Version `r packageVersion("metaviz")`) [@kossmeier2020]. The Egger regression test is a formal statistical test for this relationship between standard errors and effect sizes, probing if the weighted linear regression weight of the effect sizes on the standard errors is significantly different from zero. This test was performed using code from the metafor package and applying a two-sided false-positive error rate of $\alpha = .05$.
 
