@@ -32,8 +32,11 @@ abstract: |
 
 keywords          : "mental rotation, spatial cognition, spatial ability, infants, children, gender, meta-analysis"
 
-bibliography      : "manuscript_files/references.bib"
-csl               : "manuscript_files/nature.csl"
+bibliography_main    : "manuscript_files/main.bib"
+bibliography_methods : "manuscript_files/methods.bib"
+csl                  : "manuscript_files/nature.csl"
+citeproc             : false
+link-citations       : yes
 
 appendix          : "supplement.Rmd"
 
@@ -48,7 +51,11 @@ draft             : no
 documentclass     : "apa7"
 classoption       : "man,donotrepeattitle"
 fontsize          : "10pt"
-output            : papaja::apa6_pdf
+
+output:
+  papaja::apa6_pdf:
+    pandoc_args: "--lua-filter=manuscript_files/multiple-bibliographies.lua"
+
 header-includes:
   - \geometry{a4paper}
   - \raggedbottom
@@ -999,22 +1006,37 @@ A number of additional factors have been associated with individual differences 
 
 The present study robustly revealed that male infants look longer at novel rotated objects than female infants. Thus, on average, males show more reliable mental rotation behavior already in the first months of life.
 
+\newpage
+\nolinenumbers
+
+# References
+
+\bigskip
+
+::: {#refs_main}
+:::
+
+\newpage
+\linenumbers
+
 # Methods
 
 ## Protocol
 
 In the present meta-analysis we followed the established PRISMA 2020 guidelines (Preferred Reporting Items for Systematic reviews and Meta-Analyses) [@page2021]. The PRISMA flowchart is provided in Fig. 4 and Supplementary Table 4 contains the PRISMA checklist.
 
-## Eligibility criteria
+\bigskip
 
-Articles needed to fulfill six criteria for being included in this meta-analysis: (1) The article was written in English or German; (2) The article includes results from a group study with human samples (thus excluding review articles, meta-analyses, case studies, and animal studies); (3) These samples include at least one group of infants (mean age between 0 months and 36 months); (4) Infants were not born preterm and had no clinical diagnosis; (5) Infants performed a mental rotation task; (6) The article contains quantitative scores that could be converted into a standardized mean difference (see Data collection process and items below). We explicitly included works that were not peer reviewed (e.g., dissertations and preprints) to reduce the impact of publication bias.
-
-```{r, fig4, include=TRUE, fig.width=6, fig.cap="(ref:fig4-caption)", out.width="50%"}
+```{r, fig4, include=TRUE, fig.width=6, fig.cap="(ref:fig4-caption)", fig.pos="ht", out.width="50%"}
 # Include the flowchart (which was created manually with MS PowerPoint)
 knitr::include_graphics(here("manuscript_files/flowchart.pdf"))
 ```
 
 (ref:fig4-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. Additionally, we excluded an article that was based on an uncommon experimental paradigm differing substantially from all other articles (1 article). Finally, we excluded an article that was based on a sample of infants  who were substantially older compared to all other articles (1 article).
+
+## Eligibility criteria
+
+Articles needed to fulfill six criteria for being included in this meta-analysis: (1) The article was written in English or German; (2) The article includes results from a group study with human samples (thus excluding review articles, meta-analyses, case studies, and animal studies); (3) These samples include at least one group of infants (mean age between 0 months and 36 months); (4) Infants were not born preterm and had no clinical diagnosis; (5) Infants performed a mental rotation task; (6) The article contains quantitative scores that could be converted into a standardized mean difference (see Data collection process and items below). We explicitly included works that were not peer reviewed (e.g., dissertations and preprints) to reduce the impact of publication bias.
 
 ## Information sources and search strategy
 
@@ -1059,7 +1081,6 @@ Many of these articles consisted of multiple experiments, e.g., using different 
 
 Outcome measures and other relevant variables were extracted from each article by one of three raters and verified by a second rater. For the meta-analysis of mental rotation performance, outcome measures were any summary statistic (Table 1) that could be used to determine the standardized mean difference between novel/unexpected rotation events and familiar/expected rotation events (see Introduction). Other extracted variables included, if available, the sample size, the number of males and females, the mean age and its standard deviation, the minimum and maximum age, the type of mental rotation task (habituation or violation of expectation), the modality of stimulus presentation (real objects or objects on a computer screen), and the dimensionality of the stimuli (2D or 3D; Supplementary Table 1).
 
-\newpage
 \renewcommand{\arraystretch}{2}
 \singlespacing
 \scriptsize
@@ -1155,11 +1176,12 @@ The data for this study is available  from an   [Open Science Framework reposito
 \newpage
 \nolinenumbers
 
-# References
+# Methods references
 
 \bigskip
 
-<div id="refs"></div>
+::: {#refs_methods}
+:::
 
 \newpage
 \linenumbers
