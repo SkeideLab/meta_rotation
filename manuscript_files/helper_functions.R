@@ -13,21 +13,14 @@ print_days_months <- function(days, long = FALSE) {
 # Formatting percentages with one decimal place
 print_perc <- function(x) scales::percent(x, accuracy = 0.1)
 
-# Formatting numbers with a certain number of decimal places
-print_num <- function(x, digits = 2) {
-  x <- format(round(x, digits), trim = TRUE, nsmall = digits)
-  x[x == "NA"] <- NA
-  return(x)
-}
-
 # Format confidence interval
 print_ci <- function(lb, ub) {
-  paste0("[", print_num(lb), ", ", print_num(ub), "]")
+  paste0("[", papaja::print_num(lb), ", ", papaja::print_num(ub), "]")
 }
 
 # Format mean value and confidence interval
 print_mean_ci <- function(mean, lb, ub) {
-  paste(print_num(mean), print_ci(lb, ub))
+  paste(papaja::print_num(mean), print_ci(lb, ub))
 }
 
 # Format results of Bayesian meta-analysis as a table with optional labels
@@ -101,8 +94,8 @@ print_res_freq_table <- function(res_freq,
     Parameter = rownames(res_freq$b),
     Estimate = print_num(as.numeric(res_freq$b)),
     `$SE$` = print_num(res_freq$se),
-    `$z$` = print_num(res_freq$zval),
-    `$p$` = ifelse(
+    `$Z$` = print_num(res_freq$zval),
+    `$P$` = ifelse(
       res_freq$pval < 0.001, "< 0.001", print_num(res_freq$pval, digits = 3)
     ),
     ci_lower = print_num(res_freq$ci.lb),

@@ -123,7 +123,7 @@ raw_meta %>%
     ),
     # Add d_z from paired-samples t-test of condition means (Rosenthal, 1991)
     d_z_t = t / sqrt(sample_size),
-    # Add d_z from ANOVA F-statistic via conversion to a t-statistic
+    # Add d_z from ANOVA F statistic via conversion to a t statistic
     d_z_f = sqrt(f) / sqrt(sample_size) * sign_f,
     # Add d_z from mean and standard deviation of the difference
     d_z_diff = mean_diff / sd_diff,
@@ -717,14 +717,14 @@ raw_gender %>%
     # Add unique experiment identifier
     experiment = str_c(year, article, group_long, sep = ", "),
 
-    # Re-code non-significant F-statistics as an effect size of d = 0
+    # Re-code non-significant F statistics as an effect size of d = 0
     f = as.numeric(f),
     f_assumed = ifelse(is.nan(f), 0, f),
 
     # Add d from two-samples t-test (Lakens, 2013)
     d_t = t * sqrt(1 / female_n + 1 / male_n),
 
-    # Add d from ANOVA F-statistic via conversion to a t-statistic
+    # Add d from ANOVA F statistic via conversion to a t statistic
     d_f = sqrt(f_assumed) * sqrt(1 / female_n + 1 / male_n),
 
     # Add d from mean difference and pooled standard deviation
@@ -869,7 +869,7 @@ The results obtained from our Bayesian analyses were reproduced by classical fre
 (egger_ci_gender <- confint(egger_gender$fit)["Xsei", ])
 ```
 
-We inspected funnel plots and performed Egger regression tests to examine the possibility of publication bias in the literature included here. For the meta-analysis of mental rotation performance (Fig.\ \@ref(fig:fig3)a), we observed a slight asymmetry in the funnel plot, indicating a small publication bias. This was confirmed by an Egger regression test that showed a reliable association between effect sizes and their corresponding standard errors, $b = `r coef(egger_meta$fit)["Xsei"]`$, $t(`r egger_meta$dfs`) = `r egger_meta$zval`$, $p = `r print_p(egger_meta$pval)`$, 95% confidence interval (CI) [`r egger_ci_meta["2.5 %"]`, `r egger_ci_meta["97.5 %"]`] (two-sided test). Nevertheless, a jackknife (leave-one-out analysis) confirmed that the current results are robust to the effects of individual outlier studies (Supplementary Table\ \@ref(tab:tabs3)). For the meta-analysis of gender differences in mental rotation performance (Fig.\ \@ref(fig:fig3)b), the asymmetry in the funnel plot was less pronounced and the slope of the Egger regression test was not statistically significant, $b = `r coef(egger_gender$fit)["Xsei"]`$, $t(`r egger_gender$dfs`) = `r egger_gender$zval`$, $p = `r print_p(egger_gender$pval)`$, 95% confidence interval (CI) [`r egger_ci_gender["2.5 %"]`, `r egger_ci_gender["97.5 %"]`] (two-sided test).
+We inspected funnel plots and performed Egger regression tests to examine the possibility of publication bias in the literature included here. For the meta-analysis of mental rotation performance (Fig.\ \@ref(fig:fig3)a), we observed a slight asymmetry in the funnel plot, indicating a small publication bias. This was confirmed by an Egger regression test that showed a reliable association between effect sizes and their corresponding standard errors, $b = `r coef(egger_meta$fit)["Xsei"]`$, $t(`r egger_meta$dfs`) = `r egger_meta$zval`$, $P = `r print_num(egger_meta$pval, digits = 3)`$, 95% confidence interval (CI) [`r egger_ci_meta["2.5 %"]`, `r egger_ci_meta["97.5 %"]`] (two-sided test). Nevertheless, a jackknife (leave-one-out analysis) confirmed that the current results are robust to the effects of individual outlier studies (Supplementary Table\ \@ref(tab:tabs3)). For the meta-analysis of gender differences in mental rotation performance (Fig.\ \@ref(fig:fig3)b), the asymmetry in the funnel plot was less pronounced and the slope of the Egger regression test was not statistically significant, $b = `r coef(egger_gender$fit)["Xsei"]`$, $t(`r egger_gender$dfs`) = `r egger_gender$zval`$, $P = `r print_num(egger_gender$pval, digits = 3)`$, 95% confidence interval (CI) [`r egger_ci_gender["2.5 %"]`, `r egger_ci_gender["97.5 %"]`] (two-sided test).
 
 ```{r, fig3, include=TRUE, fig.height=3.5, fig.width=12, fig.cap="(ref:fig3-caption)"}
 # Create funnel plots for the two meta-analyses
@@ -1028,7 +1028,7 @@ descs_pedrett2020 <- within(descs_pedrett2020, {
 })
 ```
 
-Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria. Interrater agreement for the binary decision to include versus exclude an article was `r print_perc(irr_bin_perc)` ($\kappa_w$ [Cohen's weighted kappa] $= `r irr_bin_kappa_w$estimate`$, 95% CI [`r irr_bin_kappa_w$lower`, `r irr_bin_kappa_w$upper`]). Interrater agreement for the specific eligibility criteria was `r print_perc(irr_code_perc)` ($\kappa_w$ $= `r irr_code_kappa_w$estimate`$, 95% CI [`r irr_code_kappa_w$lower`, `r print_num(irr_code_kappa_w$upper)`]). Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached. One article [@mash2007] was excluded because the authors used a unique mental rotation paradigm that was not comparable to the paradigm used in the other articles. Another article [@pedrett2020] was excluded because the average age of the infants studied (`r print_num(descs_pedrett2020$age_months, 1)` months) was almost twice as high as the average age of the next article (`r print_num(descs_pedrett2020$next_largest_age_months, 1)` months; $z = `r descs_pedrett2020$z`$ compared to all articles). We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life. This procedure led to a total of `r descriptives$n_articles` articles being included in the meta-analysis (Fig.\ \@ref(fig:fig4)).
+Two independent raters read the abstract and, if necessary, relevant sections of the full text to check if an article fulfilled the inclusion criteria. Interrater agreement for the binary decision to include versus exclude an article was `r print_perc(irr_bin_perc)` ($\kappa_w$ [Cohen's weighted kappa] $= `r irr_bin_kappa_w$estimate`$, 95% CI [`r irr_bin_kappa_w$lower`, `r irr_bin_kappa_w$upper`]). Interrater agreement for the specific eligibility criteria was `r print_perc(irr_code_perc)` ($\kappa_w$ $= `r irr_code_kappa_w$estimate`$, 95% CI [`r irr_code_kappa_w$lower`, `r print_num(irr_code_kappa_w$upper)`]). Cases where the two ratings diverged were resolved via discussion among all raters until a consensus was reached. One article [@mash2007] was excluded because the authors used a unique mental rotation paradigm that was not comparable to the paradigm used in the other articles. Another article [@pedrett2020] was excluded because the average age of the infants studied (`r print_num(descs_pedrett2020$age_months, digits = 1)` months) was almost twice as high as the average age of the next article (`r print_num(descs_pedrett2020$next_largest_age_months, digits = 1)` months; $Z = `r descs_pedrett2020$z`$ compared to all articles). We therefore decided to narrow our analysis from the first 3 years of life to the first 16 months of life. This procedure led to a total of `r descriptives$n_articles` articles being included in the meta-analysis (Fig.\ \@ref(fig:figs2)).
 
 Many of these articles consisted of multiple experiments, e.g., using different variations of the mental rotation task or different subsamples of infants. We included all of these experiments in the meta-analysis and accounted for the dependencies between them by means of multilevel modeling with by-article random effects (see Bayesian meta-analysis below). However, we excluded experiments if there was insufficient information to compute a standardized effect size (see Data collection process and items below). Whenever an article reported separate effect sizes for males and females---or other subgroups like crawling and non-crawling infants---but also an effect size combining these groups, we only included the combined effect size. Moreover, we disregarded effect sizes that were clearly based on the same data but reported in different articles. This procedure led to a total of `r descriptives$n_experiments` experiments being included in the meta-analysis of mental rotation performance (Supplementary Table\ \@ref(tab:tabs1)) and 30 articles being included in the meta-analysis of gender differences in mental rotation performance.
 
