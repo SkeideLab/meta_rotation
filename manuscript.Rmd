@@ -19,16 +19,6 @@ affiliation:
   - id            : "*"
     institution   : "Corresponding author (enge@cbs.mpg.de)"
 
-authornote: |
-  \noindent \addORCIDlink{Alexander Enge}{0000-0003-0100-2297}
-
-  \noindent \addORCIDlink{Shreya Kapoor}{0000-0003-2619-8257}
-
-  \noindent \addORCIDlink{Anne-Sophie Kieslinger}{0000-0001-9240-4077}
-
-abstract: |
-  Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3 to 16 months. We robustly found that male infants recognized novel rotated objects more reliably than female infants. These findings indicate that gender differences in mental rotation are already present in the first months of life.
-
 keywords          : "mental rotation, spatial cognition, spatial ability, infants, children, gender, meta-analysis"
 
 bibliography_main    : "manuscript_files/main.bib"
@@ -282,6 +272,10 @@ descriptives <- list(
 )
 ```
 
+# Abstract
+
+Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3 to 16 months. We robustly found that male infants recognized novel rotated objects more reliably than female infants. These findings indicate that gender differences in mental rotation are already present in the first months of life.
+
 # Main
 
 The cognitive ability to move visual object representations in mind for recognition across different orientations, known as mental rotation, emerges in the first three months of life [@moore2020; @johnson2020]. Mental rotation is a key component of intelligence and a powerful predictor of learning outcome and educational achievement [@shepard1971; @hegarty1999; @johnson2005].
@@ -289,8 +283,6 @@ The cognitive ability to move visual object representations in mind for recognit
 Previous meta-analyses revealed that males solve mental rotation tasks slightly faster than females on average [@linn1985; @voyer1995; @voyer2011; @maeda2013]. Effect sizes of this difference, however, are heterogeneous and often only medium in size (mean weighted $g = 0.37\text{--}0.73$). Interestingly, a recent meta-analysis [@lauer2019a] in 3-17-year-old children and adolescents suggests even only a small-to-medium difference (mean weighted $g = 0.39$). Whether gender differences in mental rotation behavior already emerge during infancy remains unknown.
 
 In the present study, we meta-analyzed `r descriptives$n_experiments` effect sizes derived from looking times in mental rotation tasks conducted by `r formatC(descriptives$n_infants, big.mark = ",")` infants (`r print_perc(descriptives$percent_female)` female) aged `r descriptives$min_age_months` to `r descriptives$max_age_months` months (mean age of `r descriptives$mean_age_weighted`; Supplementary Table\ \@ref(tab:tabs1))[@antrilli2016; @christodoulou2016; @constantinescu2018; @erdmann2018; @frick2013b; @frick2014b; @gerhard-samunda2021; @gerhard2018; @hespos1997; @kaaz2020; @kelch2021; @kellman1984; @lauer2015; @lauer2016; @mohring2013; @moore2008; @moore2011; @quinn2008; @quinn2014; @rochat1996; @schwarzer2013; @schwarzer2013a; @slone2018]. All tasks were embedded either into habituation experiments (`r descriptives$n_experiments_habituation`) or violation of expectation experiments (`r descriptives$n_experiments_voe`) [@fantz1964; @baillargeon1985]. These experiments comprised real world stimuli (e.g., toy objects [@antrilli2016]), three-dimensional digital stimuli (e.g., cube figures [@moore2008]), or two-dimensional digital stimuli (e.g., digits [@quinn2008]). In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object. Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation. In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle. Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle. Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown. Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle. In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
-
-Following previous work in older populations, we hypothesized that looking times in mental rotation experiments are on average longer in male compared to female infants. Effect sizes were assumed to be small.
 
 ```{r, meta}
 # Specify priors
@@ -465,7 +457,7 @@ dir.create(figures_dir, showWarnings = FALSE)
 ggsave(here(figures_dir, "fig1_meta.pdf"), width = 12, height = 14)
 ```
 
-\newpage
+Following previous work in older populations, we hypothesized that looking times in mental rotation experiments are on average longer in male compared to female infants. Effect sizes were assumed to be small.
 
 ## Mental rotation performance
 
@@ -862,7 +854,9 @@ spread_draws(res_gender, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
 
 To confirm the gender difference between males and females we set up another Bayesian meta-analysis, this time focusing on the looking-time contrasts between all-male and all-female groups reported *within* each experiment by the original authors.
 Our additional analysis revealed a meta-analytic effect size of $g = `r summ_gender$intercept`$, 95% Crl [`r summ_gender$intercept.lower`, `r summ_gender$intercept.upper`] (Supplementary Fig.\ \@ref(fig:figs1)) and a probability of this effect being greater than zero of `r print_perc(hyp_gender$Post.Prob)`.
-The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_gender$sigma2_experiment`$, 95% CrI [`r summ_gender$sigma2_experiment.lower`, `r summ_gender$sigma2_experiment.upper`], at the experiment level and $\sigma_{\text{Article}}^2 = `r summ_gender$sigma2_article`$, 95% CrI [`r summ_gender$sigma2_article.lower`, `r summ_gender$sigma2_article.upper`] at the article level. This means that `r print_perc(summ_gender$icc)` of the total variance can be attributed to differences *between* articles and `r print_perc(1 - summ_gender$icc)` to differences between experiments *within* articles. The results obtained from our Bayesian analyses were reproduced by classical frequentist three-level meta-analysis and meta-regression models (Supplementary Table\ \@ref(tab:tabs2)).
+The heterogeneity of effect sizes was $\sigma_{\text{Experiment}}^2 = `r summ_gender$sigma2_experiment`$, 95% CrI [`r summ_gender$sigma2_experiment.lower`, `r summ_gender$sigma2_experiment.upper`], at the experiment level and $\sigma_{\text{Article}}^2 = `r summ_gender$sigma2_article`$, 95% CrI [`r summ_gender$sigma2_article.lower`, `r summ_gender$sigma2_article.upper`] at the article level. This means that `r print_perc(summ_gender$icc)` of the total variance can be attributed to differences *between* articles and `r print_perc(1 - summ_gender$icc)` to differences between experiments *within* articles.
+
+The results obtained from our Bayesian analyses were reproduced by classical frequentist three-level meta-analysis and meta-regression models (Supplementary Table\ \@ref(tab:tabs2)).
 
 ## Publication bias assessment
 
