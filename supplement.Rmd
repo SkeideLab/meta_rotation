@@ -57,13 +57,13 @@ However, there were `r nrow(dat_ri_empirical)` experiments taken from seven diff
 
 5. Compute the observed correlation between conditions based on a rearranged equation by @cohen1988: $$r=\frac{{SD}_\text{diff}^2-{SD}_\text{novel}^2-{SD}_\text{familiar}}{-2\cdot{SD}_\text{novel}^2\cdot{SD}_\text{familiar}^2}$$
 
-Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed correlation was $r = `r summ_ri_empirical["Mean"]`$ (median $r = `r summ_ri_empirical["Median"]`$, range [`r summ_ri_empirical["Min."]`, `r summ_ri_empirical["Max."]`]). However, we decided to assume a correlation of $r  = .50$ when computing the effect size ${SE}_\text{rotation}$ for all `r descriptives$n_experiments` experiments. This was to ensure the comparability of our methods to meta-analyses of between-participant studies [@cohen1988; @lakens2013; @morris2002]. To  evaluate the robustness of our Bayesian meta-analytic model against the assumption of a correlation of $r  = .50$ we ran a sensitivity analysis (Supplementary Table\ \@ref(tab:tabs4)).
+Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed correlation was $r = `r summ_ri_empirical["Mean"]`$ (median $r = `r summ_ri_empirical["Median"]`$, range [`r summ_ri_empirical["Min."]`, `r summ_ri_empirical["Max."]`]). However, we decided to assume a correlation of $r  = .50$ when computing the effect size ${SE}_\text{rotation}$ for all `r descriptives$n_experiments` experiments. This was to ensure the comparability of our methods to meta-analyses of between-participant studies [@cohen1988; @lakens2013; @morris2002]. To  evaluate the robustness of our Bayesian meta-analytic model against the assumption of a correlation of $r  = .50$ we ran a sensitivity analysis (Supplementary Tables\ \@ref(tab:tabs7) and \@ref(tab:tabs8)).
 
 ## Supplementary Methods 2 | Bias correction and sensitivity analysis for frequentist results
 
-We used trim-and-fill analysis and selection models to examine if and how our meta-analytic results would change under different degrees of publication bias. For both of these types of models, we used a simplified two-level version of our frequentist three-level model as a basis. In our first step, we computed a trim-and-fill model [@duval2000] by imputing possible effect sizes of non-published experiments. This new model produces a symmetric funnel plot with no association between effect sizes and standard errors (Supplementary Tables\ \@ref(tab:tabs8) and \@ref(tab:tabs9); Supplementary Fig.\ \@ref(fig:figs4)).
+We used trim-and-fill analysis and selection models to examine if and how our meta-analytic results would change under different degrees of publication bias. For both of these types of models, we used a simplified two-level version of our frequentist three-level model as a basis. In our first step, we computed a trim-and-fill model [@duval2000] by imputing possible effect sizes of non-published experiments. This new model produces a symmetric funnel plot with no association between effect sizes and standard errors (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11); Supplementary Fig.\ \@ref(fig:figs4)).
 
-In our next step, we used selection models to approximate the process by which experiments got selected into the meta-analysis. These models were based on the assumption that experiments yielding significant effects (i.e., small *p*-values) are more likely to get published. Specifically, we ran one selection model assuming a weight function with fixed *p*-value cutoffs [@vevea1995] at *p* = .01, *p* = .05, and *p* = .30. Additionally, we ran multiple models with a priori selection functions assuming biases of varying severity [@vevea2005]. These analyses  revealed that our results are robust to small to medium publication bias (Supplementary Tables\ \@ref(tab:tabs8) and \@ref(tab:tabs9)).
+In our next step, we used selection models to approximate the process by which experiments got selected into the meta-analysis. These models were based on the assumption that experiments yielding significant effects (i.e., small *p*-values) are more likely to get published. Specifically, we ran one selection model assuming a weight function with fixed *p*-value cutoffs [@vevea1995] at *p* = .01, *p* = .05, and *p* = .30. Additionally, we ran multiple models with a priori selection functions assuming biases of varying severity [@vevea2005]. These analyses  revealed that our results are robust to small to medium publication bias (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11)).
 
 <!-- Supplementary tables -->
 
@@ -285,6 +285,53 @@ apa_table(
 )
 ```
 
+\renewcommand{\arraystretch}{1.30}
+\scriptsize
+\LTcapwidth=\textwidth
+
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| \ \ Available statistics                                       | Conversion to standardized mean difference (Hedges' $g$)                                    |
++================================================================+=============================================================================================+
+| \ \ (1\) Cohen's $d$ and sample size                           | ${df}=2(n-1)$;\quad                                                                         |
+| [@goulet-pelletier2018; @hedges1985]                           | $J({df})=\frac{\Gamma(\frac{1}{2}{df})}{\sqrt{\frac{{df}}{2}}\Gamma(\frac{1}{2}({df}-1))}$; |
+|                                                                | \quad $g_\text{rotation}=d\cdot{J}({df})$                                                   |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| \ \ (2\) $t$-statistic and sample size [@rosenthal1991]        | $d=\frac{t}{\sqrt{n}}$;\quad then (1)                                                       |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| \ \ (3\) $F$-statistic and sample size [@lakens2013]           | $t=\sqrt{f}$;\quad then (2\)                                                                |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| \ \ (4\) Mean difference between conditions [@lakens2013]      | $d=\frac{m_\text{diff}}{{SD}_\text{diff}}$;\quad then (1)                                   |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| \ \ (5\) Mean looking time and ${SD}$ per condition            | ${SD}_\text{av}=\sqrt{\frac{{SD}_\text{novel}^2+{SD}_\text{familiar}^2}{2}}$;\quad          |
+| [@cumming2012]                                                 | $d=\frac{m_\text{novel}-m_\text{familiar}}{{SD}_\text{av}}$;\quad then (1)                  |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+| \ \ (6\) Mean novelty preference score [@lakens2013]           | $d=\frac{m_\text{pref}}{{SD}_\text{pref}}$;\quad then (1)                                   |
++----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
+
+Table: (\#tab:tabs5) Effect size conversion for the meta-analysis of mental rotation performance
+
++----------------------------------------+--------------------------------------------------------------------------------------------------+
+| \ \ Available statistics               | Conversion to standardized mean difference (Hedges' $g$)                                         |
++========================================+==================================================================================================+
+| \ \ (1\) Cohen's $d$ and group sizes   | ${df}=n_\text{female}+n_\text{male}-1$; \quad                                                    |
+| [@goulet-pelletier2018; @hedges1985]   | $J({df})=\frac{\Gamma(\frac{1}{2}{df})}{\sqrt{\frac{{df}}{2}}\Gamma(\frac{1}{2}({df}-1))}$;\quad |
+|                                        | $g_\text{gender}=d\cdot{J({df})}$                                                                |
++----------------------------------------+--------------------------------------------------------------------------------------------------+
+| \ \ (2\) $t$-statistic and group sizes | $d=t\sqrt{\frac{1}{n_\text{female}}+\frac{1}{n_\text{male}}}$;\quad then (1)                     |
+| [@lakens2013]                          |                                                                                                  |
++----------------------------------------+--------------------------------------------------------------------------------------------------+
+| \ \ (3\) $F$-statistic and group sizes | $t=\sqrt{f}$;\quad then (2\)                                                                     |
+| [@lakens2013]                          |                                                                                                  |
++----------------------------------------+--------------------------------------------------------------------------------------------------+
+| \ \ (4\) Mean differences between\     | ${SD}_\text{pooled}=\sqrt{\frac{(n_\text{female}-1){SD}_\text{female}^2                          |
+| \ \ conditions or preference scores    | +(n_\text{male}-1){SD}_\text{male}^2}{df}}$;\quad                                                |
+| [@lakens2013]                          | $d=\frac{m_\text{female}-m_\text{male}}{{SD}_\text{pooled}}$;\quad then (1)                      |
++----------------------------------------+--------------------------------------------------------------------------------------------------+
+
+Table: (\#tab:tabs6) Effect size conversion for the meta-analysis of gender differences
+
+\normalsize
+
 ```{r, sensitivity}
 # Re-run the sensitivity analyses if requested
 if (run$sensitivity_analysis) {
@@ -409,8 +456,8 @@ if (run$sensitivity_analysis) {
         label_1 = manipulation_name, label_2 = manipulation_value,
         label_col_1 = "Manipulation", label_col_2 = " "
       )
-    }) -> tabs5
-  write_csv(tabs5, file = here(tables_dir, "tabs5_sens_meta.csv"))
+    }) -> tabs7
+  write_csv(tabs7, file = here(tables_dir, "tabs7_sens_meta.csv"))
 
   # Create table for the meta-regression of mental rotation performance
   sens %>%
@@ -423,8 +470,8 @@ if (run$sensitivity_analysis) {
         label_1 = manipulation_name, label_2 = manipulation_value,
         label_col_1 = "Manipulation", label_col_2 = " "
       )
-    }) -> tabs6
-  write_csv(tabs6, file = here(tables_dir, "tabs6_sens_reg.csv"))
+    }) -> tabs8
+  write_csv(tabs8, file = here(tables_dir, "tabs8_sens_reg.csv"))
 
   # Create table for the meta-analysis of gender differences
   sens %>%
@@ -436,30 +483,30 @@ if (run$sensitivity_analysis) {
         label_1 = manipulation_name, label_2 = manipulation_value,
         label_col_1 = "Manipulation", label_col_2 = " "
       )
-    }) -> tabs7
-  write_csv(tabs7, file = here(tables_dir, "tabs7_sens_gender.csv"))
+    }) -> tabs9
+  write_csv(tabs9, file = here(tables_dir, "tabs9_sens_gender.csv"))
 }
 ```
 
 \renewcommand{\arraystretch}{1.10}
 
-```{r, tabs5, include=TRUE}
+```{r, tabs7, include=TRUE}
 # Load sensitivity analysis table from file
-tabs5 <- read_csv(
-  here(tables_dir, "tabs5_sens_meta.csv"),
+tabs7 <- read_csv(
+  here(tables_dir, "tabs7_sens_meta.csv"),
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
 # Add footnotes
-colnames(tabs5)[6] <- str_c(colnames(tabs5)[6], "\\textsuperscript{a}")
-tabs5$` `[8] <- str_c(tabs5$` `[8], "\\textsuperscript{b}")
-tabs5$` `[9] <- str_c(tabs5$` `[9], "\\textsuperscript{c}")
-tabs5$` `[10] <- str_c(tabs5$` `[10], "\\textsuperscript{d}")
-tabs5$` `[11] <- str_c(tabs5$` `[11], "\\textsuperscript{e}")
+colnames(tabs7)[6] <- str_c(colnames(tabs7)[6], "\\textsuperscript{a}")
+tabs7$` `[8] <- str_c(tabs7$` `[8], "\\textsuperscript{b}")
+tabs7$` `[9] <- str_c(tabs7$` `[9], "\\textsuperscript{c}")
+tabs7$` `[10] <- str_c(tabs7$` `[10], "\\textsuperscript{d}")
+tabs7$` `[11] <- str_c(tabs7$` `[11], "\\textsuperscript{e}")
 
 # Display the table
 apa_table(
-  tabs5,
+  tabs7,
   caption = "Sensitivity analyses for the meta-analysis of mental rotation performance",
   note = str_c(
     "\\scriptsize",
@@ -469,26 +516,28 @@ apa_table(
     "\\textsuperscript{d} = an uninformative (uniform) prior on the standard deviations, ",
     "\\textsuperscript{e} = an informative (Student-$t$) prior on the standard deviations."
   ),
-  font_size = "scriptsize", escape = FALSE, align = "llrrrr"
+  placement = "hb", font_size = "scriptsize", escape = FALSE, align = "llrrrr"
 )
 ```
 
-```{r, tabs6, include=TRUE}
+\renewcommand{\arraystretch}{0.97}
+
+```{r, tabs8, include=TRUE}
 # Load sensitivity analysis table from file
-tabs6 <- read_csv(
-  here(tables_dir, "tabs6_sens_reg.csv"),
+tabs8 <- read_csv(
+  here(tables_dir, "tabs8_sens_reg.csv"),
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
 # Add footnotes
-tabs6$` `[8] <- str_c(tabs6$` `[8], "\\textsuperscript{a}")
-tabs6$` `[9] <- str_c(tabs6$` `[9], "\\textsuperscript{b}")
-tabs6$` `[10] <- str_c(tabs6$` `[10], "\\textsuperscript{c}")
-tabs6$` `[11] <- str_c(tabs6$` `[11], "\\textsuperscript{d}")
+tabs8$` `[8] <- str_c(tabs8$` `[8], "\\textsuperscript{a}")
+tabs8$` `[9] <- str_c(tabs8$` `[9], "\\textsuperscript{b}")
+tabs8$` `[10] <- str_c(tabs8$` `[10], "\\textsuperscript{c}")
+tabs8$` `[11] <- str_c(tabs8$` `[11], "\\textsuperscript{d}")
 
 # Display the table
 apa_table(
-  tabs6,
+  tabs8,
   caption = "Sensitivity analyses for the meta-regression of mental rotation performance",
   note = str_c(
     "\\scriptsize",
@@ -502,23 +551,23 @@ apa_table(
 )
 ```
 
-```{r, tabs7, include=TRUE}
+```{r, tabs9, include=TRUE}
 # Load sensitivity analysis table from file
-tabs7 <- read_csv(
-  here(tables_dir, "tabs7_sens_gender.csv"),
+tabs9 <- read_csv(
+  here(tables_dir, "tabs9_sens_gender.csv"),
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
 # Add footnotes
-colnames(tabs7)[6] <- str_c(colnames(tabs7)[6], "\\textsuperscript{a}")
-tabs7$` `[1] <- str_c(tabs7$` `[1], "\\textsuperscript{b}")
-tabs7$` `[2] <- str_c(tabs7$` `[2], "\\textsuperscript{c}")
-tabs7$` `[3] <- str_c(tabs7$` `[3], "\\textsuperscript{d}")
-tabs7$` `[4] <- str_c(tabs7$` `[4], "\\textsuperscript{e}")
+colnames(tabs9)[6] <- str_c(colnames(tabs9)[6], "\\textsuperscript{a}")
+tabs9$` `[1] <- str_c(tabs9$` `[1], "\\textsuperscript{b}")
+tabs9$` `[2] <- str_c(tabs9$` `[2], "\\textsuperscript{c}")
+tabs9$` `[3] <- str_c(tabs9$` `[3], "\\textsuperscript{d}")
+tabs9$` `[4] <- str_c(tabs9$` `[4], "\\textsuperscript{e}")
 
 # Display the table
 apa_table(
-  tabs7,
+  tabs9,
   caption = "Sensitivity analyses for the meta-analysis of gender differences",
   note = str_c(
     "\\scriptsize",
@@ -621,20 +670,20 @@ map(names(res_freq_2_lvl), function(name) {
   set_names(names(res_freq_2_lvl)) -> tabs_correction
 
 # Save the tables
-tabs8 <- tabs_correction$meta
-tabs9 <- tabs_correction$gender
-write_csv(tabs8, file = here(tables_dir, "tabs8_correction_meta.csv"))
-write_csv(tabs9, file = here(tables_dir, "tabs9_correction_gender.csv"))
+tabs10 <- tabs_correction$meta
+tabs11 <- tabs_correction$gender
+write_csv(tabs10, file = here(tables_dir, "tabs10_correction_meta.csv"))
+write_csv(tabs11, file = here(tables_dir, "tabs11_correction_gender.csv"))
 ```
 
-```{r, tabs8, include=TRUE}
+```{r, tabs10, include=TRUE}
 # Add footnotes
-colnames(tabs8)[4] <- str_c(colnames(tabs8)[4], "\\textsuperscript{a}")
-colnames(tabs8)[7] <- str_c(colnames(tabs8)[7], "\\textsuperscript{b}")
+colnames(tabs10)[4] <- str_c(colnames(tabs10)[4], "\\textsuperscript{a}")
+colnames(tabs10)[7] <- str_c(colnames(tabs10)[7], "\\textsuperscript{b}")
 
 # Display the table
 apa_table(
-  tabs8,
+  tabs10,
   caption = "Publication bias correction for the meta-analysis of mental rotation performance",
   note = str_c(
     "\\scriptsize",
@@ -645,14 +694,14 @@ apa_table(
 )
 ```
 
-```{r, tabs9, include=TRUE}
+```{r, tabs11, include=TRUE}
 # Add footnotes
-colnames(tabs9)[4] <- str_c(colnames(tabs9)[4], "\\textsuperscript{a}")
-colnames(tabs9)[7] <- str_c(colnames(tabs9)[7], "\\textsuperscript{b}")
+colnames(tabs11)[4] <- str_c(colnames(tabs11)[4], "\\textsuperscript{a}")
+colnames(tabs11)[7] <- str_c(colnames(tabs11)[7], "\\textsuperscript{b}")
 
 # Display the table
 apa_table(
-  tabs9,
+  tabs11,
   caption = "Publication bias correction for the meta-analysis of gender differences",
   note = str_c(
     "\\scriptsize",
@@ -662,6 +711,8 @@ apa_table(
   font_size = "scriptsize", escape = FALSE, align = "llrrrrr",
 )
 ```
+
+\newpage
 
 <!-- Supplementary figures -->
 

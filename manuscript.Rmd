@@ -1075,75 +1075,21 @@ Many of these articles consisted of multiple experiments, e.g., using different 
 
 ## Data collection process and items
 
-Outcome measures and other relevant variables were extracted from each article by one of three raters and verified by a second rater. For the meta-analysis of mental rotation performance, outcome measures were any summary statistic (Table 1) that could be used to determine the standardized mean difference between novel/unexpected rotation events and familiar/expected rotation events (see Introduction). Other extracted variables included, if available, the sample size, the number of males and females, the mean age and its standard deviation, the minimum and maximum age, the type of mental rotation task (habituation or violation of expectation), the modality of stimulus presentation (real objects or objects on a computer screen), and the dimensionality of the stimuli (2D or 3D; Supplementary Table 1).
+Outcome measures and other relevant variables were extracted from each article by one of three raters and verified by a second rater. For the meta-analysis of mental rotation performance, outcome measures were any summary statistic (Supplementary Table\ \@ref(tab:tabs5)) that could be used to determine the standardized mean difference between novel/unexpected rotation events and familiar/expected rotation events (see Introduction). Other extracted variables included, if available, the sample size, the number of males and females, the mean age and its standard deviation, the minimum and maximum age, the type of mental rotation task (habituation or violation of expectation), the modality of stimulus presentation (real objects or objects on a computer screen), and the dimensionality of the stimuli (2D or 3D; Supplementary Table\ \@ref(tab:tabs1)).
 
-\renewcommand{\arraystretch}{2}
-\singlespacing
-\scriptsize
-
-+----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| Available statistics                                           | Conversion to standardized mean difference (Hedges' $g$)                                    |
-+================================================================+=============================================================================================+
-| (1\) Cohen's $d$ and sample size                               | ${df}=2(n-1)$;\quad                                                                         |
-| [@goulet-pelletier2018; @hedges1985]                           | $J({df})=\frac{\Gamma(\frac{1}{2}{df})}{\sqrt{\frac{{df}}{2}}\Gamma(\frac{1}{2}({df}-1))}$; |
-|                                                                | \quad $g_\text{rotation}=d\cdot{J}({df})$                                                   |
-+----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| (2\) $t$-statistic and sample size [@rosenthal1991]            | $d=\frac{t}{\sqrt{n}}$;\quad then (1)                                                       |
-+----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| (3\) $F$-statistic and sample size [@lakens2013]               | $t=\sqrt{f}$;\quad then (2\)                                                                |
-+----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| (4\) Mean difference between conditions [@lakens2013]          | $d=\frac{m_\text{diff}}{{SD}_\text{diff}}$;\quad then (1)                                   |
-+----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| (5\) Mean looking time and ${SD}$ per condition [@cumming2012] | ${SD}_\text{av}=\sqrt{\frac{{SD}_\text{novel}^2+{SD}_\text{familiar}^2}{2}}$;\quad          |
-|                                                                | $d=\frac{m_\text{novel}-m_\text{familiar}}{{SD}_\text{av}}$;\quad then (1)                  |
-+----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| (6\) Mean novelty preference score [@lakens2013]               | $d=\frac{m_\text{pref}}{{SD}_\text{pref}}$;\quad then (1)                                   |
-+----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-
-Table: Extracted between-article summary statistics and conversion to effect sizes
-
-\doublespacing
-\normalsize
-
-We also conducted a meta-analysis of the gender differences in mental rotation performance observed within the original articles. For this analysis, the outcome measures were any summary statistic (Table 2) that could be used to determine the standardized mean difference between male infants' mental rotation performance and female infants' mental rotation performance. Other extracted variables included the sample size, the mean age and its standard deviation, and the minimum and maximum age of each gender group.
-
-\singlespacing
-\scriptsize
-
-+----------------------------------------+--------------------------------------------------------------------------------------------------+
-| Available statistics                   | Conversion to standardized mean difference (Hedges' $g$)                                         |
-+========================================+==================================================================================================+
-| (1\) Cohen's $d$ and group sizes       | ${df}=n_\text{female}+n_\text{male}-1$; \quad                                                    |
-| [@goulet-pelletier2018; @hedges1985]   | $J({df})=\frac{\Gamma(\frac{1}{2}{df})}{\sqrt{\frac{{df}}{2}}\Gamma(\frac{1}{2}({df}-1))}$;\quad |
-|                                        | $g_\text{gender}=d\cdot{J({df})}$                                                                |
-+----------------------------------------+--------------------------------------------------------------------------------------------------+
-| (2\) $t$-statistic and group sizes     | $d=t\sqrt{\frac{1}{n_\text{female}}+\frac{1}{n_\text{male}}}$;\quad then (1)                     |
-| [@lakens2013]                          |                                                                                                  |
-+----------------------------------------+--------------------------------------------------------------------------------------------------+
-| (3\) $F$-statistic and group sizes     | $t=\sqrt{f}$;\quad then (2\)                                                                     |
-| [@lakens2013]                          |                                                                                                  |
-+----------------------------------------+--------------------------------------------------------------------------------------------------+
-| (4\) Mean differences between          | ${SD}_\text{pooled}=\sqrt{\frac{(n_\text{female}-1){SD}_\text{female}^2                          |
-| conditions or preference scores        | +(n_\text{male}-1){SD}_\text{male}^2}{df}}$;\quad                                                |
-| [@lakens2013]                          | $d=\frac{m_\text{female}-m_\text{male}}{{SD}_\text{pooled}}$;\quad then (1)                      |
-+----------------------------------------+--------------------------------------------------------------------------------------------------+
-
-Table: Extracted within-article summary statistics and conversion to effect sizes
-
-\doublespacing
-\normalsize
+We also conducted a meta-analysis of the gender differences in mental rotation performance observed within the original articles. For this analysis, the outcome measures were any summary statistic (Supplementary Table\ \@ref(tab:tabs6)) that could be used to determine the standardized mean difference between male infants' mental rotation performance and female infants' mental rotation performance. Other extracted variables included the sample size, the mean age and its standard deviation, and the minimum and maximum age of each gender group.
 
 No investigators were contacted for obtaining or confirming additional data and no automated tools were used in the data collection process.
 
 ## Effect measures
 
-For the meta-analysis of mental rotation performance, one outcome measure per experiment was converted into a standardized mean difference with small sample correction (Hedges' $g$) using the formulas provided in Table 1. The standard error of Hedges' $g$ for each experiment was computed using the formula provided by @goulet-pelletier2018: $${SE}_\text{rotation}=\sqrt{\frac{{df}}{{df}-2}\frac{2(1-r)}{n}\left(1+g_\text{rotation}^2\frac{n}{2(1-r)}\right)-\frac{g_\text{rotation}^2}{J({df})^2}}$$ where $n$ is the sample size of the experiment, ${df}$ are the degrees of freedom (with ${df} = 2*(n-1)$), $r$ is the correlation between the two dependent measures in the experiment, and $J({df})$ is the correction factor for small samples as described in Table 1. The correlation $r$ was not reported in any of the original articles [@harrer2021]. We therefore always assumed a correlation of $r = .50$ to make our analysis comparable to standard (between-group) meta-analyses [@cohen1988; @lakens2013; @morris2002] and because we were able to infer an average correlation of $r \approx .50$ from a subsample of articles which provided sufficient information (Supplementary Methods 1). A sensitivity analysis indicated that changing the assumed correlation to values from $r = -.90$ via $r = .00$ to $r = .90$ had no meaningful impact on the meta-analytic effect size (Supplementary Table\ \@ref(tab:tabs5)).
+For the meta-analysis of mental rotation performance, one outcome measure per experiment was converted into a standardized mean difference with small sample correction (Hedges' $g$) using the formulas provided in Supplementary Table\ \@ref(tab:tabs5). The standard error of Hedges' $g$ for each experiment was computed using the formula provided by @goulet-pelletier2018: $${SE}_\text{rotation}=\sqrt{\frac{{df}}{{df}-2}\frac{2(1-r)}{n}\left(1+g_\text{rotation}^2\frac{n}{2(1-r)}\right)-\frac{g_\text{rotation}^2}{J({df})^2}}$$ where $n$ is the sample size of the experiment, ${df}$ are the degrees of freedom (with ${df} = 2*(n-1)$), $r$ is the correlation between the two dependent measures in the experiment, and $J({df})$ is the correction factor for small samples as described in Supplementary Table\ \@ref(tab:tabs5). The correlation $r$ was not reported in any of the original articles [@harrer2021]. We therefore always assumed a correlation of $r = .50$ to make our analysis comparable to standard (between-group) meta-analyses [@cohen1988; @lakens2013; @morris2002] and because we were able to infer an average correlation of $r \approx .50$ from a subsample of articles which provided sufficient information (Supplementary Methods 1). A sensitivity analysis indicated that changing the assumed correlation to values from $r = -.90$ via $r = .00$ to $r = .90$ had no meaningful impact on the meta-analytic effect size (Supplementary Tables\ \@ref(tab:tabs7) and\ \@ref(tab:tabs8)).
 
-For the meta-analysis of gender differences in mental rotation performance, one outcome measure per contrast between non-redundant male and female groups of infants was converted into a standardized mean difference with small sample correction (Hedges' $g$) using the formulas provided in Table 2. The standard error of Hedges' $g$ for each gender contrast was computed using the formula provided by @goulet-pelletier2018: $${SE}_\text{gender}=\sqrt{\frac{{df}}{{df}-2}\frac{2}{\tilde{n}}\left(1+g_\text{gender}^2\frac{\tilde{n}}{2}\right)-\frac{g_\text{gender}^2}{J({df})^2}}$$ where $df$ are the degrees of freedom (with $df=n_\text{female}+n_\text{male}-2$), $\tilde{n}$ is the harmonic mean of the group sizes (i.e., $\tilde{n}=\frac{2}{n_\text{female}^{-1}+n_\text{male}^{-1}}$), and $J(df)$ is the correction factor for small samples as described in Row (1) of Table 2.
+For the meta-analysis of gender differences in mental rotation performance, one outcome measure per contrast between non-redundant male and female groups of infants was converted into a standardized mean difference with small sample correction (Hedges' $g$) using the formulas provided in Supplementary Table\ \@ref(tab:tabs6). The standard error of Hedges' $g$ for each gender contrast was computed using the formula provided by @goulet-pelletier2018: $${SE}_\text{gender}=\sqrt{\frac{{df}}{{df}-2}\frac{2}{\tilde{n}}\left(1+g_\text{gender}^2\frac{\tilde{n}}{2}\right)-\frac{g_\text{gender}^2}{J({df})^2}}$$ where $df$ are the degrees of freedom (with $df=n_\text{female}+n_\text{male}-2$), $\tilde{n}$ is the harmonic mean of the group sizes (i.e., $\tilde{n}=\frac{2}{n_\text{female}^{-1}+n_\text{male}^{-1}}$), and $J(df)$ is the correction factor for small samples as described in Row (1) of Supplementary Table\ \@ref(tab:tabs6).
 
 ## Bayesian meta-analysis
 
-We synthesized the effect sizes and their sampling variances using a Bayesian multilevel model. This model had three levels, with infant participants nested in experiments and experiments nested in articles [@vandennoortgate2013]. We used a weakly-informative $\mathcal{N}(0,1)$ (normal) prior for the meta-analytic effect size and a weakly-informative $\mathcal{HC}(0,0.3)$ (half-Cauchy) prior for all standard deviations [@williams2018]. A prior sensitivity analysis indicated that making these priors either more informative or less informative did not change the meta-analytic results (Supplementary Table\ \@ref(tab:tabs5)). For the meta-analysis of mental rotation performance, the dependent variable was the standardized mean difference (Hedges' $g$) between the novel and familiar rotation condition, weighted by its standard error (see Effect measures above). For the meta-analysis of gender differences, the dependent variable was the standardized mean difference (Hedges' $g$) between male infants' mental rotation performance and female infants' mental rotation performance, weighted by its standard error. All Bayesian models were fitted using the brms package (Version `r packageVersion("brms")`) [@burkner2017; @burkner2018] in R (Version `r packageVersion("base")`) [@rcoreteam2021] and the Stan language (Version `r packageVersion("rstan")`) [@standevelopmentteam2022]. Markov Chain Monte Carlo (MCMC) sampling was used with four parallel chains, each sampling `r formatC(n_iter, big.mark = ",")` draws (including `r formatC(n_warmup, big.mark = ",")` warm-up draws) from the posterior distribution. To verify the convergence of the Markov chains, we examined rank plots as well as the $R_\text{hat}$ and $N_\text{eff}$ statistics (Supplementary Fig.\ \@ref(fig:figs2)) [@vehtari2021]. For reporting, the credible interval (CrI) for each model parameter was computed as the 95% equal-tailed interval (ETI) of its posterior distribution, although replacing this with the 95% highest density interval (HDI) yielded highly similar results [@kruschke2015].
+We synthesized the effect sizes and their sampling variances using a Bayesian multilevel model. This model had three levels, with infant participants nested in experiments and experiments nested in articles [@vandennoortgate2013]. We used a weakly-informative $\mathcal{N}(0,1)$ (normal) prior for the meta-analytic effect size and a weakly-informative $\mathcal{HC}(0,0.3)$ (half-Cauchy) prior for all standard deviations [@williams2018]. A prior sensitivity analysis indicated that making these priors either more informative or less informative did not change the meta-analytic results (Supplementary Tables\ \@ref(tab:tabs7), \@ref(tab:tabs8), and\ \@ref(tab:tabs9)). For the meta-analysis of mental rotation performance, the dependent variable was the standardized mean difference (Hedges' $g$) between the novel and familiar rotation condition, weighted by its standard error (see Effect measures above). For the meta-analysis of gender differences, the dependent variable was the standardized mean difference (Hedges' $g$) between male infants' mental rotation performance and female infants' mental rotation performance, weighted by its standard error. All Bayesian models were fitted using the brms package (Version `r packageVersion("brms")`) [@burkner2017; @burkner2018] in R (Version `r packageVersion("base")`) [@rcoreteam2021] and the Stan language (Version `r packageVersion("rstan")`) [@standevelopmentteam2022]. Markov Chain Monte Carlo (MCMC) sampling was used with four parallel chains, each sampling `r formatC(n_iter, big.mark = ",")` draws (including `r formatC(n_warmup, big.mark = ",")` warm-up draws) from the posterior distribution. To verify the convergence of the Markov chains, we examined rank plots as well as the $R_\text{hat}$ and $N_\text{eff}$ statistics (Supplementary Fig.\ \@ref(fig:figs2)) [@vehtari2021]. For reporting, the credible interval (CrI) for each model parameter was computed as the 95% equal-tailed interval (ETI) of its posterior distribution, although replacing this with the 95% highest density interval (HDI) yielded highly similar results [@kruschke2015].
 
 ## Bayesian meta-regression
 
@@ -1151,7 +1097,7 @@ We examined the influence of three moderator variables on the mental rotation ou
 
 ## Frequentist meta-analysis
 
-We verified the results obtained from our Bayesian analyses using classical frequentist meta-analysis and meta-regression. To this end, we used the metafor package (Version `r packageVersion("metafor")`) [@viechtbauer2010] in R to specify the same three-level models as described above but without the Bayesian priors (Supplementary Table\ \@ref(tab:tabs5)). These models were fitted using restricted maximum likelihood estimation (REML). To verify that the REML converged on the correct estimates, we examined profile likelihood plots [@raue2009; @viechtbauer2010] for the two variance components in the model (i.e., the between-experiment variance and the between-article variance; Supplementary Fig.\ \@ref(fig:figs3)).
+We verified the results obtained from our Bayesian analyses using classical frequentist meta-analysis and meta-regression. To this end, we used the metafor package (Version `r packageVersion("metafor")`) [@viechtbauer2010] in R to specify the same three-level models as described above but without the Bayesian priors (Supplementary Table\ \@ref(tab:tabs2)). These models were fitted using restricted maximum likelihood estimation (REML). To verify that the REML converged on the correct estimates, we examined profile likelihood plots [@raue2009; @viechtbauer2010] for the two variance components in the model (i.e., the between-experiment variance and the between-article variance; Supplementary Fig.\ \@ref(fig:figs3)).
 
 ## Publication bias assessment
 
@@ -1159,7 +1105,7 @@ Publication bias was evaluated based on funnel plots and Egger regression tests 
 
 To scrutinize the robustness of the meta-analytic effect size against the influence of any individual experiment (which may or may not be a false positive), we conducted a jackknife leave-one-out-analysis for the meta-analysis of mental rotation performance [@gee2005; @efron1993]. To this end, we refitted the Bayesian three-level model repeatedly while leaving out one of the original experiments on every iteration. We then checked if the meta-analytic effect size and heterogeneity remained constant or if it was sensitive against the influence of any individual experiment (Supplementary Table\ \@ref(tab:tabs3)).
 
-We also performed trim-and-fill analyses and tested selection models to confirm the robustness of the results obtained from the frequentist meta-analyses against publication bias (Supplementary Methods 2; Supplementary Tables\ \@ref(tab:tabs8) and \@ref(tab:tabs9); Supplementary Fig.\ \@ref(fig:figs4)) [@duval2000; @vevea1995; @vevea2005].
+We also performed trim-and-fill analyses and tested selection models to confirm the robustness of the results obtained from the frequentist meta-analyses against publication bias (Supplementary Methods 2; Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11); Supplementary Fig.\ \@ref(fig:figs4)) [@duval2000; @vevea1995; @vevea2005].
 
 ## Data availability
 
@@ -1203,7 +1149,3 @@ The analysis code for the current study is available in an Open Science Framewor
 
 ```{r child = "supplement.Rmd"}
 ```
-
-- Cite all studies included in the MA
-- Change abstract and main headings
-- Move figures and tables from the methods to the supplement
