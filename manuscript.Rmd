@@ -4,7 +4,7 @@ shorttitle        : "Infant mental rotation"
 
 author:
   - name          : "Alexander Enge"
-    affiliation   : "1,2"
+    affiliation   : "1,2,*"
   - name          : "Shreya Kapoor"
     affiliation   : "1"
   - name          : "Anne-Sophie Kieslinger"
@@ -16,6 +16,8 @@ affiliation:
     institution   : "Research Group Learning in Early Childhood, Max Planck Institute for Human Cognitive and Brain Sciences, Stephanstraße 1a, Leipzig, Germany"
   - id            : "2"
     institution   : "Department of Psychology, Humboldt-Universität zu Berlin, Rudower Chaussee 18, Berlin, Germany"
+  - id            : "*"
+    institution   : "Corresponding author (enge@cbs.mpg.de)"
 
 authornote: |
   \noindent \addORCIDlink{Alexander Enge}{0000-0003-0100-2297}
@@ -280,7 +282,7 @@ descriptives <- list(
 )
 ```
 
-# Introduction
+# Main
 
 The cognitive ability to move visual object representations in mind for recognition across different orientations, known as mental rotation, emerges in the first three months of life [@moore2020; @johnson2020]. Mental rotation is a key component of intelligence and a powerful predictor of learning outcome and educational achievement [@shepard1971; @hegarty1999; @johnson2005].
 
@@ -464,8 +466,6 @@ ggsave(here(figures_dir, "fig1_meta.pdf"), width = 12, height = 14)
 ```
 
 \newpage
-
-# Results
 
 ## Mental rotation performance
 
@@ -978,15 +978,11 @@ ggsave(here(figures_dir, "fig3_funnel.pdf"), width = 12, height = 3.5)
 
 (ref:fig3-caption) **Evaluation of publication bias.**  Funnel plots for the meta-analysis of mental rotation performance (**a**) and for the meta-analysis of gender differences in mental rotation performance (**b**). The plots show the standard error and effect size for each of the individual experiments as a black square. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect size (vertical black line). Gray shades indicate a 95% pseudo-confidence interval (dark gray) and a 99% pseudo-confidence interval (light gray) under the null hypothesis. These shades thus illustrate which of the original studies observed a significant effect. For the meta-analysis of mental rotation performance, a slight asymmetry induced by the underrepresentation of studies with high standard errors and small effect sizes suggests a small publication bias.
 
-# Discussion
+## Discussion
 
 We analyzed looking times during mental rotation in `r formatC(descriptives$n_infants, big.mark = ",")` infants ranging from `r descriptives$min_age_months` to `r descriptives$max_age_months` months of age. To this end, we scrutinized the robustness of `r descriptives$n_experiments` experimental effect sizes. We found that male infants looked on average longer at novel rotated objects compared to female infants. This effect was small and unrelated to age in the current range.
 
-## Effect size estimates
-
 We interpret the meta-regression-based estimate of the gender difference ($b = `r summ_reg$male_female`$, where $b = \Delta{g}$) as an upper bound of the true effect size since this estimate is based on experiments that reported only separate effect sizes for males and females. The gender effect of these experiments can be considered as positively biased when assuming that authors who observe a statistically significant gender difference more likely report separate effect sizes for males and females. In contrast, the meta-analytic estimate derived from the observed gender differences within each experiment ($g = `r summ_gender$intercept`$) can be viewed as a lower bound of the true effect size. This view is plausible because the unknown effect sizes of experiments without significant gender differences were set to zero although non-zero differences were likely also observed but just not reported because of missing power to render these effects statistically significant.
-
-## Gender differences
 
 The gender differences observed here remain to be explained by interacting genetic and environmental factors that are largely unknown. To the best of our knowledge, there are currently no genetic association or gene-environment interaction studies with a focus on mental rotation. Nevertheless, it is documented that genetic contributions to behavioral variance in mental rotation are substantially smaller than unique non-shared environmental contributions both in male and female adults [@shakeshaft2016]. Whether this observation also applies to infants remains to be explored.
 
@@ -994,11 +990,7 @@ One recent study on 5--6-month-old female infants provided preliminary evidence 
 
 Sex hormone concentration in male infants, especially postnatal testosterone in the first six months of life, could also contribute to gender differences in mental rotation performance [@toivainen2018; @constantinescu2018; @erdmann2019]. Possible biological developmental pathways, however, bridging the gap from hormonal to behavioral differences are currently far from understood.
 
-## Additional factors
-
 A number of additional factors have been associated with individual differences in infant mental rotation performance. For example, mental rotation is related to previous relevant experience with the particular objects used in the specific task [@mohring2013; @schwarzer2013a; @slone2018]. This relation also applies to previous experience with manually rotating toys [@schwarzer2013a]. While these preliminary results require replication they are in line with the longstanding notion that prior knowledge is the strongest predictor of learning outcomes in a range of cognitive domains (e.g. [@ausubel1968; @bradley1983; @halberda2008]). Furthermore, there is yet to be confirmed preliminary evidence for possible links between mental rotation performance and several sensory motor skills including fine and gross motor skills, oculomotor control, and crawling skills [@schwarzer2013; @schwarzer2013a].
-
-# Conclusion
 
 The present study robustly revealed that male infants look longer at novel rotated objects than female infants. Thus, on average, males show more reliable mental rotation behavior already in the first months of life.
 
@@ -1121,20 +1113,15 @@ The analysis code for the current study is available in an Open Science Framewor
 
 # Author contributions
 
-\noindent M.A.S. conceived, designed, and obtained funding for the study.
-
-\noindent A.E., S.K., and A.-S.K. designed and executed the search and selection strategies, performed data analysis, conducted robustness checks, and visualized the results in consultation with M.A.S. 
-
-\noindent A.E. and M.A.S. wrote the manuscript with additional input from S.K. and A.-S.K.
+M.A.S. conceived, designed, and obtained funding for the study. A.E., S.K., and A.-S.K. (in consultation with M.A.S.) designed and executed the search and selection strategies, performed data analysis, conducted robustness checks, and visualized the results. A.E. and M.A.S. wrote the manuscript with additional input from S.K. and A.-S.K.
 
 # Competing interests
 
-\noindent The authors declare no competing interests.
+The authors declare no competing interests.
 
-# Corresponding author
+# Additional information
 
-\noindent Correspondence concerning this article should be addressed to Alexander Enge, Stephanstraße 1a, 04103 Leipzig, Germany. E-mail: [enge@cbs.mpg.de](mailto:enge@cbs.mpg.de)
-
+Supplementary Information is available for this paper. Correspondence and requests for materials should be addressed to Alexander Enge ([enge@cbs.mpg.de](mailto:enge@cbs.mpg.de)).
 
 \newpage
 
