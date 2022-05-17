@@ -33,7 +33,6 @@ bibliography_main    : "manuscript_files/main.bib"
 bibliography_methods : "manuscript_files/methods.bib"
 csl                  : "manuscript_files/nature.csl"
 citeproc             : false
-link-citations       : yes
 
 appendix          : "supplement.Rmd"
 
