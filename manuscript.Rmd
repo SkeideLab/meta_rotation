@@ -1164,11 +1164,11 @@ We also performed trim-and-fill analyses and tested selection models to confirm 
 
 ## Data availability
 
-The datasets generated and analyzed during the current study are available in an Open Science Framework repository, [https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. This link is intended for peer review only and will be replaced with a public link upon acceptance.
+The datasets generated and analyzed during the current study are available in an Open Science Framework repository, [https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. This link is intended for peer review only and will be replaced with a public DOI link upon publication.
 
 ## Code availability
 
-The analysis code for the current study is available in an Open Science Framework repository, [https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. This link is intended for peer review only and will be replaced with a public link upon acceptance.
+The analysis code for the current study is available in an Open Science Framework repository, [https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8) [@enge2022a]. This link is intended for peer review only and will be replaced with a public DOI link upon publication.
 
 \newpage
 \nolinenumbers
@@ -1204,3 +1204,7 @@ The analysis code for the current study is available in an Open Science Framewor
 
 ```{r child = "supplement.Rmd"}
 ```
+
+- Cite all studies included in the MA
+- Change abstract and main headings
+- Move figures and tables from the methods to the supplement
