@@ -44,8 +44,6 @@ srun:
 # 3. Remove all newlines between `\CSLLeftMargin{XX. }` and `\CSLRightInline`
 # 4. Remove empty lines after references for ausubel1968, hedges1985,
 #    rosenthal1991, cohen1988, efron1993
-# 5. Update numbering for the Methods Reference so they start after the
-#	 main references (not restart at 1.)
 # 5. Replace `\caption*{\normalfont{Table \ref{` with
 #    `\caption*{\normalfont{Supplementary Table \ref{`
 # 6. Detel all instances of `\textit{Note.} `

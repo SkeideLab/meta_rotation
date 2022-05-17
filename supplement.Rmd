@@ -2,14 +2,16 @@
 \captionsetup[table]{name=Supplementary Table}
 \captionsetup[figure]{name=Supplementary Fig.}
 
-<!-- Restart numbering of figures, tables, equations, and pages -->
+<!-- Restart numbering of figures and tables -->
 \renewcommand{\thefigure}{\arabic{figure}}
 \renewcommand{\thetable}{\arabic{table}}
-\renewcommand{\theequation}{\arabic{table}}
 \setcounter{figure}{0}
 \setcounter{table}{0}
-\setcounter{equation}{0}
+
+<!-- Restart page and line numbers -->
 \setcounter{page}{1}
+\resetlinenumber
+\linenumbers
 
 # Supplementary information
 

@@ -21,10 +21,8 @@ affiliation:
 
 keywords          : "mental rotation, spatial cognition, spatial ability, infants, children, gender, meta-analysis"
 
-bibliography_main    : "manuscript_files/main.bib"
-bibliography_methods : "manuscript_files/methods.bib"
-csl                  : "manuscript_files/nature.csl"
-citeproc             : false
+bibliography      : "manuscript_files/references.bib"
+csl               : "manuscript_files/nature.csl"
 
 appendix          : "supplement.Rmd"
 
@@ -39,10 +37,7 @@ draft             : no
 documentclass     : "apa7"
 classoption       : "man,donotrepeattitle"
 fontsize          : "10pt"
-
-output:
-  papaja::apa6_pdf:
-    pandoc_args: "--lua-filter=manuscript_files/multiple-bibliographies.lua"
+output            : "papaja::apa6_pdf"
 
 header-includes:
   - \geometry{a4paper}
@@ -988,19 +983,6 @@ A number of additional factors have been associated with individual differences 
 
 The present study robustly revealed that male infants look longer at novel rotated objects than female infants. Thus, on average, males show more reliable mental rotation behavior already in the first months of life.
 
-\newpage
-\nolinenumbers
-
-# References
-
-\bigskip
-
-::: {#refs_main}
-:::
-
-\newpage
-\linenumbers
-
 # Methods
 
 ## Protocol
@@ -1095,27 +1077,25 @@ The analysis code for the current study is available in an Open Science Framewor
 \newpage
 \nolinenumbers
 
-# Methods references
+# References
 
 \bigskip
 
-::: {#refs_methods}
-:::
+<div id="refs"></div>
 
 \newpage
-\linenumbers
 
 # Author contributions
 
-M.A.S. conceived, designed, and obtained funding for the study. A.E., S.K., and A.-S.K. (in consultation with M.A.S.) designed and executed the search and selection strategies, performed data analysis, conducted robustness checks, and visualized the results. A.E. and M.A.S. wrote the manuscript with additional input from S.K. and A.-S.K.
+\noindent M.A.S. conceived, designed, and obtained funding for the study. A.E., S.K., and A.-S.K. (in consultation with M.A.S.) designed and executed the search and selection strategies, performed data analysis, conducted robustness checks, and visualized the results. A.E. and M.A.S. wrote the manuscript with additional input from S.K. and A.-S.K.
 
 # Competing interests
 
-The authors declare no competing interests.
+\noindent The authors declare no competing interests.
 
-# Additional information
+# Materials & Correspondence
 
-Supplementary Information is available for this paper. Correspondence and requests for materials should be addressed to Alexander Enge ([enge@cbs.mpg.de](mailto:enge@cbs.mpg.de)).
+\noindent Supplementary Information is available for this paper. Correspondence and requests for materials should be addressed to Alexander Enge ([enge@cbs.mpg.de](mailto:enge@cbs.mpg.de)).
 
 \newpage
 
