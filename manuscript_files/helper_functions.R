@@ -1,4 +1,4 @@
-# Formatting days as months + days
+# Format days as months + days
 print_days_months <- function(days, long = FALSE) {
   m_str <- ifelse(long, " months ", "m ")
   d_str <- ifelse(long, " days", "d")
@@ -10,7 +10,7 @@ print_days_months <- function(days, long = FALSE) {
   return(str)
 }
 
-# Formatting percentages with one decimal place
+# Format percentages with one decimal place
 print_perc <- function(x) scales::percent(x, accuracy = 0.1)
 
 # Format confidence interval
@@ -21,6 +21,11 @@ print_ci <- function(lb, ub) {
 # Format mean value and confidence interval
 print_mean_ci <- function(mean, lb, ub) {
   paste(papaja::print_num(mean), print_ci(lb, ub))
+}
+
+# Format big numbers (> 1,000) with commas
+print_big <- function(x, digits = 0) {
+  formatC(x, digits = digits, format = "f", big.mark = ",")
 }
 
 # Format results of Bayesian meta-analysis as a table with optional labels
