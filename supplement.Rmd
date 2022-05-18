@@ -49,7 +49,7 @@ Meta-analytic methods require an estimate of the sampling variance of each inclu
 
 However, there were `r nrow(dat_ri_empirical)` experiments taken from seven different articles that included enough statistical information to reconstruct this correlation. This was done using the following procedure:
 
-1. Extract an effect size $d_\text{diff}$ based on a paired $t$-test, a one-sample $t$-test of difference scores, or an analysis of variance (ANOVA) (see Rows (1) to (4) in Table 1). All three of these tests take the correlation between the repeated measures into account.
+1. Extract an effect size $d_\text{diff}$ based on a paired $t$-test, a one-sample $t$-test of difference scores, or an analysis of variance (ANOVA) (see rows (1) to (4) in Supplementary Table\ \@ref(tab:tabs5)). All three of these tests take the correlation between the repeated measures into account.
 
 2. Extract the mean looking time difference $m_\text{diff}$ (in seconds) between the novel and familiar conditions.
 
@@ -59,13 +59,13 @@ However, there were `r nrow(dat_ri_empirical)` experiments taken from seven diff
 
 5. Compute the observed correlation between conditions based on a rearranged equation by @cohen1988: $$r=\frac{{SD}_\text{diff}^2-{SD}_\text{novel}^2-{SD}_\text{familiar}}{-2\cdot{SD}_\text{novel}^2\cdot{SD}_\text{familiar}^2}$$
 
-Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed correlation was $r = `r summ_ri_empirical["Mean"]`$ (median $r = `r summ_ri_empirical["Median"]`$, range [`r summ_ri_empirical["Min."]`, `r summ_ri_empirical["Max."]`]). However, we decided to assume a correlation of $r  = .50$ when computing the effect size ${SE}_\text{rotation}$ for all `r descriptives$n_experiments` experiments. This was to ensure the comparability of our methods to meta-analyses of between-participant studies [@cohen1988; @lakens2013; @morris2002]. To  evaluate the robustness of our Bayesian meta-analytic model against the assumption of a correlation of $r  = .50$ we ran a sensitivity analysis (Supplementary Tables\ \@ref(tab:tabs7) and \@ref(tab:tabs8)).
+Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed correlation was $r = `r summ_ri_empirical["Mean"]`$ (median $r = `r summ_ri_empirical["Median"]`$, range [`r summ_ri_empirical["Min."]`, `r summ_ri_empirical["Max."]`]). However, we decided to assume a correlation of $r  = 0.50$ when computing the effect size ${SE}_\text{rotation}$ for all `r descriptives$n_experiments` experiments. This was to ensure the comparability of our methods to meta-analyses of between-participant studies [@cohen1988; @lakens2013; @morris2002]. To  evaluate the robustness of our Bayesian meta-analytic models against the assumption of a correlation of $r  = 0.50$, we ran a sensitivity analysis (Supplementary Tables\ \@ref(tab:tabs7) and \@ref(tab:tabs8)).
 
-## Supplementary Methods 2 | Bias correction and sensitivity analysis for frequentist results
+## Supplementary Methods 2 | Publication bias correction
 
 We used trim-and-fill analysis and selection models to examine if and how our meta-analytic results would change under different degrees of publication bias. For both of these types of models, we used a simplified two-level version of our frequentist three-level model as a basis. In our first step, we computed a trim-and-fill model [@duval2000] by imputing possible effect sizes of non-published experiments. This new model produces a symmetric funnel plot with no association between effect sizes and standard errors (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11); Supplementary Fig.\ \@ref(fig:figs5)).
 
-In our next step, we used selection models to approximate the process by which experiments got selected into the meta-analysis. These models were based on the assumption that experiments yielding significant effects (i.e., small $P$ values) are more likely to get published. Specifically, we ran one selection model assuming a weight function with fixed $P$ value cutoffs [@vevea1995] at $P$ = .01, $P$ = .05, and $P$ = .30. Additionally, we ran multiple models with a priori selection functions assuming biases of varying severity [@vevea2005]. These analyses  revealed that our results are robust to small to medium publication bias (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11)).
+In our next step, we used selection models to approximate the process by which experiments got selected into the meta-analysis. These models were based on the assumption that experiments yielding significant effects (i.e., small $P$ values) are more likely to get published. Specifically, we ran one selection model assuming a weight function with fixed $P$ value cutoffs [@vevea1995] at $P$ = 0.01, $P$ = 0.05, and $P$ = 0.30. Additionally, we ran multiple models with a priori selection functions assuming biases of varying severity [@vevea2005]. These analyses  revealed that our results are robust to small to medium publication bias (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11)).
 
 <!-- Supplementary tables -->
 
@@ -173,8 +173,8 @@ map2_dfr(
   mutate(
     Parameter = c(
       "Hedges' $g$",
-      "$\\sigma_{\\text{Article}}^2$",
-      "$\\sigma_{\\text{Experiment}}^2$",
+      "$\\sigma_{\\text{article}}^2$",
+      "$\\sigma_{\\text{experiment}}^2$",
       "Intercept (Hedges' $g$)",
       "Female - mixed",
       "Male - female",
@@ -182,11 +182,11 @@ map2_dfr(
       "Habituation - VoE",
       "(Female - mixed) $\\times$ age",
       "(Male - female) $\\times$ age",
-      "$\\sigma_{\\text{Article}}^2$",
-      "$\\sigma_{\\text{Experiment}}^2$",
+      "$\\sigma_{\\text{article}}^2$",
+      "$\\sigma_{\\text{experiment}}^2$",
       "Hedges' $g$",
-      "$\\sigma_{\\text{Article}}^2$",
-      "$\\sigma_{\\text{Experiment}}^2$"
+      "$\\sigma_{\\text{article}}^2$",
+      "$\\sigma_{\\text{experiment}}^2$"
     )
   ) %>%
   # Replace NAs with blank cells
@@ -300,7 +300,7 @@ apa_table(
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
 | \ \ (2\) $t$ statistic and sample size [@rosenthal1991]        | $d=\frac{t}{\sqrt{n}}$;\quad then (1)                                                       |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| \ \ (3\) $F$ statistic and sample size [@lakens2013]           | $t=\sqrt{f}$;\quad then (2\)                                                                |
+| \ \ (3\) $F$ statistic and sample size [@lakens2013]           | $t=\sqrt{F}$;\quad then (2\)                                                                |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
 | \ \ (4\) Mean difference between conditions [@lakens2013]      | $d=\frac{m_\text{diff}}{{SD}_\text{diff}}$;\quad then (1)                                   |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
@@ -310,7 +310,7 @@ apa_table(
 | \ \ (6\) Mean novelty preference score [@lakens2013]           | $d=\frac{m_\text{pref}}{{SD}_\text{pref}}$;\quad then (1)                                   |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
 
-Table: (\#tab:tabs5) Effect size conversion for the meta-analysis of mental rotation performance
+Table: (\#tab:tabs5) Effect sizes for the meta-analysis of mental rotation performance
 
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
 | \ \ Available statistics               | Conversion to standardized mean difference (Hedges' $g$)                                         |
@@ -322,7 +322,7 @@ Table: (\#tab:tabs5) Effect size conversion for the meta-analysis of mental rota
 | \ \ (2\) $t$ statistic and group sizes | $d=t\sqrt{\frac{1}{n_\text{female}}+\frac{1}{n_\text{male}}}$;\quad then (1)                     |
 | [@lakens2013]                          |                                                                                                  |
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
-| \ \ (3\) $F$ statistic and group sizes | $t=\sqrt{f}$;\quad then (2\)                                                                     |
+| \ \ (3\) $F$ statistic and group sizes | $t=\sqrt{F}$;\quad then (2\)                                                                     |
 | [@lakens2013]                          |                                                                                                  |
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
 | \ \ (4\) Mean differences between\     | ${SD}_\text{pooled}=\sqrt{\frac{(n_\text{female}-1){SD}_\text{female}^2                          |
@@ -330,7 +330,7 @@ Table: (\#tab:tabs5) Effect size conversion for the meta-analysis of mental rota
 | [@lakens2013]                          | $d=\frac{m_\text{female}-m_\text{male}}{{SD}_\text{pooled}}$;\quad then (1)                      |
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
 
-Table: (\#tab:tabs6) Effect size conversion for the meta-analysis of gender differences
+Table: (\#tab:tabs6) Effect sizes for the meta-analysis of gender differences
 
 \normalsize
 
@@ -653,7 +653,7 @@ map(names(res_freq_2_lvl), function(name) {
       "Selection models", "", "", "", ""
     ),
     label_2 = c(
-      "--", "--", "Weight function [.01, .05, .30]",
+      "--", "--", "Weight function [0.01, 0.05, 0.30]",
       "One-tailed, moderate bias", "One-tailed, severe bias",
       "Two-tailed, moderate bias", "Two-tailed, severe bias"
     )
@@ -799,8 +799,8 @@ dat_gender %>%
       "Experiment",
       "Effect size plot",
       "Effect size",
-      "Lower",
-      "Upper"
+      "2.5%",
+      "97.5%"
     ),
     hjust = c(0, 0, 0.5, 1, 1, 1),
     fontface = "bold"
@@ -832,14 +832,14 @@ dat_gender %>%
 ggsave(here(figures_dir, "figs1_gender.pdf"), width = 12, height = 8)
 ```
 
-(ref:figs1-caption) **Meta-analysis of gender differences.** A Bayesian three-level meta-analysis provided evidence for a small gender difference in mental rotation performance between male and female infants. White squares indicate the effect sizes (Hedges' $g$) of gender differences in all individual experiments and black lines indicate their 95% confidence intervals. For experiments resulting in a non-significant gender difference and for which the authors did not specify the exact size of this effect, we assumed an effect size of $g = 0.00$. Gray bars depict the 95% and 50% Bayesian credible interval (CrI) based on a Bayesian three-level random-effects model. These intervals got shrunk towards the meta-analytic effect size because of partial pooling, that is, the three-level model regularizing the impact of experiments with small sample sizes and/or unrealistically large effect sizes. The bold line at the bottom of the figure shows the meta-analytic effect size obtained from the three-level model (black dot) together with its 95% CrI (black line) and its posterior distribution (gray curve).
+(ref:figs1-caption) **Meta-analysis of gender differences.** A Bayesian three-level meta-analysis provided evidence for a small gender difference in mental rotation performance between male and female infants. White squares indicate the effect sizes (Hedges' $g$) of gender differences in all individual experiments and black lines indicate their 95% confidence intervals. For experiments resulting in a non-significant gender difference and for which the authors did not specify the exact size of this effect, we assumed an effect size of $g = 0.00$. Gray bars depict the 95% and 50% Bayesian credible interval (CrI) based on a Bayesian three-level random-effects model. The last line shows the meta-analytic effect size (black dot) together with its 95% CrI (black line) and its posterior distribution (gray curve).
 
 ```{r, figs2, include=TRUE, fig.width=6, fig.cap="(ref:figs2-caption)", fig.pos="ht", out.width="50%"}
 # Include the flowchart (which was created manually with MS PowerPoint)
 knitr::include_graphics(here("manuscript_files/flowchart.pdf"))
 ```
 
-(ref:figs2-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. Additionally, we excluded an article that was based on an uncommon experimental paradigm differing substantially from all other articles (1 article). Finally, we excluded an article that was based on a sample of infants  who were substantially older compared to all other articles (1 article).
+(ref:figs2-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. \textsuperscript{a} = We decided to excluded two additional articles: one article because it was based on an uncommon experimental paradigm, differing substantially from all other articles, and another article because it was based on a sample of infants who were substantially older compared to all other articles.
 
 ```{r, figs3, include=TRUE, fig.height=6, fig.width=12, fig.cap="(ref:figs3-caption)"}
 # Extract convergence statistics (Rhat, Neff) from Bayesian results
@@ -855,7 +855,7 @@ conv_stats <- with(summary(res_meta), tibble(
   r_hat = print_num(c(fixed$Rhat, map_dbl(random, ~ .$Rhat)), digits = 4),
   bulk_ess = round(c(fixed$Bulk_ESS, map_dbl(random, ~ .$Bulk_ESS))),
   tail_ess = round(c(fixed$Tail_ESS, map_dbl(random, ~ .$Tail_ESS))),
-  r_hat_expr = str_c("italic(R)[hat] == ", r_hat),
+  r_hat_expr = str_c("italic(widehat(R)) == ", r_hat),
   bulk_ess_expr = str_c("italic(N)[eff(bulk)] == ", bulk_ess),
   tail_ess_expr = str_c("italic(N)[eff(tail)] == ", tail_ess),
   y_pos = c(0.7, 0.75, 0.8)
@@ -871,14 +871,14 @@ bayesplot::mcmc_trace(
   geom_text(
     aes(y = 0.45, label = name_expr, color = NA),
     conv_stats,
-    y = 0.45, x = -0.042 * n_draws, color = "black", parse = TRUE,
-    vjust = 1, angle = 90
+    y = 0.45, x = -0.042 * n_draws, vjust = 1, color = "black", parse = TRUE,
+    angle = 90
   ) +
   # Rhat label
   geom_text(
     aes(y = y_pos, label = r_hat_expr, color = NA),
     conv_stats,
-    x = 0.684 * n_draws, hjust = 1, color = "black", parse = TRUE,
+    x = 0.684 * n_draws, hjust = 1, vjust = 0.2, color = "black", parse = TRUE
   ) +
   # Neff labels
   geom_text(
@@ -912,7 +912,7 @@ bayesplot::mcmc_trace(
 ggsave(here(figures_dir, "figs3_convergence.pdf"), width = 12, height = 6)
 ```
 
-(ref:figs3-caption) **Convergence checks for the Bayesian meta-analysis.** For each of the three parameters in the three-level meta-analytic model, gray traces show the exploration of the posterior distribution by four independent Markov Chain Monte Carlo (MCMC) chains. Overlap of the gray traces as well as random upward and downward fluctuations (rather than systematic drifts) indicate efficient exploration of the posterior distribution. $R_\text{hat}$ = potential scale reduction factor, with values close to 1.0 indicating convergence of the chains, $N_\text{eff(bulk)}$ = bulk effective sample size, with larger values indicating better sampling efficiency in the bulk of the distribution (e.g., for estimating the posterior mean), $N_\text{eff(tail)}$ = tail effective sample size, with larger values indicating better sampling efficiency in the tails of the distribution (e.g., for estimating the 95% credible interval [CrI]). Details about these convergence criteria can be found in @vehtari2021.
+(ref:figs3-caption) **Convergence checks for the Bayesian meta-analysis.** For each of the three parameters in the three-level meta-analytic model, gray traces show the exploration of the posterior distribution by four independent Markov Chain Monte Carlo (MCMC) chains. Overlap of the gray traces as well as random upward and downward fluctuations (rather than systematic drifts) indicate efficient exploration of the posterior distribution. $\widehat{R}$ = potential scale reduction factor, with values close to 1.0 indicating convergence of the chains, $N_\text{eff(bulk)}$ = bulk effective sample size, with larger values indicating better sampling efficiency in the bulk of the distribution (e.g., for estimating the posterior mean), $N_\text{eff(tail)}$ = tail effective sample size, with larger values indicating better sampling efficiency in the tails of the distribution (e.g., for estimating the 95% credible interval [CrI]). Details about these convergence criteria can be found in @vehtari2021.
 
 ```{r, figs4, include=TRUE, fig.height=4, fig.width=12, fig.cap="(ref:figs4-caption)"}
 # Combine frequentist profile likelihood results into one data frame
@@ -1019,4 +1019,4 @@ ggsave(
 )
 ```
 
-(ref:figs5-caption) **Trim-and-fill analyses.** As in Fig.\ \@ref(fig:fig3) in the main text, black squares indicate the effect sizes (x-axis) and standard errors (y-axis) of the individual experiments included in the meta-analysis of mental rotation performance (**a**) and in the meta-analysis of gender differences within each article (**b**). The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect sizes (vertical black lines). Gray shades indicate 95% pseudo-confidence intervals (dark gray) and 99% pseudo-confidence intervals (light gray) under the null hypothesis. Red squares show fictional experiments that were imputed using the trim-and-fill method  to compensate for the small publication bias observed in the original funnel plots. Red lines depict the meta-analytic effect size and its 95% pseudo-confidence interval for the trim-and-fill-corrected meta-analysis of mental rotation performance. For the meta-analysis of gender differences, the results of the trim-and-fill analysis suggested that no additional experiments had to be imputed to compensate for publication bias.
+(ref:figs5-caption) **Trim-and-fill analysis.** As in Fig.\ \@ref(fig:fig3) in the main text, black squares indicate the effect sizes (x-axis) and standard errors (y-axis) of the individual experiments included in the meta-analysis of mental rotation performance (**a**) and in the meta-analysis of gender differences within each article (**b**). The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect sizes (vertical black lines). Gray shades indicate 95% pseudo-confidence intervals (dark gray) and 99% pseudo-confidence intervals (light gray) under the null hypothesis. Red squares show fictional experiments that were imputed using the trim-and-fill method  to compensate for the small publication bias observed in the original funnel plot. Red lines depict the meta-analytic effect size and its 95% pseudo-confidence interval for the trim-and-fill-corrected meta-analysis of mental rotation performance. For the meta-analysis of gender differences, the results of the trim-and-fill analysis suggested that no additional experiments had to be imputed to compensate for publication bias.
