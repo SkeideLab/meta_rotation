@@ -448,10 +448,10 @@ if (run$sensitivity_analysis) {
 
   # Create table for the meta-analysis of mental rotation performance
   sens %>%
-    select(res, manipulation_name, manipulation_value) %>%
-    pmap_dfr(function(res, manipulation_name, manipulation_value) {
+    select(res_meta, manipulation_name, manipulation_value) %>%
+    pmap_dfr(function(res_meta, manipulation_name, manipulation_value) {
       print_res_table(
-        res,
+        res_meta,
         label_1 = manipulation_name, label_2 = manipulation_value,
         label_col_1 = "Manipulation", label_col_2 = " "
       )
