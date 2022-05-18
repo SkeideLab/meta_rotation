@@ -81,13 +81,13 @@ dat_meta %>%
   ) %>%
   transmute(
     Article = if_else(article == lag(article, default = ""), "", article),
-    Experiment = group_long,
+    Experiment = group,
     `Sample size` = as.integer(sample_size),
     Females = as.integer(round(female_percent * sample_size)),
     `Age ($M$ ± $SD$)` = str_c(age_mean, "±", age_sd, sep = " "),
     Task = as.character(task),
     `Stimulus type` = str_to_sentence(stimuli_presentation),
-    `Stimulus dimensions` = stimuli_dimensions
+    `Stimulus dimensions` = str_c(as.integer(stimuli_dimensions), "D")
   ) %>%
   mutate(
     across(.fns = function(x) ifelse(is.na(x), "n/a", x))
@@ -235,7 +235,7 @@ if (run$jackknife_analysis) {
     print_res_table(
       res_jackknife,
       label_1 = dat_meta$article[jackknife_index],
-      label_2 = dat_meta$group_long[jackknife_index],
+      label_2 = dat_meta$group[jackknife_index],
       label_col_1 = "Article", label_col_2 = "Experiment"
     )
   }) %>%
@@ -274,10 +274,7 @@ apa_table(
 
 ```{r, tabs4, include=TRUE}
 # Read PRISMA checklist from file
-tabs4 <- read_csv(
-  here(data_dir, "prisma_checklist.csv"),
-  col_types = "ccc", na = character()
-)
+tabs4 <- read_tsv(here(data_dir, "05_prisma.tsv"), na = character())
 
 # Display the table
 apa_table(
@@ -741,7 +738,7 @@ dat_gender %>%
   geom_vline(xintercept = seq(-3, 3, 0.5), color = "grey90") +
   # Add article and group labels as text on the left
   geom_text(aes(x = -9.9, label = article), hjust = 0) +
-  geom_text(aes(x = -7.1, label = group_long), hjust = 0) +
+  geom_text(aes(x = -7.1, label = group), hjust = 0) +
   # Add experiment-specific effect sizes and CIs as text on the right
   geom_text(aes(x = 3.7, label = print_num(gi)), hjust = 1) +
   geom_text(aes(x = 4.4, label = print_num(ci_lb)), hjust = 1) +

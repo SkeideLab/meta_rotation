@@ -99,23 +99,17 @@ models_dir <- here("results/models")
 figures_dir <- here("results/figures")
 tables_dir <- here("results/tables")
 
-# Download spreadsheets from the literature search from Google Drive
-excel_url <- "https://docs.google.com/spreadsheets/d/1xnC0NlQYTXavXaeqQidhi7UKb1pCGAl9Ry3h3Uz3mi0"
-excel_file <- here(data_dir, "literature_search.xlsx")
-# googledrive::drive_auth(use_oob = TRUE)
-# googledrive::drive_download(excel_url, excel_file, overwrite = TRUE)
-
-# Read the sheets
-raw_screening <- read_excel(excel_file, sheet = "screening")
-raw_meta <- read_excel(excel_file, sheet = "included", na = "NA")
-raw_gender <- read_excel(excel_file, sheet = "gender_differences", na = "NA")
+# Read the relevant spreadsheets
+raw_screen <- read_tsv(here(data_dir, "02_screen.tsv"), na = "NA")
+raw_meta <- read_tsv(here(data_dir, "03_meta.tsv"), na = "NA")
+raw_gender <- read_tsv(here(data_dir, "04_gender.tsv"), na = "NA")
 
 # Add columns to the table of experiments for the meta-analysis
 raw_meta %>%
   mutate(
 
     # Add unique experiment identifier
-    experiment = str_c(year, article, group_long, sep = ", "),
+    experiment = str_c(year, article, group, sep = ", "),
 
     # Add difference between condition means
     mean_diff = case_when(
@@ -362,7 +356,7 @@ dat_meta %>%
   geom_vline(xintercept = seq(-3, 3, 0.5), color = "grey90") +
   # Add article and group labels as text on the left
   geom_text(aes(x = -9.9, label = article), hjust = 0) +
-  geom_text(aes(x = -7.1, label = group_long), hjust = 0) +
+  geom_text(aes(x = -7.1, label = group), hjust = 0) +
   # Add experiment-specific effect sizes and CIs as text on the right
   geom_text(aes(x = 3.7, label = print_num(gi)), hjust = 1) +
   geom_text(aes(x = 4.4, label = print_num(ci_lb)), hjust = 1) +
@@ -717,7 +711,7 @@ raw_gender %>%
   mutate(
 
     # Add unique experiment identifier
-    experiment = str_c(year, article, group_long, sep = ", "),
+    experiment = str_c(year, article, group, sep = ", "),
 
     # Re-code non-significant F statistics as an effect size of d = 0
     f = as.numeric(f),
@@ -785,7 +779,7 @@ raw_gender %>%
 dat_gender %>%
   select(
     article,
-    group_long,
+    group,
     gi,
     di,
     di_type,
@@ -1003,21 +997,13 @@ We entered the search terms ("mental rotation" OR "mental transformation" OR "sp
 
 ```{r, selection_process}
 # Compute interrater agreement for binary decision (include vs. exclude)
-(irr_bin_perc <- with(
-  raw_screening, mean(bin_1 == bin_2)
-))
-(irr_bin_kappa <- with(
-  raw_screening, psych::cohen.kappa(cbind(bin_1, bin_2))
-))
+(irr_bin_perc <- with(raw_screen, mean(bin_1 == bin_2)))
+(irr_bin_kappa <- with(raw_screen, psych::cohen.kappa(cbind(bin_1, bin_2))))
 irr_bin_kappa_w <- as.list(irr_bin_kappa$confid["weighted kappa", ])
 
 # Compute interrater agreement for specific exclusion codes
-(irr_code_perc <- with(
-  raw_screening, mean(code_1 == code_2)
-))
-(irr_code_kappa <- with(
-  raw_screening, psych::cohen.kappa(cbind(code_1, code_2))
-))
+(irr_code_perc <- with(raw_screen, mean(code_1 == code_2)))
+(irr_code_kappa <- with(raw_screen, psych::cohen.kappa(cbind(code_1, code_2))))
 irr_code_kappa_w <- as.list(irr_code_kappa$confid["weighted kappa", ])
 
 # Justify exclusion of @pedrett2020 based on outlier mean age

@@ -1,0 +1,49 @@
+sheet	column_name	type	unit	description	comment
+meta	rater	"AE" or "ASK" or "SK"	NA	who extracted descriptive information of this article	NA
+meta	article	"authorYYYY"	NA	first author and year of the paper	NA
+meta	group	string	NA	name of the group within an article (e.g., "exp1" or "females")	can be hierarchical (e.g., "exp1_females")
+meta	split_group	"split" or "mixed" or "split_redundant" or "mixed_redundant"	NA	If this group is boys/girls only ("split") or mixed ("mixed")	add "_redundant" if the same group's data is already in another article
+meta	training	"1" or "0"	NA	If ("1") or not ("0") the group received training before the MR task	NA
+meta	sample_size	integer	infants	number of infants in this group	put "NA" information is not available at the group level
+meta	female_n	integer	infants	number of girls in this group	put "NA" information is not available at the group level
+meta	female_percent	double	share	percent of girls in this group	if female_n is available at the group level: = female_n / sample_size if not: = total_female_n / total_n of the supergroup -> put comment!
+meta	age_mean	double	days	mean age of the group	if this is only available for a supergroup, mention this in comment!
+meta	age_sd	double	days	standard deviation of age in the group	if this is only available for a supergroup, mention this in comment!
+meta	age_min	double	days	minimum age in the group	if this is only available for a supergroup, mention this in comment!
+meta	age_max	double	days	maximum age in the group	if this is only available for a supergroup, mention this in comment!
+meta	mean_novel	double	seconds	mean looking time for this group at the novel / unexpected stimulus	put "NA" if information is not in the text or a figure
+meta	sd_novel	double	seconds	standard deviation of mean_novel	if SE instead of SD is given, compute via SE * SQRT(sample_size)
+meta	mean_familar	double	seconds	mean looking time for this group at the familiar / expected stimulus	put "NA" if information is not in the text or a figure
+meta	sd_familiar	double	seconds	standard deviation of mean_familiar	if SE instead of SD is given, compute via SE * SQRT(sample_size)
+meta	mean_diff	double	seconds	mean difference in looking times between the novel and familiar stimulus	put "NA" if information is not in the text or a figure
+meta	sd_diff	double	seconds	standard deviation of mean_diff	if SE instead of SD is given, compute via SE * SQRT(sample_size)
+meta	nov_pref	double	share	novelty preference score (> .5 = novelty preference, < .5 = familiarity preference)	put "NA" if information is not in the text or a figure
+meta	sd_nov_pref	double	share	standard deviation of nov_pref	if SE instead of SD is given, compute via SE * SQRT(sample_size)
+meta	t	double	NA	t value of the difference between conditions or novelty preference score (vs .5)	positive = novelty preference, negative = familiarity preference
+meta	df_t	integer	NA	degrees of freedom of the t value	should always be sample_size - 1
+meta	f	double	NA	F value for the difference between conditions	must be a group-specific main effect, no interaction effect
+meta	df_f	integer	NA	denominator degrees of freedom of the f value	numerator degrees of freedom should always be 1
+meta	d	double	NA	Cohen's d for the difference between conditions or novelty preference score	positive = novelty preference, negative = familiarity preference
+meta	perc	double	share	Percent of infants in the group showing a novelty preference	NA
+meta	gender_t	double	NA	t value for the group comparison between males and females	positive = male advantage, negative = female advantage
+meta	gender_df_t	integer	NA	degrees of freedom for the t test of the group comparison	???
+meta	gender_f	double	NA	F value for the group comparison between males and females	???
+meta	gender_df_f	integer	NA	denominator degrees of freedom of the f value	???
+meta	gender_d	double	NA	Cohen's d for the group comparison between males and females	positive = male advantage, negative = female advantage; 0 if n.s.
+meta	task	"violation_expectation" or "habituation" or custom string	NA	"violation of expectation" paradigm is a task where an object that is rotating moves behind a screen and after removal of the screen, the object is in an orientation that is implausible based on the rotational movement. "habituation" paradigm is a task where one stimulus is shown repeatedly to habituate the subject to it, and after habituation the subject is presented with the same or a novel object in a known or novel orientation	NA
+meta	stimuli_presentation	"real" or "digital"	NA	presentation mode of stimuli, either real word or on a computer screen	NA
+meta	stimuli_dimensions	"2D" or "3D"	NA	dimensionality of the stimuli, either 2D (e.g., letters) or 3D (e.g., cube figures)	NA
+meta	stimuli_simultaneous_displayed	integer	NA	number of stimuli presented simultanously on the same trial	NA
+meta	stimuli_description	"shepard-metzler" or "rochat" or custom string	NA	brief description of the actual stimuli shepard-metzler: 3-dimensional cubes forming structure rochat: y-shaped object/stick with semicircle	if neccessary, can be text-heavy
+meta	conditions	one or more of "novel-familiar", "probable-improbable", or free text	NA	factors that are being compared *within* the group	NA
+meta	covariates	one or more of "gender", "age", or free text	NA	factors that are being compared *between* different groups	"order" doesn't count
+meta	dependent_variable	"eyetracking", "manual", proposed: "offline"	NA	"offline" means coding manually from video recordings at a later time	NA
+meta	num_trials_habit	integer	trials	number of trials for habituation	NA
+meta	num_habit_test	integer	trials	number of trials for testing	NA
+meta	statistics_within	{factor}: {test statistics}	NA	list all statistics (e.g., "m, sd, F, d, p") seperately for each within-group factor	NA
+meta	statistics_between	{factor}: {test statistics}	NA	list all statistics (e.g., "m, sd, F, d, p") seperately for each between-group factor	NA
+gender	n_male_nov_pref  n_female_nov_pref	integer	count	how many males or females have a novelty preference (novelty preference score >0.5)	
+gender	mean_diff_males_mean  mean_diff_females_mean	double	seconds	mean raw difference in looking time to novel vs familiar stimuli for male or female group	
+gender	mean_diff_males_sd  mean_diff_females_sd	double	seconds	standard deviation in mean raw difference in looking time to novel vs familiar stimuli for male or female group	
+gender	novelty_pref_males_mean  novelty_pref_females_mean	double	NA	mean of standardized novelty preference score for male or female group	
+gender	novelty_pref_males_sd  novelty_pref_females_sd	double	NA	standard deviation of standardized novelty preference score for male or female group	
