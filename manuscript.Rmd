@@ -70,9 +70,9 @@ source(here("manuscript_files", "helper_functions.R"))
 
 # Re-run steps that take a long time?
 run <- list(
-  bayesian_models = FALSE,
-  jackknife_analysis = FALSE,
-  sensitivity_analysis = FALSE
+  bayesian_models = TRUE,
+  jackknife_analysis = TRUE,
+  sensitivity_analysis = TRUE
 )
 
 # Global chunk options
@@ -88,8 +88,8 @@ knitr::opts_chunk$set(
 )
 
 # Options for MCMC sampling when fitting Bayesian multilevel models
-n_iter <- 4000 # Posterior samples per chain, including `n_warmup`
-n_warmup <- 1000 # Warmup samples per chain
+n_iter <- 20000 # Posterior samples per chain, including `n_warmup`
+n_warmup <- 2000 # Warmup samples per chain
 n_chains <- 4 # Number of (parallel) chains
 seed <- 1234 # Random seed to make the results reproducible
 
