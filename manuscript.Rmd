@@ -1066,15 +1066,15 @@ The analysis code for the current study is available in an Open Science Framewor
 
 # Author contributions
 
-\noindent M.A.S. conceived, designed, and obtained funding for the study. A.E., S.K., and A.-S.K. (in consultation with M.A.S.) designed and executed the search and selection strategies, performed data analysis, conducted robustness checks, and visualized the results. A.E. and M.A.S. wrote the manuscript with additional input from S.K. and A.-S.K.
+M.A.S. conceived, designed, and obtained funding for the study. A.E., S.K., and A.-S.K. (in consultation with M.A.S.) designed and executed the search and selection strategies, performed data analysis, conducted robustness checks, and visualized the results. A.E. and M.A.S. wrote the manuscript with additional input from S.K. and A.-S.K.
 
 # Competing interests
 
-\noindent The authors declare no competing interests.
+The authors declare no competing interests.
 
 # Materials & Correspondence
 
-\noindent Supplementary Information is available for this paper. Correspondence and requests for materials should be addressed to Alexander Enge ([enge@cbs.mpg.de](mailto:enge@cbs.mpg.de)).
+Supplementary Information is available for this paper. Correspondence and requests for materials should be addressed to Alexander Enge ([enge@cbs.mpg.de](mailto:enge@cbs.mpg.de)).
 
 \newpage
 

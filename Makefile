@@ -44,6 +44,8 @@ srun:
 # 3. Remove all newlines between `\CSLLeftMargin{XX. }` and `\CSLRightInline`
 # 4. Remove empty lines after references for ausubel1968, hedges1985,
 #    rosenthal1991, cohen1988, efron1993
+# 5. In the References, replace ` t-tests ` with ` $t$-tests `, `{Cohen}'s d`
+#    with `{Cohen}'s $d$`, and `Rhat` with `$\widehat{R}`
 # 5. Replace `\caption*{\normalfont{Table \ref{` with
 #    `\caption*{\normalfont{Supplementary Table \ref{`
 # 6. Detel all instances of `\textit{Note.} `
