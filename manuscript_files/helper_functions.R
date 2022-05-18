@@ -23,6 +23,11 @@ print_mean_ci <- function(mean, lb, ub) {
   paste(papaja::print_num(mean), print_ci(lb, ub))
 }
 
+# Format probabilities as percent
+print_prob <- function(x) {
+  ifelse(x < 0.999, print_perc(x), "> 99.9%")
+}
+
 # Format big numbers (> 1,000) with commas
 print_big <- function(x, digits = 0) {
   formatC(x, digits = digits, format = "f", big.mark = ",")
