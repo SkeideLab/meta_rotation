@@ -95,7 +95,7 @@ dat_meta %>%
 
 # Save the table
 dir.create(tables_dir, showWarnings = FALSE)
-write_csv(tabs1, file = here(tables_dir, "tabs1_experiments.csv"), na = "n/a")
+write_tsv(tabs1, file = here(tables_dir, "tabs1_experiments.tsv"), na = "n/a")
 
 # Add footnotes
 colnames(tabs1)[5] <- str_c(colnames(tabs1)[5], "\\textsuperscript{a}")
@@ -194,7 +194,7 @@ map2_dfr(
 
 
 # Save the table
-write_csv(tabs2, file = here(tables_dir, "tabs2_frequentist.csv"))
+write_tsv(tabs2, file = here(tables_dir, "tabs2_frequentist.tsv"))
 
 # Add footnotes
 colnames(tabs2)[4] <- str_c(colnames(tabs2)[4], "\\textsuperscript{a}")
@@ -245,7 +245,7 @@ if (run$jackknife_analysis) {
     ) -> tabs3
 
   # Save the table
-  write_csv(tabs3, file = here(tables_dir, "tabs3_jackknife.csv"))
+  write_tsv(tabs3, file = here(tables_dir, "tabs3_jackknife.tsv"))
 }
 ```
 
@@ -253,8 +253,8 @@ if (run$jackknife_analysis) {
 
 ```{r, tabs3, include=TRUE}
 # Read jackknife table from file
-tabs3 <- read_csv(
-  here(tables_dir, "tabs3_jackknife.csv"),
+tabs3 <- read_tsv(
+  here(tables_dir, "tabs3_jackknife.tsv"),
   col_types = "c", na = character()
 )
 
@@ -456,7 +456,7 @@ if (run$sensitivity_analysis) {
         label_col_1 = "Manipulation", label_col_2 = " "
       )
     }) -> tabs7
-  write_csv(tabs7, file = here(tables_dir, "tabs7_sens_meta.csv"))
+  write_tsv(tabs7, file = here(tables_dir, "tabs7_sens_meta.tsv"))
 
   # Create table for the meta-regression of mental rotation performance
   sens %>%
@@ -470,7 +470,7 @@ if (run$sensitivity_analysis) {
         label_col_1 = "Manipulation", label_col_2 = " "
       )
     }) -> tabs8
-  write_csv(tabs8, file = here(tables_dir, "tabs8_sens_reg.csv"))
+  write_tsv(tabs8, file = here(tables_dir, "tabs8_sens_reg.tsv"))
 
   # Create table for the meta-analysis of gender differences
   sens %>%
@@ -483,7 +483,7 @@ if (run$sensitivity_analysis) {
         label_col_1 = "Manipulation", label_col_2 = " "
       )
     }) -> tabs9
-  write_csv(tabs9, file = here(tables_dir, "tabs9_sens_gender.csv"))
+  write_tsv(tabs9, file = here(tables_dir, "tabs9_sens_gender.tsv"))
 }
 ```
 
@@ -491,8 +491,8 @@ if (run$sensitivity_analysis) {
 
 ```{r, tabs7, include=TRUE}
 # Load sensitivity analysis table from file
-tabs7 <- read_csv(
-  here(tables_dir, "tabs7_sens_meta.csv"),
+tabs7 <- read_tsv(
+  here(tables_dir, "tabs7_sens_meta.tsv"),
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
@@ -523,8 +523,8 @@ apa_table(
 
 ```{r, tabs8, include=TRUE}
 # Load sensitivity analysis table from file
-tabs8 <- read_csv(
-  here(tables_dir, "tabs8_sens_reg.csv"),
+tabs8 <- read_tsv(
+  here(tables_dir, "tabs8_sens_reg.tsv"),
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
@@ -552,8 +552,8 @@ apa_table(
 
 ```{r, tabs9, include=TRUE}
 # Load sensitivity analysis table from file
-tabs9 <- read_csv(
-  here(tables_dir, "tabs9_sens_gender.csv"),
+tabs9 <- read_tsv(
+  here(tables_dir, "tabs9_sens_gender.tsv"),
   col_types = "c", na = character(), trim_ws = FALSE
 )
 
@@ -671,8 +671,8 @@ map(names(res_freq_2_lvl), function(name) {
 # Save the tables
 tabs10 <- tabs_correction$meta
 tabs11 <- tabs_correction$gender
-write_csv(tabs10, file = here(tables_dir, "tabs10_correction_meta.csv"))
-write_csv(tabs11, file = here(tables_dir, "tabs11_correction_gender.csv"))
+write_tsv(tabs10, file = here(tables_dir, "tabs10_correction_meta.tsv"))
+write_tsv(tabs11, file = here(tables_dir, "tabs11_correction_gender.tsv"))
 ```
 
 ```{r, tabs10, include=TRUE}
