@@ -656,7 +656,7 @@ map(names(res_freq_2_lvl), function(name) {
       "Selection models", "", "", "", ""
     ),
     label_2 = c(
-      "--", "--", "Weight function, $P$ cutoffs [0.01, 0.05, 0.30]",
+      "--", "--", "Weight function, $P$ value cutoffs [0.01, 0.05, 0.30]",
       "One-tailed, moderate bias", "One-tailed, severe bias",
       "Two-tailed, moderate bias", "Two-tailed, severe bias"
     )
