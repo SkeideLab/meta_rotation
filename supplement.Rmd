@@ -858,9 +858,9 @@ conv_stats <- with(summary(res_meta), tibble(
   r_hat = print_num(c(fixed$Rhat, map_dbl(random, ~ .$Rhat)), digits = 4),
   bulk_ess = print_big(c(fixed$Bulk_ESS, map_dbl(random, ~ .$Bulk_ESS))),
   tail_ess = print_big(c(fixed$Tail_ESS, map_dbl(random, ~ .$Tail_ESS))),
-  r_hat_expr = str_c("italic(widehat(R)) ~ == ~ \"", r_hat, "\""),
-  bulk_ess_expr = str_c("italic(N)[eff(bulk)] ~ == ~ \"", bulk_ess, "\""),
-  tail_ess_expr = str_c("italic(N)[eff(tail)] ~ == ~ \"", tail_ess, "\""),
+  r_hat_expr = str_c("italic(widehat(R)) == \"", r_hat, "\""),
+  bulk_ess_expr = str_c("italic(N)[eff(bulk)] == \"", bulk_ess, "\""),
+  tail_ess_expr = str_c("italic(N)[eff(tail)] == \"", tail_ess, "\""),
   y_pos = c(0.7, 0.75, 0.8)
 ))
 
