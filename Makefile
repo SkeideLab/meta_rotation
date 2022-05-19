@@ -38,6 +38,12 @@ srun:
 	run_slurm.sh $(PROJECT_DIR) $(REMOTE_DIR) $(IMAGE_FILE)
 
 # Convert from LaTeX to PDF after postprocessing, locally or in the container
+latex:
+	$(LATEX_CMD)
+latex-docker:
+	docker run -it --rm --volume $(PROJECT_DIR):$(REMOTE_DIR) $(IMAGE_TAG) \
+	$(LATEX_CMD)
+
 # Required post-processing includes:
 # 1. Remove `\&` before the name of the alst author in the `author{}` line
 # 2. Place each affiliation into `{}`
@@ -49,11 +55,8 @@ srun:
 # 5. Replace `\caption*{\normalfont{Table \ref{` with
 #    `\caption*{\normalfont{Supplementary Table \ref{`
 # 6. Detel all instances of `\textit{Note.} `
-latex:
-	$(LATEX_CMD)
-latex-docker:
-	docker run -it --rm --volume $(PROJECT_DIR):$(REMOTE_DIR) $(IMAGE_TAG) \
-	$(LATEX_CMD)
+# 7. After running the `make latex` command, rotate the pages for Supplementary
+#    Tables 1, 3, 4, and 8 in a PDF software
 
 # Auto-format the manuscript
 style:

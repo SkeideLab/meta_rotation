@@ -842,7 +842,7 @@ ggsave(here(figures_dir, "figs1_gender.pdf"), width = 12, height = 8)
 knitr::include_graphics(here("manuscript_files/flowchart.pdf"))
 ```
 
-(ref:figs2-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. \textsuperscript{a} = We decided to excluded two additional articles: one article because it was based on an uncommon experimental paradigm, differing substantially from all other articles, and another article because it was based on a sample of infants who were substantially older compared to all other articles.
+(ref:figs2-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. \textsuperscript{a} = We decided to exclude two additional articles: one article because it was based on an uncommon experimental paradigm, differing substantially from all other articles, and another article because it was based on a sample of infants who were substantially older compared to all other articles.
 
 ```{r, figs3, include=TRUE, fig.height=6, fig.width=12, fig.cap="(ref:figs3-caption)"}
 # Extract convergence statistics (Rhat, Neff) from Bayesian results
