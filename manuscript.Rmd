@@ -716,7 +716,7 @@ raw_gender %>%
     d_t = t * sqrt(1 / female_n + 1 / male_n),
 
     # Add d from ANOVA F statistic via conversion to a t statistic
-    d_f = sqrt(f_assumed) * sqrt(1 / female_n + 1 / male_n),
+    d_f = sqrt(f_assumed) * sign_f * sqrt(1 / female_n + 1 / male_n),
 
     # Add d from mean difference and pooled standard deviation
     mean_diff = mean_diff_males_mean - mean_diff_females_mean,
