@@ -55,7 +55,7 @@ latex-docker:
 #    with `{Cohen}'s $d$`, and `Rhat` with `$\widehat{R}$`
 # 5. Replace `\caption*{\normalfont{Table \ref{` with
 #    `\caption*{\normalfont{Supplementary Table \ref{`
-# 6. Detel all instances of `\textit{Note.} `
+# 6. Delete all instances of `\textit{Note.} `
 # 7. After running the `make latex` command, rotate the pages for Supplementary
 #    Tables 1, 3, 4, and 8 in a PDF software
 

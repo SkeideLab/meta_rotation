@@ -721,7 +721,7 @@ apa_table(
 
 <!-- Supplementary figures -->
 
-```{r, figs1, include=TRUE, fig.height=10, fig.width=12, fig.cap="(ref:figs1-caption)"}
+```{r, figs1, include=TRUE, fig.height=8, fig.width=12, fig.cap="(ref:figs1-caption)"}
 # Get posterior draws for the effect *in each experiment*
 epred_draws_gender <- epred_draws(res_gender, dat_gender, ndraws = NULL) %>%
   mutate(experiment_f = factor(experiment))
