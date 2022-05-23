@@ -70,9 +70,9 @@ source(here("manuscript_files", "helper_functions.R"))
 
 # Re-run steps that take a long time?
 run <- list(
-  bayesian_models = TRUE,
-  jackknife_analysis = TRUE,
-  sensitivity_analysis = TRUE
+  bayesian_models = FALSE,
+  jackknife_analysis = FALSE,
+  sensitivity_analysis = FALSE
 )
 
 # Global chunk options
@@ -961,6 +961,8 @@ ggsave(here(figures_dir, "fig3_funnel.pdf"), width = 12, height = 3.5)
 We analyzed looking times during mental rotation in `r formatC(descriptives$n_infants, big.mark = ",")` infants ranging from `r descriptives$min_age_months` to `r descriptives$max_age_months` months of age. To this end, we scrutinized the robustness of `r descriptives$n_experiments` experimental effect sizes. We found that on average, male infants looked longer at novel rotated objects compared to female infants. This effect was small and unrelated to age in the current range.
 
 We interpret the meta-regression-based estimate of the gender difference ($b = `r summ_reg$male_female`$, where $b = \Delta{g}$) as an upper bound of the true effect size since this estimate is based on experiments that reported only separate effect sizes for males and females. The gender effect of these experiments can be considered as positively biased when assuming that authors who observe a statistically significant gender difference would be more likely to report separate effect sizes for males and females. In contrast, the meta-analytic estimate derived from the observed gender differences within each experiment ($g = `r summ_gender$intercept`$) can be viewed as a lower bound of the true effect size. This view is plausible because the unknown effect sizes of experiments without significant gender differences were set to zero although non-zero differences were likely also observed but just not reported because of missing power to render these effects statistically significant.
+
+As a final statistical consideration, we have coded the effect size of the looking time difference between novel and familiar rotation events in a linear fashion. This means that a positive looking time difference (i.e., a novelty preference) is taken as stronger evidence for mental rotation than a looking time difference of zero (i.e., no systematic preference), which in turn is taken as stronger evidence for mental rotation than a negative looking time difference (i.e., a familiarity preference). Although novelty preference is the more paradigmatic case, some authors have argued that familiarity preference should also be taken as evidence for mental rotation ability [@erdmann2018; @moore2020; @johnson2020]. We have instead decided to model the looking time differences in a linear fashion to facilitate the interpretability of our models (for related discussion, see [@houston-price2004; @black2017; @cristia2018]). This procedure has rendered our meta-analytic effect sizes of mental rotation performance and of gender differences smaller than they would have been if both novelty preference and familiarity preference are interpreted as successful mental rotation.
 
 The gender differences observed here remain to be explained by interacting genetic and environmental factors that are largely unknown. To the best of our knowledge, there are currently no genetic association or gene-environment interaction studies with a focus on mental rotation. Nevertheless, it is documented that genetic contributions to behavioral variance in mental rotation are substantially smaller than unique non-shared environmental contributions both in male and female adults [@shakeshaft2016]. Whether this observation also applies to infants remains to be explored.
 

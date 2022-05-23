@@ -1,4 +1,4 @@
-# General stuff
+# Misc files
 .vscode
 .DS_Store
 *.sif
@@ -18,8 +18,7 @@ slurm-*
 *.tex
 *.ttt
 
-# PDF articles of the original experiments
+# Folders
 /data/articles/
-
-# Fitted Bayesian models
 /results/
+/submission/
