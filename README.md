@@ -15,9 +15,9 @@
 
 #### Cloud-based
 
-1. Hit the "launch binder"[^1] button at the top
+1. Hit the "launch binder" button at the top[^1]
 
-2. Run the R code in `manuscript.Rmd` and `supplement.Rmd` on the cloud server (kindly provided by the [Binder project](https://mybinder.readthedocs.io/en/latest/index.html))
+2. Run the R code in `manuscript.Rmd` and `supplement.Rmd` directly in your web browser
 
 #### Local machine
 
