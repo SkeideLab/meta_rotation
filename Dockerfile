@@ -19,21 +19,16 @@ RUN \
     brms \
     cowplot \
     furrr \
-    git2r \
     ggnewscale \
     ggridges \
-    googledrive \
     here \
     Hmisc \
     httpgd \
-    huxtable \
-    kableExtra \
     languageserver \
     logspline \
     magick \
     metafor \
     metaviz \
-    MetBrewer \
     psych \
     styler \
     tidybayes \
@@ -42,7 +37,6 @@ RUN \
     claudiozandonella/trackdown@844a0ec \
     crsh/papaja@2572124 \
     stan-dev/cmdstanr@a2a97d9 \
-    MathiasHarrer/dmetar@3e7e309 \
     # Build CmdStanR
     && mkdir -p "$HOME/.cmdstanr" \
     && Rscript -e "cmdstanr::install_cmdstan(dir = '$HOME/.cmdstanr')" \
