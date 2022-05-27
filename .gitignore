@@ -6,8 +6,6 @@
 slurm-*
 
 # LaTeX-generated files
-/manuscript.pdf
-/manuscript_files/figure-latex
 *.aux
 *.fdb_latexmk
 *.fff
