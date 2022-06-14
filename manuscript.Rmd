@@ -13,16 +13,14 @@ author:
     affiliation   : "1"
 affiliation:
   - id            : "1"
-    institution   : "Research Group Learning in Early Childhood, Max Planck Institute for Human Cognitive and Brain Sciences, Stephanstraße 1a, Leipzig, Germany"
+    institution   : "Research Group Learning in Early Childhood, Max Planck Institute for Human Cognitive and Brain Sciences, Stephanstraße 1a, 04103 Leipzig, Germany"
   - id            : "2"
-    institution   : "Department of Psychology, Humboldt-Universität zu Berlin, Rudower Chaussee 18, Berlin, Germany"
+    institution   : "Department of Psychology, Humboldt-Universität zu Berlin, Rudower Chaussee 18, 12489 Berlin, Germany"
   - id            : "*"
     institution   : "Corresponding author (enge@cbs.mpg.de)"
 
-keywords          : "mental rotation, spatial cognition, spatial ability, infants, children, gender, meta-analysis"
-
 bibliography      : "manuscript_files/references.bib"
-csl               : "manuscript_files/nature.csl"
+csl               : "manuscript_files/pnas.csl"
 
 appendix          : "supplement.Rmd"
 
@@ -265,17 +263,23 @@ descriptives <- list(
 
 # Abstract
 
-Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning, and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3--16 months. We robustly found that male infants recognized rotated objects slightly more reliably than female infants. These findings indicate that subtle gender differences in mental rotation are already present in the first months of life.
+Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning, and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3--16 months. We robustly found that male infants recognized rotated objects more reliably than female infants. These findings indicate that gender differences in mental rotation are already present in the first months of life.
 
-# Main
+# Significance statement
+
+Are there gender differences in cognitive ability? So far, putative differences in most cognitive domains turned out to be myths. However, mental rotation, the ability to move an object in mind to predict how it would look in a new orientation, is considered as a serious candidate. Here we investigated how early during development mental rotation behavior differs in male and female infants. We found that, on average, males recognized rotated objects more reliably than females as early as in the first months of life. These results are an important step towards narrowing down possible social and genetic origins of gender differences in mental rotation ability.
+
+\newpage
+
+# Introduction
 
 The cognitive ability to move visual object representations in mind for recognition across different orientations, known as mental rotation, emerges in the first three months of life [@moore2020; @johnson2020]. Mental rotation is a key component of intelligence and a powerful predictor of learning outcome and educational achievement [@shepard1971; @hegarty1999; @johnson2005].
 
 Previous meta-analyses revealed that males solve mental rotation tasks slightly faster than females on average [@linn1985; @voyer1995; @voyer2011; @maeda2013]. Effect sizes of this difference, however, are heterogeneous and often only medium in size (mean weighted $g = 0.37\text{--}0.73$). Interestingly, a recent meta-analysis in 3--17-year-old children and adolescents suggests only a small-to-medium difference (mean weighted $g = 0.39$) [@lauer2019a]. Whether gender differences in mental rotation behavior already emerge during infancy remains unknown.
 
-In the present study, we meta-analyzed `r descriptives$n_experiments` effect sizes derived from looking times in mental rotation tasks performed by `r formatC(descriptives$n_infants, big.mark = ",")` infants (`r print_perc(descriptives$percent_female)` female) aged `r descriptives$min_age_months` to `r descriptives$max_age_months` months (mean age of `r descriptives$mean_age_weighted`; Supplementary Table\ \@ref(tab:tabs1))[@kellman1984; @rochat1996; @hespos1997; @moore2008; @quinn2008; @moore2011; @frick2013b; @mohring2013; @schwarzer2013; @schwarzer2013a; @frick2014b; @quinn2014; @lauer2015; @antrilli2016; @christodoulou2016; @lauer2016; @constantinescu2018; @erdmann2018; @gerhard2018; @slone2018; @kaaz2020; @gerhard-samunda2021; @kelch2021]. All tasks were embedded either into habituation experiments (`r descriptives$n_experiments_habituation`) or violation of expectation experiments (`r descriptives$n_experiments_voe`) [@fantz1964; @baillargeon1985]. These experiments comprised real world stimuli (e.g., toy objects) [@antrilli2016], three-dimensional digital stimuli (e.g., cube figures) [@moore2008], or two-dimensional digital stimuli (e.g., digits) [@quinn2008]. In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object or with the familiar object at a new angle. Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation. In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle. Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle. Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown. Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle. In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
+In the present study, we meta-analyzed `r descriptives$n_experiments` effect sizes derived from looking times in mental rotation tasks performed by `r formatC(descriptives$n_infants, big.mark = ",")` infants (`r print_perc(descriptives$percent_female)` female) aged `r descriptives$min_age_months` to `r descriptives$max_age_months` months (mean age of `r descriptives$mean_age_weighted`; Supplementary Table\ \@ref(tab:tabs1))[@kellman1984; @rochat1996; @hespos1997; @moore2008; @quinn2008; @moore2011; @frick2013b; @mohring2013; @schwarzer2013; @schwarzer2013a; @frick2014b; @quinn2014; @lauer2015; @antrilli2016; @christodoulou2016; @lauer2016; @constantinescu2018; @erdmann2018; @gerhard2018; @slone2018; @kaaz2020; @gerhard-samunda2021; @kelch2021]. All tasks were embedded either into habituation experiments (`r descriptives$n_experiments_habituation` experiments) or violation of expectation experiments (`r descriptives$n_experiments_voe` experiments) [@fantz1964; @baillargeon1985]. These experiments comprised real world stimuli (e.g., toy objects), three-dimensional digital stimuli (e.g., cube figures), or two-dimensional digital stimuli (e.g., digits). In habituation experiments, infants repeatedly saw an object until their looking times declined before they were presented with a mirror image of the object or with the familiar object at a new angle. Longer looking times at the mirror image were taken as evidence that an infant still recognized the familiar object after rotation through the new orientation. In violation of expectation experiments, infants were habituated to an object that was revolving repeatedly through a certain angle. Then, either the familiar object or an unseen object was shown while they were revolving through a certain angle. Subsequently, the object disappeared behind an occluder. Finally, the occluder was removed and either the object or its mirror object were shown. Larger differences in looking times for the familiar object versus the unseen mirror image (at the new angle) were taken as evidence that an infant still recognized the familiar object after rotation through the new angle. In contrast, looking times for both objects were expected to be similar if an infant did not recognize the familiar object from the new angle.
 
-\vspace{1cm}
+Following previous work in older populations, we hypothesized that looking time differences in mental rotation experiments are on average longer in male compared to female infants. Effect sizes were assumed to be small.
 
 ```{r, meta}
 # Specify priors
@@ -335,7 +339,7 @@ spread_draws(res_meta, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
 (summ_meta <- as.list(mean_qi(draws_meta)))
 ```
 
-```{r, fig1, include=TRUE, fig.height=14, fig.pos="bh", fig.width=12, fig.cap="(ref:fig1-caption)"}
+```{r, fig1, include=TRUE, fig.height=14, fig.width=12, fig.cap="(ref:fig1-caption)"}
 # Get posterior draws for the effect *in each experiment*
 epred_draws_meta <- epred_draws(res_meta, dat_meta, ndraws = NULL) %>%
   mutate(experiment_f = factor(experiment))
@@ -452,7 +456,7 @@ ggsave(here(figures_dir, "fig1_meta.pdf"), width = 12, height = 14)
 
 (ref:fig1-caption) **Mental rotation performance.** A Bayesian three-level meta-analysis provided evidence for mental rotation ability in infants. White squares depict the effect sizes (Hedges' $g$) for infants' mental rotation performance in all individual experiments and black lines depict their 95% confidence intervals. Gray bars indicate the 50% and 95% credible intervals (CrI) from the Bayesian model, which take into account that experiments with smaller sample sizes or more extreme effect sizes provide less reliable information. The last line shows the meta-analytic effect size (black dot) together with its 95% CrI (black line) and its posterior distribution (gray curve).
 
-Following previous work in older populations, we hypothesized that looking time differences in mental rotation experiments are on average longer in male compared to female infants. Effect sizes were assumed to be small.
+# Results
 
 ## Mental rotation performance
 
@@ -956,7 +960,7 @@ ggsave(here(figures_dir, "fig3_funnel.pdf"), width = 12, height = 3.5)
 
 (ref:fig3-caption) **Evaluation of publication bias.**  Funnel plots for the meta-analysis of mental rotation performance (**a**) and for the meta-analysis of gender differences in mental rotation performance (**b**). The plots show the standard error and effect size for each of the individual experiments as a black square. The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect size (vertical black line). Gray shades indicate a 95% pseudo-confidence interval (dark gray) and a 99% pseudo-confidence interval (light gray) under the null hypothesis. These shades thus illustrate which of the original experiments observed a significant effect. For the meta-analysis of mental rotation performance, a slight asymmetry induced by the underrepresentation of experiments with high standard errors and small effect sizes suggests a small publication bias.
 
-## Discussion
+# Discussion
 
 We analyzed looking times during mental rotation in `r formatC(descriptives$n_infants, big.mark = ",")` infants ranging from `r descriptives$min_age_months` to `r descriptives$max_age_months` months of age. To this end, we scrutinized the robustness of `r descriptives$n_experiments` experimental effect sizes. We found that on average, male infants looked longer at novel rotated objects compared to female infants. This effect was small to medium and unrelated to age in the current range.
 
@@ -972,9 +976,9 @@ Sex hormone concentration in male infants, especially postnatal testosterone in 
 
 A number of additional factors have been associated with individual differences in infant mental rotation performance. For example, mental rotation is related to previous relevant experience with the particular objects used in the specific task [@mohring2013; @schwarzer2013a; @slone2018]. This relation also applies to previous experience with manually rotating toys [@schwarzer2013a]. While these preliminary results require replication, they are in line with the longstanding notion that prior knowledge is the strongest predictor of learning outcomes in a range of cognitive domains (e.g., [@ausubel1968; @bradley1983; @halberda2008]). Furthermore, there is yet to be confirmed preliminary evidence for possible links between mental rotation performance and several sensory motor skills including fine and gross motor skills, oculomotor control, and crawling skills [@schwarzer2013; @schwarzer2013a].
 
-The present study robustly revealed that male infants look slightly longer at novel rotated objects than female infants. Thus, on average, males show slightly more reliable mental rotation behavior already in the first months of life.
+The present study robustly revealed that male infants look longer at novel rotated objects than female infants. Thus, on average, males show more reliable mental rotation behavior already in the first months of life.
 
-# Methods
+# Materials and methods
 
 ## Protocol
 
@@ -1049,13 +1053,9 @@ To scrutinize the robustness of the meta-analytic effect size against the influe
 
 We also performed trim-and-fill analyses and tested selection models to confirm the robustness of the results obtained from the frequentist meta-analyses against publication bias (Supplementary Methods 2; Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11); Supplementary Fig.\ \@ref(fig:figs5)) [@duval2000; @vevea1995; @vevea2005].
 
-## Data availability
+## Data and code availability
 
-The datasets generated and analyzed during the current study are available in an Open Science Framework repository [@enge2022a], [https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8). This link is intended for peer review only and will be replaced with a public DOI link upon publication.
-
-## Code availability
-
-The analysis code for the current study is available in an Open Science Framework repository [@enge2022a], [https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8](https://osf.io/k3wdg/?view_only=06a4a0ac3d5f4681baab11751c1498b8). This link is intended for peer review only and will be replaced with a public DOI link upon publication.
+The data and code for this study are available in an Open Science Framework repository ([https://doi.org/10.17605/OSF.IO/K3WDG](https://doi.org/10.17605/OSF.IO/K3WDG)).
 
 \newpage
 \nolinenumbers
@@ -1065,20 +1065,6 @@ The analysis code for the current study is available in an Open Science Framewor
 \bigskip
 
 <div id="refs"></div>
-
-\newpage
-
-# Author contributions
-
-M.A.S. conceived, designed, and obtained funding for the study. A.E., S.K., and A.-S.K. (in consultation with M.A.S.) designed and executed the search and selection strategies, performed data analysis, conducted robustness checks, and visualized the results. A.E. and M.A.S. wrote the manuscript with additional input from S.K. and A.-S.K.
-
-# Competing interests
-
-The authors declare no competing interests.
-
-# Materials & Correspondence
-
-Supplementary Information is available for this paper. Correspondence and requests for materials should be addressed to Alexander Enge ([enge@cbs.mpg.de](mailto:enge@cbs.mpg.de)).
 
 \newpage
 

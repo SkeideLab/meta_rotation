@@ -48,8 +48,8 @@ latex-docker:
 # 1. Remove `\&` before the name of the alst author in the `author{}` line
 # 2. Place each affiliation into `{}`
 # 3. Remove all newlines between `\CSLLeftMargin{XX. }` and `\CSLRightInline`
-# 4. Remove empty lines after references for ausubel1968, hedges1985,
-#    rosenthal1991, cohen1988, efron1993, rcoreteam2021,
+# 4. Remove empty lines after references for ausubel1968, hespos1997,
+#    hedges1985, rosenthal1991, cohen1988, efron1993, rcoreteam2021,
 #    standevelopmentteam2022
 # 5. In the References, replace ` t-tests ` with ` $t$-tests `, `{Cohen}'s d`
 #    with `{Cohen}'s $d$`, and `Rhat` with `$\widehat{R}$`
