@@ -1,6 +1,6 @@
 <!-- Re-define labels for tables and figures -->
 \captionsetup[table]{name=Supplementary Table}
-\captionsetup[figure]{name=Supplementary Fig.}
+\captionsetup[figure]{name=Supplementary Figure}
 
 <!-- Restart numbering of figures and tables -->
 \renewcommand{\thefigure}{\arabic{figure}}
@@ -17,7 +17,7 @@
 
 <!-- Supplementary methods -->
 
-## Supplementary Methods 1 | Correlation between dependent samples
+## Supplementary Methods 1: Correlation between dependent samples
 
 ```{r, correlation}
 # Compute empirical estimate of the correlation between dependent samples
@@ -51,7 +51,7 @@ dat_ri_empirical <- filter(dat_meta, !is.na(ri_empirical))
   map(print_num))
 ```
 
-Meta-analytic methods require an estimate of the sampling variance of each included experiment [@harrer2021]. For within-participant experimental designs, this sampling variance needs to account for the fact that repeated measures are taken from the same individuals in different conditions. Repeated measures from the same participant will be more similar to one another than measures from two randomly selected participants and thus do not provide independent information. This is accounted for by the correlation term $r$ in the formula of the standard error of the effect size ${SE}_\text{rotation}$ (see Methods) [@goulet-pelletier2018]. However, the correlation between repeated measures tends to go unreported in research articles. In fact, none of the `r descriptives$n_articles` articles in the present meta-analysis provided a direct numerical estimate for the correlation between infants' looking times in the novel and familiar rotation object conditions.
+Meta-analytic methods require an estimate of the sampling variance of each included experiment [@harrer2021]. For within-participant experimental designs, this sampling variance needs to account for the fact that repeated measures are taken from the same individuals in different conditions. Repeated measures from the same participant will be more similar to one another than measures from two randomly selected participants and thus do not provide independent information. This is accounted for by the correlation term $r$ in the formula of the standard error of the effect size ${SE}_\text{rotation}$ [see Methods and @goulet-pelletier2018]. However, the correlation between repeated measures tends to go unreported in research articles. In fact, none of the `r descriptives$n_articles` articles in the present meta-analysis provided a direct numerical estimate for the correlation between infants' looking times in the novel and familiar rotation object conditions.
 
 However, there were `r nrow(dat_ri_empirical)` experiments taken from seven different articles that included enough statistical information to reconstruct this correlation. This was done using the following procedure:
 
@@ -67,11 +67,11 @@ However, there were `r nrow(dat_ri_empirical)` experiments taken from seven diff
 
 Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed correlation was $r = `r summ_ri_empirical$mean`$ (median $r = `r summ_ri_empirical$median`$, range [`r summ_ri_empirical$min`, `r summ_ri_empirical$max`]). However, we decided to assume a correlation of $r  = 0.50$ when computing the effect size ${SE}_\text{rotation}$ for all `r descriptives$n_experiments` experiments. This was to ensure the comparability of our methods to meta-analyses of between-participant studies [@cohen1988; @lakens2013; @morris2002]. To  evaluate the robustness of our Bayesian meta-analytic models against the assumption of a correlation of $r  = 0.50$, we ran a sensitivity analysis (Supplementary Tables\ \@ref(tab:tabs7) and \@ref(tab:tabs8)).
 
-## Supplementary Methods 2 | Publication bias correction
+## Supplementary Methods 2: Publication bias correction
 
-We used trim-and-fill analysis and selection models to examine if and how our meta-analytic results would change under different degrees of publication bias. For both of these types of models, we used a simplified two-level version of our frequentist three-level model as a basis. In our first step, we computed a trim-and-fill model by imputing possible effect sizes of non-published experiments [@duval2000]. This new model produces a symmetric funnel plot with no association between effect sizes and standard errors (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11); Supplementary Fig.\ \@ref(fig:figs5)).
+We used trim-and-fill analysis and selection models to examine if and how our meta-analytic results would change under different degrees of publication bias. For both of these types of models, we used a simplified two-level version of our frequentist three-level model as a basis. In our first step, we computed a trim-and-fill model by imputing possible effect sizes of non-published experiments [@duval2000]. This new model produces a symmetric funnel plot with no association between effect sizes and standard errors (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11); Supplementary Figure\ \@ref(fig:figs5)).
 
-In our next step, we used selection models to approximate the process by which experiments got selected into the meta-analysis. These models were based on the assumption that experiments yielding significant effects (i.e., small $P$ values) are more likely to get published. Specifically, we ran one selection model assuming a weight function with fixed $P$ value cutoffs [@vevea1995] at $P$ = 0.01, $P$ = 0.05, and $P$ = 0.30. Additionally, we ran multiple models with a priori selection functions assuming biases of varying severity [@vevea2005]. These analyses  revealed that our results are robust to small to medium publication bias (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11)).
+In our next step, we used selection models to approximate the process by which experiments got selected into the meta-analysis. These models were based on the assumption that experiments yielding significant effects (i.e., small $p$ values) are more likely to get published. Specifically, we ran one selection model assuming a weight function with fixed $p$ value cutoffs [@vevea1995] at $p$ = 0.01, $p$ = 0.05, and $p$ = 0.30. Additionally, we ran multiple models with a priori selection functions assuming biases of varying severity [@vevea2005]. These analyses  revealed that our results are robust to small to medium publication bias (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11)).
 
 <!-- Supplementary tables -->
 
@@ -295,41 +295,41 @@ apa_table(
 \LTcapwidth=\textwidth
 
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| \ \ Available statistics                                       | Conversion to standardized mean difference (Hedges' $g$)                                    |
+| Available statistics                                           | Conversion to standardized mean difference (Hedges' $g$)                                    |
 +================================================================+=============================================================================================+
-| \ \ (1\) Cohen's $d$ and sample size                           | ${df}=2(n-1)$;\quad                                                                         |
+| (1\) Cohen's $d$ and sample size                               | ${df}=2(n-1)$;\quad                                                                         |
 | [@goulet-pelletier2018; @hedges1985]                           | $J({df})=\frac{\Gamma(\frac{1}{2}{df})}{\sqrt{\frac{{df}}{2}}\Gamma(\frac{1}{2}({df}-1))}$; |
 |                                                                | \quad $g_\text{rotation}=d\cdot{J}({df})$                                                   |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| \ \ (2\) $t$ statistic and sample size [@rosenthal1991]        | $d=\frac{t}{\sqrt{n}}$;\quad then (1)                                                       |
+| (2\) $t$ statistic and sample size [@rosenthal1991]            | $d=\frac{t}{\sqrt{n}}$;\quad then (1)                                                       |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| \ \ (3\) $F$ statistic and sample size [@lakens2013]           | $t=\sqrt{F}$;\quad then (2\)                                                                |
+| (3\) $F$ statistic and sample size [@lakens2013]               | $t=\sqrt{F}$;\quad then (2\)                                                                |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| \ \ (4\) Mean difference between conditions [@lakens2013]      | $d=\frac{m_\text{diff}}{{SD}_\text{diff}}$;\quad then (1)                                   |
+| (4\) Mean difference between conditions [@lakens2013]          | $d=\frac{m_\text{diff}}{{SD}_\text{diff}}$;\quad then (1)                                   |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| \ \ (5\) Mean looking times$ per condition [@cumming2012]      | ${SD}_\text{av}=\sqrt{\frac{{SD}_\text{novel}^2+{SD}_\text{familiar}^2}{2}}$;\quad          |
+| (5\) Mean looking times$ per condition [@cumming2012]          | ${SD}_\text{av}=\sqrt{\frac{{SD}_\text{novel}^2+{SD}_\text{familiar}^2}{2}}$;\quad          |
 |                                                                | $d=\frac{m_\text{novel}-m_\text{familiar}}{{SD}_\text{av}}$;\quad then (1)                  |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
-| \ \ (6\) Mean novelty preference score [@lakens2013]           | $d=\frac{m_\text{pref}}{{SD}_\text{pref}}$;\quad then (1)                                   |
+| (6\) Mean novelty preference score [@lakens2013]               | $d=\frac{m_\text{pref}}{{SD}_\text{pref}}$;\quad then (1)                                   |
 +----------------------------------------------------------------+---------------------------------------------------------------------------------------------+
 
 Table: (\#tab:tabs5) Effect sizes for the meta-analysis of mental rotation performance
 
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
-| \ \ Available statistics               | Conversion to standardized mean difference (Hedges' $g$)                                         |
+| Available statistics                   | Conversion to standardized mean difference (Hedges' $g$)                                         |
 +========================================+==================================================================================================+
-| \ \ (1\) Cohen's $d$ and group sizes   | ${df}=n_\text{female}+n_\text{male}-2$; \quad                                                    |
+| (1\) Cohen's $d$ and group sizes       | ${df}=n_\text{female}+n_\text{male}-2$; \quad                                                    |
 | [@goulet-pelletier2018; @hedges1985]   | $J({df})=\frac{\Gamma(\frac{1}{2}{df})}{\sqrt{\frac{{df}}{2}}\Gamma(\frac{1}{2}({df}-1))}$;\quad |
 |                                        | $g_\text{gender}=d\cdot{J({df})}$                                                                |
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
-| \ \ (2\) $t$ statistic and group sizes | $d=t\sqrt{\frac{1}{n_\text{female}}+\frac{1}{n_\text{male}}}$;\quad then (1)                     |
+| (2\) $t$ statistic and group sizes     | $d=t\sqrt{\frac{1}{n_\text{female}}+\frac{1}{n_\text{male}}}$;\quad then (1)                     |
 | [@lakens2013]                          |                                                                                                  |
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
-| \ \ (3\) $F$ statistic and group sizes | $t=\sqrt{F}$;\quad then (2\)                                                                     |
+| (3\) $F$ statistic and group sizes     | $t=\sqrt{F}$;\quad then (2\)                                                                     |
 | [@lakens2013]                          |                                                                                                  |
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
-| \ \ (4\) Mean differences between\     | ${SD}_\text{pooled}=\sqrt{\frac{(n_\text{female}-1){SD}_\text{female}^2                          |
-| \ \ conditions or preference scores    | +(n_\text{male}-1){SD}_\text{male}^2}{df}}$;\quad                                                |
+| (4\) Mean differences between\         | ${SD}_\text{pooled}=\sqrt{\frac{(n_\text{female}-1){SD}_\text{female}^2                          |
+| conditions or preference scores        | +(n_\text{male}-1){SD}_\text{male}^2}{df}}$;\quad                                                |
 | [@lakens2013]                          | $d=\frac{m_\text{female}-m_\text{male}}{{SD}_\text{pooled}}$;\quad then (1)                      |
 +----------------------------------------+--------------------------------------------------------------------------------------------------+
 
@@ -656,7 +656,7 @@ map(names(res_freq_2_lvl), function(name) {
       "Selection models", "", "", "", ""
     ),
     label_2 = c(
-      "--", "--", "Weight function, $P$ value cutoffs [0.01, 0.05, 0.30]",
+      "--", "--", "Weight function, $p$ value cutoffs [0.01, 0.05, 0.30]",
       "One-tailed, moderate bias", "One-tailed, severe bias",
       "Two-tailed, moderate bias", "Two-tailed, severe bias"
     )
@@ -842,7 +842,7 @@ ggsave(here(figures_dir, "figs1_gender.pdf"), width = 12, height = 8)
 knitr::include_graphics(here("manuscript_files/flowchart.pdf"))
 ```
 
-(ref:figs2-caption) **Literature search and selection process.** **a,** We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. **b,** Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. **c,** Redundant articles comprising the same experiment(s) were excluded. \textsuperscript{a} = We decided to exclude two additional articles: one article because it was based on an uncommon experimental paradigm, differing substantially from all other articles, and another article because it was based on a sample of infants who were substantially older compared to all other articles.
+(ref:figs2-caption) **Literature search and selection process.** (A) We searched four online databases as well as reviews and reference sections to identify articles in which mental rotation experiments in infants were reported. (B) Experiments were included in the meta-analysis if they fulfilled six pre-specified inclusion criteria. (C) Redundant articles comprising the same experiment(s) were excluded. \textsuperscript{a} = We decided to exclude two additional articles: one article because it was based on an uncommon experimental paradigm, differing substantially from all other articles, and another article because it was based on a sample of infants who were substantially older compared to all other articles.
 
 ```{r, figs3, include=TRUE, fig.height=6, fig.width=12, fig.cap="(ref:figs3-caption)"}
 # Extract convergence statistics (Rhat, Neff) from Bayesian results
@@ -1010,7 +1010,7 @@ map2(res_trim_fill, plots_funnel, function(res, plot) {
 
 # Combine plots and legend
 plot_grid(
-  plotlist = plots_funnel_trim_fill, nrow = 1, labels = "auto",
+  plotlist = plots_funnel_trim_fill, nrow = 1, labels = "AUTO",
   label_size = 11, label_fontfamily = "Helvetica"
 ) +
   draw_plot(legend_funnel, x = -0.39, y = 0.355)
@@ -1022,4 +1022,4 @@ ggsave(
 )
 ```
 
-(ref:figs5-caption) **Trim-and-fill analysis.** As in Fig.\ \@ref(fig:fig3) in the main text, black squares indicate the effect sizes (x-axis) and standard errors (y-axis) of the individual experiments included in the meta-analysis of mental rotation performance (**a**) and in the meta-analysis of gender differences within each article (**b**). The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect sizes (vertical black lines). Gray shades indicate 95% pseudo-confidence intervals (dark gray) and 99% pseudo-confidence intervals (light gray) under the null hypothesis. Red squares show fictional experiments that were imputed using the trim-and-fill method  to compensate for the small publication bias observed in the original funnel plot. Red lines depict the meta-analytic effect size and its 95% pseudo-confidence interval for the trim-and-fill-corrected meta-analysis of mental rotation performance. For the meta-analysis of gender differences, the results of the trim-and-fill analysis suggested that no additional experiments had to be imputed to compensate for publication bias.
+(ref:figs5-caption) **Trim-and-fill analysis.** As in Figure\ \@ref(fig:fig3) in the main text, black squares indicate the effect sizes (x-axis) and standard errors (y-axis) of the individual experiments included in the meta-analysis of mental rotation performance (A) and in the meta-analysis of gender differences within each article (B). The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect sizes (vertical black lines). Gray shades indicate 95% pseudo-confidence intervals (dark gray) and 99% pseudo-confidence intervals (light gray) under the null hypothesis. Red squares show fictional experiments that were imputed using the trim-and-fill method  to compensate for the small publication bias observed in the original funnel plot. Red lines depict the meta-analytic effect size and its 95% pseudo-confidence interval for the trim-and-fill-corrected meta-analysis of mental rotation performance. For the meta-analysis of gender differences, the results of the trim-and-fill analysis suggested that no additional experiments had to be imputed to compensate for publication bias.

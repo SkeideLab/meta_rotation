@@ -104,8 +104,8 @@ print_res_freq_table <- function(res_freq,
     Parameter = rownames(res_freq$b),
     Estimate = print_num(as.numeric(res_freq$b)),
     `$SE$` = print_num(res_freq$se),
-    `$Z$` = print_num(res_freq$zval),
-    `$P$` = ifelse(
+    `$z$` = print_num(res_freq$zval),
+    `$p$` = ifelse(
       res_freq$pval < 0.001, "< 0.001", print_num(res_freq$pval, digits = 3)
     ),
     ci_lower = print_num(res_freq$ci.lb),
