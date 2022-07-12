@@ -24,10 +24,6 @@ authornote: |
   We have no conflicts of interest to disclose.
   The data and code for this study are available at [https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e](https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e).
 
-abstract: |
-  Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning, and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3--16 months. We robustly found that male infants recognized rotated objects more reliably than female infants. These findings indicate that gender differences in mental rotation are already present in the first months of life.
-keywords: "mental rotation; spatial cognition; infants; gender; meta-analysis"
-
 bibliography      : "manuscript_files/references.bib"
 csl               : "manuscript_files/apa.csl"
 
@@ -37,7 +33,7 @@ floatsintext      : yes
 figurelist        : no
 tablelist         : no
 footnotelist      : no
-linenumbers       : no
+linenumbers       : yes
 mask              : no
 draft             : no
 
@@ -267,7 +263,31 @@ descriptives <- list(
 )
 ```
 
-# Gender differences in infant mental rotation
+\newpage 
+
+\
+
+\newpage
+
+\resetlinenumber
+
+# Highlights
+
+* We analyzed effect sizes of 59 mental rotation experiments including 1,798 infants 
+
+* Looking time reveals that 3--16-months-old infants are able to perform mental rotation
+
+* Mental rotation is more reliable in male infants compared to female infants
+
+\newpage
+
+# Abstract
+
+Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning, and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3--16 months. We robustly found that male infants recognized rotated objects more reliably than female infants. These findings indicate that gender differences in mental rotation are already present in the first months of life.
+
+\newpage
+
+# Introduction
 
 The cognitive ability to move visual object representations in mind for recognition across different orientations, known as mental rotation, emerges in the first three months of life [@moore2020; @johnson2020]. Mental rotation is a key component of intelligence and a powerful predictor of learning outcome and educational achievement [@shepard1971; @hegarty1999; @johnson2005].
 
@@ -1051,9 +1071,9 @@ To scrutinize the robustness of the meta-analytic effect size against the influe
 
 We also performed trim-and-fill analyses and tested selection models to confirm the robustness of the results obtained from the frequentist meta-analyses against publication bias [@duval2000; @vevea1995; @vevea2005\; Supplementary Methods 2\; Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11)\; Supplementary Figure\ \@ref(fig:figs5)].
 
-## Transparency and openness
+## Data and code availability
 
-The data and code for this study are available at [https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e](https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e). This study was not preregistered.
+The data and code for this study are available at [https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e](https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e).
 
 \newpage
 \nolinenumbers
