@@ -14,23 +14,23 @@ Methods	Eligibility criteria	5	Specify the inclusion and exclusion criteria for 
 	Effect measures	12	Specify for each outcome the effect measure(s) (e.g. risk ratio, mean difference) used in the synthesis or presentation of results.	Methods: Effect measures
 	Synthesis methods	13a	Describe the processes used to decide which studies were eligible for each synthesis (e.g. tabulating the study intervention characteristics and comparing against the planned groups for each synthesis (item #5)).	Methods: Data collection process and items
 		13b	Describe any methods required to prepare the data for presentation or synthesis, such as handling of missing summary statistics, or data conversions.	Methods: Effect measures
-		13c	Describe any methods used to tabulate or visually display results of individual studies and syntheses.	Results: Fig. 1
+		13c	Describe any methods used to tabulate or visually display results of individual studies and syntheses.	Results: Figure 1
 		13d	Describe any methods used to synthesize results and provide a rationale for the choice(s). If meta-analysis was performed, describe the model(s), method(s) to identify the presence and extent of statistical heterogeneity, and software package(s) used.	Methods: Bayesian meta-analysis; Methods: Frequentist meta-analysis
 		13e	Describe any methods used to explore possible causes of heterogeneity among study results (e.g. subgroup analysis, meta-regression).	Methods: Bayesian meta-regression
 		13f	Describe any sensitivity analyses conducted to assess robustness of the synthesized results.	Methods: Bayesian meta-analysis; Supplementary Methods 1
 	Reporting bias assessment	14	Describe any methods used to assess risk of bias due to missing results in a synthesis (arising from reporting biases).	Methods: Publication bias asssessment
 	Certainty assessment	15	Describe any methods used to assess certainty (or confidence) in the body of evidence for an outcome.	Methods: Publication bias asssessment
-Results	Study selection	16a	Describe the results of the search and selection process, from the number of records identified in the search to the number of studies included in the review, ideally using a flow diagram.	Introduction; Results: Mental rotation performance; Supplementary Fig. 2
+Results	Study selection	16a	Describe the results of the search and selection process, from the number of records identified in the search to the number of studies included in the review, ideally using a flow diagram.	Introduction; Results: Mental rotation performance; Supplementary Figure 2
 		16b	Cite studies that might appear to meet the inclusion criteria, but which were excluded, and explain why they were excluded.	Methods: Selection process
 	Study characteristics	17	Cite each included study and present its characteristics.	Supplementary Table 1
 	Risk of bias in studies	18	Present assessments of risk of bias for each included study.	--
-	Results of individual studies	19	For all outcomes, present, for each study: (a) summary statistics for each group (where appropriate) and (b) an effect estimate and its precision (e.g. confidence/credible interval), ideally using structured tables or plots.	Results: Fig. 1
+	Results of individual studies	19	For all outcomes, present, for each study: (a) summary statistics for each group (where appropriate) and (b) an effect estimate and its precision (e.g. confidence/credible interval), ideally using structured tables or plots.	Results: Figure 1
 	Results of syntheses	20a	For each synthesis, briefly summarise the characteristics and risk of bias among contributing studies.	Introduction
 		20b	Present results of all statistical syntheses conducted. If meta-analysis was done, present for each the summary estimate and its precision (e.g. confidence/credible interval) and measures of statistical heterogeneity. If comparing groups, describe the direction of the effect.	Results: Mental rotation performance
 		20c	Present results of all investigations of possible causes of heterogeneity among study results.	Results: Effects of gender, age, and task
 		20d	Present results of all sensitivity analyses conducted to assess the robustness of the synthesized results.	Supplementary Tables 7, 8, and 9
 	Reporting biases	21	Present assessments of risk of bias due to missing results (arising from reporting biases) for each synthesis assessed.	Results: Publication bias assessment; Supplementary Methods 2; Supplementary Tables 3, 10 and 11
-	Certainty of evidence	22	Present assessments of certainty (or confidence) in the body of evidence for each outcome assessed.	Results: Fig. 1; Results: Fig. 2
+	Certainty of evidence	22	Present assessments of certainty (or confidence) in the body of evidence for each outcome assessed.	Results: Figure 1; Results: Figure 2
 Discussion	Discussion	23a	Provide a general interpretation of the results in the context of other evidence.	Discussion
 		23b	Discuss any limitations of the evidence included in the review.	Discussion
 		23c	Discuss any limitations of the review processes used.	Discussion

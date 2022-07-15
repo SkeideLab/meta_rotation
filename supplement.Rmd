@@ -535,10 +535,11 @@ tabs8 <- read_tsv(
 )
 
 # Add footnotes
-tabs8$` `[8] <- str_c(tabs8$` `[8], "\\textsuperscript{a}")
-tabs8$` `[9] <- str_c(tabs8$` `[9], "\\textsuperscript{b}")
-tabs8$` `[10] <- str_c(tabs8$` `[10], "\\textsuperscript{c}")
-tabs8$` `[11] <- str_c(tabs8$` `[11], "\\textsuperscript{d}")
+colnames(tabs8)[7] <- str_c(colnames(tabs8)[7], "\\textsuperscript{a}")
+tabs8$` `[8] <- str_c(tabs8$` `[8], "\\textsuperscript{b}")
+tabs8$` `[9] <- str_c(tabs8$` `[9], "\\textsuperscript{c}")
+tabs8$` `[10] <- str_c(tabs8$` `[10], "\\textsuperscript{d}")
+tabs8$` `[11] <- str_c(tabs8$` `[11], "\\textsuperscript{e}")
 
 # Display the table
 apa_table(
@@ -546,10 +547,11 @@ apa_table(
   caption = "Sensitivity analyses for the meta-regression of mental rotation performance",
   note = str_c(
     "\\scriptsize",
-    "\\textsuperscript{a} = an uninformative (uniform) prior on the mean effect, ",
-    "\\textsuperscript{b} = an informative (normal) prior on the mean effect, ",
-    "\\textsuperscript{c} = an uninformative (uniform) prior on the standard deviations, ",
-    "\\textsuperscript{d} = an informative (Student-$t$) prior on the standard deviations."
+    "\\textsuperscript{a} = violation of expectation, ",
+    "\\textsuperscript{b} = an uninformative (uniform) prior on the mean effect, ",
+    "\\textsuperscript{c} = an informative (normal) prior on the mean effect, ",
+    "\\textsuperscript{d} = an uninformative (uniform) prior on the standard deviations, ",
+    "\\textsuperscript{e} = an informative (Student-$t$) prior on the standard deviations."
   ),
   font_size = "scriptsize", landscape = TRUE, escape = FALSE,
   align = "llrrrrrrr"

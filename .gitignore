@@ -1,6 +1,7 @@
 # Misc files
 .vscode
 .DS_Store
+*.docx
 *.sif
 *.xlsx
 slurm-*
@@ -18,5 +19,6 @@ slurm-*
 
 # Folders
 /data/articles/
+/manuscript_files/figure-docx/
 /results/
 /submission/
