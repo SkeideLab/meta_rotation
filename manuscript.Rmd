@@ -6,7 +6,7 @@ author:
   - name          : "Alexander Enge"
     affiliation   : "1,2"
     corresponding : "yes"
-    address       : "Stephanstraße 1a"
+    address       : "Stephanstraße 1a, 04103 Leipzig, Germany"
     email         : "enge@cbs.mpg.de"
   - name          : "Shreya Kapoor"
     affiliation   : "1"
@@ -21,13 +21,17 @@ affiliation:
     institution   : "Department of Psychology, Humboldt-Universität zu Berlin"
 
 authornote: |
-  We have no conflicts of interest to disclose.
-  The data and code necessary to reproduce the analyses presented here are publicly accessible at the following URL: [https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e](https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e).
-  The analyses presented here were not preregistered.
+  \addORCIDlink{Alexander Enge}{0000-0003-0100-2297}
 
-abstract: |
-  Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning, and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3--16 months. We robustly found that male infants recognized rotated objects more reliably than female infants. These findings indicate that gender differences in mental rotation are already present in the first months of life.
-keywords: "mental rotation; spatial cognition; infants; gender; meta-analysis"
+  \addORCIDlink{Shreya Kapoor}{0000-0003-2619-8257}
+
+  \addORCIDlink{Anne-Sophie Kieslinger}{0000-0001-9240-4077}
+
+  The data and code necessary to reproduce the analyses presented here are available at [https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e](https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e).
+
+  M.A.S. was supported by the German Research Foundation (DFG Grants 433715509 and 433758790), the European Research Council (ERC Starting Grant 850752), and a Jacobs Foundation Research Scholarship. A.E. was supported by a PhD scholarship from the German Academic Scholarship Foundation (Studienstiftung des deutschen Volkes).
+
+  The authors declare that they have no conflicts of interest to disclose.
 
 bibliography      : "manuscript_files/references.bib"
 csl               : "manuscript_files/apa.csl"
@@ -268,7 +272,30 @@ descriptives <- list(
 )
 ```
 
+\setcounter{page}{1}
+\resetlinenumber
+
 # Gender differences in infant mental rotation
+
+\bigskip
+
+# Research highlights
+
+* We analyzed effect sizes of 59 mental rotation experiments including 1,798 infants 
+
+* Looking time reveals that 3–16-months-old infants are able to perform mental rotation
+
+* Mental rotation is more reliable in male infants compared to female infants
+
+# Abstract
+
+Mental rotation, the cognitive process of moving an object in mind to predict how it looks in a new orientation, is tightly coupled to intelligence, learning, and educational achievement [@shepard1971; @hegarty1999; @johnson2005]. On average, males solve mental rotation tasks slightly faster than females [@linn1985; @voyer1995; @voyer2011; @maeda2013]. When such behavioral differences emerge during development, however, remains poorly understood [@lauer2019a]. Here we analyzed effect sizes derived from 59 experiments conducted in 1,798 infants aged 3--16 months. We robustly found that male infants recognized rotated objects more reliably than female infants. These findings indicate that gender differences in mental rotation are already present in the first months of life.
+
+*Keywords*: mental rotation; spatial cognition; spatial ability; infants; gender; meta-analysis
+
+\newpage
+
+# Introduction
 
 The cognitive ability to move visual object representations in mind for recognition across different orientations, known as mental rotation, emerges in the first three months of life [@moore2020; @johnson2020]. Mental rotation is a key component of intelligence and a powerful predictor of learning outcome and educational achievement [@shepard1971; @hegarty1999; @johnson2005].
 
@@ -1054,7 +1081,7 @@ We also performed trim-and-fill analyses and tested selection models to confirm 
 
 ## Data and code availability
 
-The data and code necessary to reproduce the analyses presented here are publicly accessible at the following URL: [https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e](https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e).
+The data and code necessary to reproduce the analyses presented here are available at [https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e](https://osf.io/k3wdg/?view_only=e3b345f00ee84d318a9990689a1c5a9e).
 
 \newpage
 \nolinenumbers
