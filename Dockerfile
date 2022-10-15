@@ -107,6 +107,6 @@ RUN \
     # Add default user permissions
     && chown -R $NB_USER $HOME
 
-USER $NB_USER
+USER rstudio
 
 WORKDIR $PROJECT_DIR
