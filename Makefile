@@ -58,6 +58,7 @@ latex-docker:
 # Auto-format the manuscript
 style:
 	Rscript -e "styler::style_file('manuscript.Rmd')"
+	Rscript -e "styler::style_file('supplement.Rmd')"
 
 # Run an interactive RStudio session with Docker
 interactive:
