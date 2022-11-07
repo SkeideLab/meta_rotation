@@ -241,19 +241,19 @@ table(dat_meta_all$gender_split)
 dat_split <- filter(dat_meta_all, gender_split %in% c("split", "split_only"))
 dat_mixed <- filter(dat_meta_all, gender_split %in% c("mixed", "mixed_only"))
 
-# Combine both strategies but preferring split experiments
-dat_both_split <- filter(
-  dat_meta_all, gender_split %in% c("split", "mixed_only", "split_only")
-)
-
 # Combine both strategies but preferring mixed experiments
 dat_both_mixed <- filter(
   dat_meta_all, gender_split %in% c("mixed", "mixed_only", "split_only")
 )
 
-# We go ahead with the last solution (i.e., prefer mixed experiments) as to use
+# Combine both strategies but preferring split experiments
+dat_both_split <- filter(
+  dat_meta_all, gender_split %in% c("split", "mixed_only", "split_only")
+)
+
+# We go ahead with the last solution (i.e., prefer split experiments) as to use
 # the maximum amount of information while not biasing the gender results
-dat_meta <- dat_both_mixed
+dat_meta <- dat_both_split
 
 # Extract some descriptive statistics so we can paste them in the main text
 descriptives <- list(
@@ -1095,4 +1095,5 @@ The data and code necessary to reproduce the analyses presented here are availab
 \newpage
 
 ```{r child = "supplement.Rmd"}
+
 ```
