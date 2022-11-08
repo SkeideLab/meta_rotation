@@ -71,7 +71,7 @@ Across these $`r nrow(dat_ri_empirical)`$ experiments, the average observed corr
 
 We used trim-and-fill analysis and selection models to examine if and how our meta-analytic results would change under different degrees of publication bias. For both of these types of models, we used a simplified two-level version of our frequentist three-level model as a basis. In our first step, we computed a trim-and-fill model by imputing possible effect sizes of non-published experiments [@duval2000]. This new model produces a symmetric funnel plot with no association between effect sizes and standard errors (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11); Supplementary Figure\ \@ref(fig:figs5)).
 
-In our next step, we used selection models to approximate the process by which experiments got selected into the meta-analysis. These models were based on the assumption that experiments yielding significant effects (i.e., small $p$ values) are more likely to get published. Specifically, we ran one selection model assuming a weight function with fixed $p$ value cutoffs [@vevea1995] at $p$ = 0.01 and $p$ = 0.05. Additionally, we ran multiple models with a priori selection functions assuming biases of varying severity [@vevea2005]. These analyses  revealed that our results are robust to small to medium publication bias (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11)).
+In our next step, we used selection models to approximate the process by which experiments got selected into the meta-analysis. These models were based on the assumption that experiments yielding significant effects (i.e., small $p$ values) are more likely to get published. Specifically, we ran one selection model assuming a weight function with fixed $p$ value cutoffs [@vevea1995] at $p$ = 0.05 and $p$ = 0.01. Additionally, we ran multiple models with a priori selection functions assuming biases of varying severity [@vevea2005]. These analyses  revealed that our results are robust to small to medium publication bias (Supplementary Tables\ \@ref(tab:tabs10) and \@ref(tab:tabs11)).
 
 <!-- Supplementary tables -->
 
@@ -286,7 +286,9 @@ tabs4 <- read_tsv(here(data_dir, "05_prisma.tsv"), na = character())
 apa_table(
   tabs4,
   caption = "PRISMA 2020 checklist", font_size = "scriptsize",
-  landscape = TRUE, align = "p{1.5cm}p{2.5cm}p{1cm}p{12cm}p{5.5cm}",
+  landscape = TRUE,
+  align = "lllll" # For Word
+  # align = "p{1.5cm}p{2.5cm}p{1cm}p{12cm}p{5.5cm}" # For LaTeX
 )
 ```
 
@@ -658,7 +660,7 @@ map(names(res_freq_2_lvl), function(name) {
       "Selection models", "", "", "", ""
     ),
     label_2 = c(
-      "--", "--", "Weight function, $p$ value cutoffs [0.01, 0.05]",
+      "--", "--", "Weight function, $p$ value cutoffs [0.05, 0.01]",
       "One-tailed, moderate bias", "One-tailed, severe bias",
       "Two-tailed, moderate bias", "Two-tailed, severe bias"
     )
