@@ -1027,3 +1027,310 @@ ggsave(
 ```
 
 (ref:figs5-caption) **Trim-and-fill analysis.** As in Figure\ \@ref(fig:fig3) in the main text, black squares indicate the effect sizes (x-axis) and standard errors (y-axis) of the individual experiments included in the meta-analysis of mental rotation performance (A) and in the meta-analysis of gender differences within each article (B). The funnel contours (diagonal black lines) depict a 95% pseudo-confidence interval around the meta-analytic effect sizes (vertical black lines). Gray shades indicate 95% pseudo-confidence intervals (dark gray) and 99% pseudo-confidence intervals (light gray) under the null hypothesis. Red squares show fictional experiments that were imputed using the trim-and-fill method  to compensate for the small publication bias observed in the original funnel plot. Red lines depict the meta-analytic effect size and its 95% pseudo-confidence interval for the trim-and-fill-corrected meta-analysis of mental rotation performance. For the meta-analysis of gender differences, the results of the trim-and-fill analysis suggested that no additional experiments had to be imputed to compensate for publication bias.
+
+```{r, meta_pos}
+# Re-code familiarity preference to be treated the same as novelty preference
+dat_meta_pos <- mutate(dat_meta, gi = abs(gi))
+
+# Specify new priors
+prior_meta_pos <- c(
+  set_prior("normal(0, 1)", class = "b", lb = 0),
+  set_prior("cauchy(0, 0.3)", class = "sd")
+)
+
+# Re-fit meta-analysis using the new data and priors
+res_meta_pos <- update(
+  res_meta,
+  newdata = dat_meta_pos,
+  prior = prior_meta_pos,
+  file = here(models_dir, "res_meta_pos"),
+  file_refit = brms_file_refit
+)
+summary(res_meta_pos)
+
+# Extract posterior draws for the meta-analytic effects
+spread_draws(res_meta_pos, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
+  # Compute variances and ICC from standard deviations
+  mutate(
+    intercept = b_Intercept,
+    sigma_article = sd_article__Intercept,
+    sigma_experiment = `sd_article:experiment__Intercept`,
+    sigma2_article = sigma_article^2,
+    sigma2_experiment = sigma_experiment^2,
+    sigma2_total = sigma2_article + sigma2_experiment,
+    icc = sigma2_article / sigma2_total,
+    .keep = "unused"
+  ) -> draws_meta_pos
+
+# Summarize as means and 95% credible intervals
+(summ_meta_pos <- as.list(mean_qi(draws_meta_pos)))
+```
+
+```{r, figs5new, include=TRUE, fig.height=14, fig.width=12, fig.cap="(ref:figs5new-caption)"}
+# Get posterior draws for the effect *in each experiment*
+epred_draws_meta_pos <-
+  epred_draws(res_meta_pos, dat_meta_pos, ndraws = NULL) %>%
+  mutate(experiment_f = factor(experiment))
+
+# Create forest plot
+dat_meta_pos %>%
+  # Make sure the plot will be ordered alphabetically by experiment IDs
+  arrange(experiment) %>%
+  mutate(
+    experiment_f = fct_rev(fct_expand(factor(experiment), "model")),
+    # Show article labels only for the first experiment (row) per article
+    article = if_else(article == lag(article, default = ""), "", article),
+    # Compute frequentist confidence intervals for each experiment
+    ci_lb = gi - qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
+    ci_ub = gi + qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
+    ci_print = print_mean_ci(gi, ci_lb, ci_ub)
+  ) %>%
+  # Prepare plotting canvas
+  ggplot(aes(x = gi, y = experiment_f)) +
+  geom_vline(xintercept = seq(-3, 3, 0.5), color = "grey90") +
+  # Add article and group labels as text on the left
+  geom_text(aes(x = -9.9, label = article), hjust = 0) +
+  geom_text(aes(x = -7.1, label = group), hjust = 0) +
+  # Add experiment-specific effect sizes and CIs as text on the right
+  geom_text(aes(x = 3.7, label = print_num(gi)), hjust = 1) +
+  geom_text(aes(x = 4.4, label = print_num(ci_lb)), hjust = 1) +
+  geom_text(aes(x = 5.1, label = print_num(ci_ub)), hjust = 1) +
+  # Add Bayesian credible intervals for each experiment
+  stat_interval(
+    aes(x = .epred),
+    data = epred_draws_meta_pos,
+    alpha = .8,
+    point_interval = "mean_qi",
+    .width = c(0.5, 0.95),
+  ) +
+  scale_color_grey(
+    start = 0.85, end = 0.65,
+    labels = as_mapper(~ scales::percent(as.numeric(.x)))
+  ) +
+  # Add experiment-specific effect sizes and CIs as dots with error bars
+  geom_linerange(aes(xmin = ci_lb, xmax = ci_ub), size = 0.35) +
+  geom_point(aes(size = ni), shape = 22, fill = "white") + # Or (1 / vi)?
+  # Add posterior distribution for the meta-analytic effect
+  stat_halfeye(
+    aes(x = intercept, y = -1),
+    draws_meta_pos,
+    point_interval = "mean_qi",
+    .width = c(0.95)
+  ) +
+  annotate(
+    "text",
+    x = c(-9.9, 3.7, 4.4, 5.1),
+    y = -0.5,
+    label = c(
+      "Three-level model",
+      print_num(summ_meta_pos$intercept),
+      print_num(summ_meta_pos$intercept.lower),
+      print_num(summ_meta_pos$intercept.upper)
+    ),
+    hjust = c(0, 1, 1, 1),
+    fontface = "bold"
+  ) +
+  # Add column headers
+  annotate(
+    "rect",
+    xmin = -Inf,
+    xmax = Inf,
+    ymin = descriptives$n_experiments + 0.5,
+    ymax = Inf,
+    fill = "white"
+  ) +
+  annotate(
+    "text",
+    x = c(-9.9, -7.1, 0, 3.7, 4.4, 5.1),
+    y = descriptives$n_experiments + 1.5,
+    label = c(
+      "Article",
+      "Experiment",
+      "Effect size plot",
+      "Effect size",
+      "2.5%",
+      "97.5%"
+    ),
+    hjust = c(0, 0, 0.5, 1, 1, 1),
+    fontface = "bold"
+  ) +
+  # Styling
+  coord_cartesian(
+    ylim = c(-1.5, descriptives$n_experiments + 2), expand = FALSE, clip = "off"
+  ) +
+  scale_x_continuous(breaks = seq(-3, 3, 0.5)) +
+  annotate("segment", x = -3.3, xend = 3.3, y = -1.5, yend = -1.5) +
+  labs(
+    x = expression("Hedges'" ~ italic("g")),
+    size = "Sample size",
+    color = "CrI level"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(family = "Helvetica", color = "black"),
+    axis.text.y = element_blank(),
+    axis.ticks.x = element_line(colour = "black"),
+    axis.title.x = element_text(hjust = 0.67, margin = margin(b = -15)),
+    axis.title.y = element_blank(),
+    panel.grid = element_blank(),
+    text = element_text(family = "Helvetica")
+  )
+
+# Save the plot
+ggsave(here(figures_dir, "figs5new_meta_pos.pdf"), width = 12, height = 14)
+```
+
+(ref:figs5new-caption) **Meta-analysis of mental rotation performance, accounting for familiarity preferences.** Analysis and formatting are the same as in Figure 2, but with effect sizes that indicated a familiarity preference (i.e., longer looking times at the familiar stimulus as compared to the novel stimulus) being re-coded as providing positive evidence for (preliminary) mental rotation ability. 
+
+```{r, meta_gender_pos}
+# Re-code familiarity preference to be treated the same as novelty preference
+dat_gender_pos <- mutate(dat_gender, gi = abs(gi))
+
+# Use the same priors as for the main meta-analysis
+prior_gender_pos <- prior_meta_pos
+
+# Re-fit meta-analysis
+res_gender_pos <- update(
+  res_gender,
+  newdata = dat_gender_pos,
+  prior = prior_gender_pos,
+  file = here(models_dir, "res_gender_pos"),
+  file_refit = brms_file_refit
+)
+summary(res_gender_pos)
+
+# Extract posterior draws for the meta-analytic effects
+spread_draws(res_gender_pos, `b_.*`, `sd_.*`, regex = TRUE, ndraws = NULL) %>%
+  # Compute variances and ICC from standard deviations
+  mutate(
+    intercept = b_Intercept,
+    sigma_article = sd_article__Intercept,
+    sigma_experiment = `sd_article:experiment__Intercept`,
+    sigma2_article = sigma_article^2,
+    sigma2_experiment = sigma_experiment^2,
+    sigma2_total = sigma2_article + sigma2_experiment,
+    icc = sigma2_article / sigma2_total,
+    .keep = "unused"
+  ) -> draws_gender_pos
+
+# Summarize as means and 95% credible intervals
+(summ_gender_pos <- as.list(mean_qi(draws_gender_pos)))
+```
+
+```{r, figs6new, include=TRUE, fig.height=8, fig.width=12, fig.cap="(ref:figs6new-caption)"}
+# Get posterior draws for the effect *in each experiment*
+epred_draws_gender_pos <-
+  epred_draws(res_gender_pos, dat_gender_pos, ndraws = NULL) %>%
+  mutate(experiment_f = factor(experiment))
+
+# Create forest plot
+dat_gender_pos %>%
+  # Make sure the plot will be ordered alphabetically by experiment IDs
+  arrange(experiment) %>%
+  mutate(
+    experiment_f = fct_rev(fct_expand(factor(experiment), "model")),
+    # Show article labels only for the first experiment (row) per article
+    article = if_else(article == lag(article, default = ""), "", article),
+    # Compute frequentist confidence intervals
+    ci_lb = gi - qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
+    ci_ub = gi + qnorm(0.05 / 2, lower.tail = FALSE) * sqrt(vi),
+    ci_print = print_mean_ci(gi, ci_lb, ci_ub)
+  ) %>%
+  # Prepare plotting canvas
+  ggplot(aes(x = gi, y = experiment_f)) +
+  geom_vline(xintercept = seq(-3, 3, 0.5), color = "grey90") +
+  # Add article and group labels as text on the left
+  geom_text(aes(x = -9.9, label = article), hjust = 0) +
+  geom_text(aes(x = -7.1, label = group), hjust = 0) +
+  # Add experiment-specific effect sizes and CIs as text on the right
+  geom_text(aes(x = 3.7, label = print_num(gi)), hjust = 1) +
+  geom_text(aes(x = 4.4, label = print_num(ci_lb)), hjust = 1) +
+  geom_text(aes(x = 5.1, label = print_num(ci_ub)), hjust = 1) +
+  # Add Bayesian credible intervals for each experiment
+  stat_interval(
+    aes(x = .epred),
+    data = epred_draws_gender_pos,
+    alpha = .8,
+    point_interval = "mean_qi",
+    .width = c(0.5, 0.95),
+  ) +
+  scale_color_grey(
+    start = 0.85, end = 0.65,
+    labels = as_mapper(~ scales::percent(as.numeric(.x)))
+  ) +
+  # Add experiment-specific effect sizes and CIs as dots with error bars
+  geom_linerange(aes(xmin = ci_lb, xmax = ci_ub), size = 0.35) +
+  geom_point(aes(size = ni), shape = 22, fill = "white") + # Or (1 / vi)?
+  # Add posterior distribution for the meta-analytic effect
+  stat_halfeye(
+    aes(x = intercept, y = -1),
+    draws_gender_pos,
+    point_interval = "mean_qi",
+    .width = c(0.95)
+  ) +
+  annotate(
+    "text",
+    x = c(-9.9, 3.7, 4.4, 5.1),
+    y = -0.5,
+    label = c(
+      "Three-level model",
+      print_num(summ_gender_pos$intercept),
+      print_num(summ_gender_pos$intercept.lower),
+      print_num(summ_gender_pos$intercept.upper)
+    ),
+    hjust = c(0, 1, 1, 1),
+    fontface = "bold"
+  ) +
+  # Add column headers
+  annotate(
+    "rect",
+    xmin = -Inf,
+    xmax = Inf,
+    ymin = nrow(dat_gender_pos) + 0.5,
+    ymax = Inf,
+    fill = "white"
+  ) +
+  annotate(
+    "text",
+    x = c(-9.9, -7.1, 0, 3.7, 4.4, 5.1),
+    y = nrow(dat_gender_pos) + 1.5,
+    label = c(
+      "Article",
+      "Experiment",
+      "Effect size plot",
+      "Effect size",
+      "2.5%",
+      "97.5%"
+    ),
+    hjust = c(0, 0, 0.5, 1, 1, 1),
+    fontface = "bold"
+  ) +
+  # Styling
+  coord_cartesian(
+    ylim = c(-1.5, nrow(dat_gender_pos) + 2), expand = FALSE, clip = "off"
+  ) +
+  scale_x_continuous(breaks = seq(-3, 3, 0.5)) +
+  annotate("segment", x = -3.3, xend = 3.3, y = -1.5, yend = -1.5) +
+  labs(
+    x = expression("Hedges'" ~ italic("g")),
+    size = "Sample size",
+    color = "CrI level"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    axis.text.x = element_text(family = "Helvetica", color = "black"),
+    axis.text.y = element_blank(),
+    axis.ticks.x = element_line(colour = "black"),
+    axis.title.x = element_text(hjust = 0.67, margin = margin(b = -15)),
+    axis.title.y = element_blank(),
+    panel.grid = element_blank(),
+    text = element_text(family = "Helvetica")
+  )
+
+# Save the plot
+ggsave(here(figures_dir, "figs6new_gender_pos.pdf"), width = 12, height = 8)
+```
+
+(ref:figs6new-caption) **Meta-analysis of gender differences, accounting for familiarity preferences.** Analysis and formatting are the same as in Supplementary Figure 4, but with one effect size [@moore2011] re-coded as a male advantage (rather than as a female advantage) in mental rotation performance. Male infants in this study showed a familiarity preference (i.e., longer looking times at the familiar stimulus as compared to the novel stimulus), which may be interpreted as preliminary mental rotation ability, while female infants showed no discrimination between stimuli.
