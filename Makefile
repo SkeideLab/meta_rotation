@@ -2,8 +2,7 @@
 DOCKER_USER := skeidelab
 IMAGE_NAME := meta_rotation
 IMAGE_VERSION := main
-KNIT_CMD := Rscript -e "rmarkdown::render(input = 'manuscript.Rmd')"
-LATEX_CMD := xelatex manuscript
+KNIT_CMD := quarto render
 SHELL := bash
 SLURM_CPUS := 8
 SLURM_MEMORY := 32G
@@ -18,16 +17,16 @@ IMAGE_URL := docker://$(IMAGE_TAG):$(IMAGE_VERSION)
 IMAGE_FILE := $(PROJECT_DIR)/$(IMAGE_NAME)_$(IMAGE_VERSION).sif
 REMOTE_DIR := /home/rstudio/project
 
-# Knit the manuscript locally
+# Render locally
 all:
 	$(KNIT_CMD)
 
-# Knit the manuscript inside the Docker container
+# Render inside the Docker container
 docker:
 	docker run -it --rm --volume $(PROJECT_DIR):$(REMOTE_DIR) $(IMAGE_TAG) \
 	$(KNIT_CMD)
 
-# Knit the manuscript via SLURM and Singularity on an HPC cluster
+# Render via SLURM and Singularity on an HPC cluster
 sbatch:
 	sbatch --chdir $(PROJECT_DIR) --cpus-per-task 40 \
 	--mem 180G --nodes 1 --ntasks 1 --time 06:00:00 \
@@ -37,28 +36,10 @@ srun:
 	--mem 4G --nodes 1 --ntasks 1 --time 01:00:00 \
 	run_slurm.sh $(PROJECT_DIR) $(REMOTE_DIR) $(IMAGE_FILE)
 
-# Convert from LaTeX to PDF after postprocessing, locally or in the container
-latex:
-	$(LATEX_CMD)
-latex-docker:
-	docker run -it --rm --volume $(PROJECT_DIR):$(REMOTE_DIR) $(IMAGE_TAG) \
-	$(LATEX_CMD)
-
-# Required post-processing includes:
-# 1. Remove `\&` before the name of the alst author in the `author{}` line
-# 2. Place each affiliation into `{}`
-# 3. In the References, replace ` t-tests ` with ` $t$-tests `, `Cohen}'s d`
-#    with `Cohen}'s $d$`, and `Rhat` with `$\widehat{R}$`
-# 4. Replace `\caption*{\normalfont{Table \ref{` with
-#    `\caption*{\normalfont{Supplementary Table \ref{`
-# 5. Delete all instances of `\textit{Note.} `
-# 6. After running the `make latex` command, rotate the pages for Supplementary
-#    Tables 1, 3, 4, and 8 in a PDF software
-
-# Auto-format the manuscript
+# Auto-format
 style:
-	Rscript -e "styler::style_file('manuscript.Rmd')"
-	Rscript -e "styler::style_file('supplement.Rmd')"
+	Rscript -e "styler::style_file('main.qmd')"
+	Rscript -e "styler::style_file('supplement.qmd')"
 
 # Run an interactive RStudio session with Docker
 interactive:

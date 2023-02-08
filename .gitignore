@@ -2,6 +2,7 @@
 .vscode
 .DS_Store
 *.docx
+*.RData
 *.sif
 *.xlsx
 slurm-*
@@ -16,6 +17,10 @@ slurm-*
 *.out
 *.tex
 *.ttt
+
+# Quarto-generated files
+/.quarto/
+/_book/
 
 # Folders
 /data/articles/

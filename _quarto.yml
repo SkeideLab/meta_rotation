@@ -1,0 +1,36 @@
+project:
+  type: book
+
+book:
+  title: "A meta-analysis of mental rotation in the first years of life"
+  author:
+    - name: Alexander Enge
+      orcid: 0000-0003-0100-2297
+      corresponding: true
+      email: enge@cbs.mpg.de
+    - name: Shreya Kapoor
+      orcid: 0000-0003-2619-8257
+    - name: Anne-Sophie Kieslinger
+      orcid: 0000-0001-9240-4077
+    - name: Michael A. Skeide
+
+  date: "2023-02-08"
+  chapters:
+    - index.qmd
+    - main.qmd
+    - supplement.qmd
+
+format:
+  html:
+    theme: cosmo
+    number-depth: 3
+    code-fold: true
+    code-tools: true
+    df-print: paged
+
+knitr:
+  opts_chunk: 
+    results: hold
+    fig.show: hold
+    message: false
+    warning: false

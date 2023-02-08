@@ -32,6 +32,7 @@
 		"ms-azuretools.vscode-docker",
 		"ms-python.python",
 		"ms-toolsai.jupyter",
+		"quarto.quarto",
 		"redhat.vscode-yaml",
 		"tht13.html-preview-vscode"
 	],

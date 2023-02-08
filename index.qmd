@@ -1,0 +1,12 @@
+# Welcome {.unnumbered}
+
+This webpage contains the code and results for the following paper:
+
+> Enge, A., Kapoor, S., Kieslinger, A.-S., & Skeide, M. A. (*under review*). A meta-analysis of mental rotation in the first years of life
+
+## Acknowledgments
+
+M.A.S. was supported by the German Research Foundation (DFG Grants 433715509 and 433758790), the European Research Council (ERC Starting Grant 850752), and a Jacobs Foundation Research Scholarship.
+A.E. was supported by a PhD scholarship from the German Academic Scholarship Foundation (Studienstiftung des deutschen Volkes).
+
+The authors declare that they have no conflicts of interest to disclose.

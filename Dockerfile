@@ -34,7 +34,6 @@ RUN \
     tidybayes \
     # Install R packages from GitHub
     && installGithub.r \
-    claudiozandonella/trackdown@844a0ec \
     crsh/papaja@2572124 \
     stan-dev/cmdstanr@a2a97d9 \
     # Build CmdStanR
@@ -43,67 +42,6 @@ RUN \
     # Install Python packages
     && pip3 install --no-cache-dir \
     radian \
-    # Install LaTeX packages
-    && tlmgr update --self \
-    && tlmgr install \
-    amsmath \
-    apa7 \
-    auxhook \
-    bigintcalc \
-    bitset \
-    booktabs \
-    caption \
-    csquotes \
-    endfloat \
-    environ \
-    epstopdf-pkg \
-    etexcmds \
-    etoolbox \
-    euenc \
-    fancyhdr \
-    fancyvrb \
-    float \
-    fontspec \
-    fp \
-    framed \
-    geometry \
-    gettitlestring \
-    hycolor \
-    hyperref \
-    iftex \
-    infwarerr \
-    intcalc \
-    kvdefinekeys \
-    kvoptions \
-    kvsetkeys \
-    latex-amsmath-dev \
-    letltxmacro \
-    lineno \
-    ltxcmds \
-    makecell \
-    mdwtools \
-    ms \
-    multirow \
-    nowidow \
-    pgf \
-    pdfescape \
-    pdftexcmds \
-    refcount \
-    rerunfilecheck \
-    scalerel \
-    setspace \
-    stringenc \
-    threeparttable \
-    threeparttablex \
-    tipa \
-    trimspaces \
-    unicode-math \
-    uniquecounter \
-    was \
-    xcolor \
-    xpatch \
-    xunicode \
-    zapfding \
     # Add default user permissions
     && chown -R $NB_USER $HOME
 
