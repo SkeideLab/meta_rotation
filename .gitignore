@@ -13,7 +13,6 @@ slurm-*
 *.fff
 *.fls
 *.log
-*.png
 *.out
 *.tex
 *.ttt

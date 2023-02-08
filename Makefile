@@ -7,7 +7,7 @@ SHELL := bash
 SLURM_CPUS := 8
 SLURM_MEMORY := 32G
 SLURM_TIME := 24:00:00
-SLURM_SCRIPT := run_slurm.sh
+SLURM_SCRIPT := misc/run_slurm.sh
 
 # Automatic workflow variables
 PROJECT_DIR	:= $(CURDIR)

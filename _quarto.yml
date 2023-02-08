@@ -13,12 +13,13 @@ book:
     - name: Anne-Sophie Kieslinger
       orcid: 0000-0001-9240-4077
     - name: Michael A. Skeide
-
   date: "2023-02-08"
   chapters:
     - index.qmd
     - main.qmd
     - supplement.qmd
+
+bibliography: misc/references.bib
 
 format:
   html:
