@@ -15,7 +15,7 @@ library(tidybayes)
 library(cowplot)
 
 # Load custom helper functions
-source(here("manuscript_files", "helper_functions.R"))
+source(here("misc", "helper_functions.R"))
 
 # Read work space from the main text script
 load(here("results", "workspace.RData"))

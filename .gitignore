@@ -23,6 +23,5 @@ slurm-*
 
 # Folders
 /data/articles/
-/manuscript_files/figure-docx/
 /results/
 /submission/
