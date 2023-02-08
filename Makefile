@@ -2,7 +2,8 @@
 DOCKER_USER := skeidelab
 IMAGE_NAME := meta_rotation
 IMAGE_VERSION := main
-KNIT_CMD := quarto render
+RENDER_CMD := quarto render
+PUBLISH_CMD := quarto publish gh-pages --no-promt --no-render --no-browser
 SHELL := bash
 SLURM_CPUS := 8
 SLURM_MEMORY := 32G
@@ -19,12 +20,12 @@ REMOTE_DIR := /home/rstudio/project
 
 # Render locally
 all:
-	$(KNIT_CMD)
+	$(RENDER_CMD)
 
 # Render inside the Docker container
 docker:
 	docker run -it --rm --volume $(PROJECT_DIR):$(REMOTE_DIR) $(IMAGE_TAG) \
-	$(KNIT_CMD)
+	$(RENDER_CMD)
 
 # Render via SLURM and Singularity on an HPC cluster
 sbatch:
@@ -35,6 +36,10 @@ srun:
 	srun --chdir $(PROJECT_DIR) --cpus-per-task 1 \
 	--mem 4G --nodes 1 --ntasks 1 --time 01:00:00 \
 	run_slurm.sh $(PROJECT_DIR) $(REMOTE_DIR) $(IMAGE_FILE)
+
+# Publish to GitHub pages
+publish:
+	$(PUBLISH_CMD)
 
 # Auto-format
 style:
