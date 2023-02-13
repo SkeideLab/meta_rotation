@@ -1308,3 +1308,5 @@ dat_gender_pos %>%
 # Save the plot
 ggsave(here(figures_dir, "figs6_gender_pos.pdf"), width = 12, height = 8)
 ```
+
+## References
