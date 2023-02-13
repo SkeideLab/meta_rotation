@@ -4,7 +4,16 @@ ENV HOME=/home/$NB_USER
 ENV PROJECT_DIR=$HOME/project
 ENV RETICULATE_MINICONDA_ENABLED=FALSE
 
-COPY .Rprofile $PROJECT_DIR/.Rprofile
+COPY data/ $PROJECT_DIR
+COPY misc/ $PROJECT_DIR
+COPY _quarto.yml $PROJECT_DIR
+COPY .gitignore $PROJECT_DIR
+COPY LICENSE $PROJECT_DIR
+COPY Makefile $PROJECT_DIR
+COPY README.md $PROJECT_DIR
+COPY index.qmd $PROJECT_DIR
+COPY main.qmd $PROJECT_DIR
+COPY supplement.qmd $PROJECT_DIR
 
 USER root
 
@@ -42,6 +51,8 @@ RUN \
     # Install Python packages
     && pip3 install --no-cache-dir \
     radian \
+    # Set working directory for R sessions
+    && echo "setwd($PROJECT_DIR)" > $HOME/.Rprofile \
     # Add default user permissions
     && chown -R $NB_USER $HOME
 
