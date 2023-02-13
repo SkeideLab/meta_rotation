@@ -25,6 +25,8 @@ run <- list(
 )
 
 # Options for MCMC sampling when fitting Bayesian multilevel models
+options(brms.backend = "cmdstanr") # Can choose "rstan" instead
+options(mc.cores = parallel::detectCores()) # Use all available cores
 n_iter <- 20000 # Posterior samples per chain, including `n_warmup`
 n_warmup <- 2000 # Warmup samples per chain
 n_chains <- 4 # Number of (parallel) chains
