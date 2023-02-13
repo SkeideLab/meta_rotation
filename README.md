@@ -1,23 +1,38 @@
-# Gender differences in infant mental rotation
+# A meta-analysis of mental rotation in the first years of life
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/SkeideLab/meta_rotation.git/HEAD?urlpath=rstudio)
-[![Made with R Markdown](https://img.shields.io/badge/Made%20with-R%20Markdown-blue)](https://rmarkdown.rstudio.com/)
-![![GitHub Workflow Status](https://github.com/SkeideLab/meta_rotation/actions/workflows/build_push_docker.yml)](https://img.shields.io/github/workflow/status/SkeideLab/meta_rotation/build_push_docker)
-[![License: CC BY 4.0](https://img.shields.io/badge/License-CC_BY_4.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![R version 4.1.2](https://img.shields.io/badge/R%20version-4.1.2-blue)](https://www.r-project.org)
+[![GitHub workflow](https://img.shields.io/github/actions/workflow/status/SkeideLab/meta_rotation/docker-publish.yml)](https://github.com/SkeideLab/meta_rotation/actions/workflows/docker-publish.yml)
+[![License](https://img.shields.io/github/license/SkeideLab/meta_rotation)](https://github.com/SkeideLab/meta_semantics/blob/main/LICENSE)
+
+This repository contains the code, data, and results for the following paper:
+
+> Enge, A., Kapoor, S., Kieslinger, A.-S., & Skeide, M. A. (forthcoming). A meta-analysis of mental rotation in the first years of life. *Developmental Science*.
+
+BibTeX citation:
+
+```bibtex
+@article{enge2023,
+  title = {A Meta-Analysis of Mental Rotation in the First Years of Life},
+  author = {Enge, Alexander and Kapoor, Shreya and Kieslinger, Anne-Sophie and Skeide, Michael A.},
+  year = {forthcoming},
+  journal = {Developmental Science}
+}
+```
 
 ## Usage
 
 ### Static version
 
-- Browse through the [R Markdown version](manuscript.Rmd) or [PDF version](manuscript.pdf) of the paper
+- Browse through the [source code](main.qmd) or the [rendered online version](https://skeidelab.github.io/meta_rotation) of the analyses
 
 ### Interactive version
 
 #### Cloud-based
 
-1. Hit the "launch binder" button at the top[^1]
+1. Hit [this link](https://mybinder.org/v2/gh/SkeideLab/meta_rotation.git/HEAD?urlpath=rstudio) or the "launch binder" button at the top
 
-2. Run the R code in `manuscript.Rmd` and `supplement.Rmd` directly in your web browser
+2. Run the R code in `main.qmd` and `supplement.qmd` in your web browser
 
 #### Local machine
 
@@ -25,10 +40,8 @@
 
 2. [Download](https://github.com/SkeideLab/meta_rotation/archive/refs/heads/main.zip) or `git clone` this repository
 
-3. Run the R code in `manuscript.Rmd` and `supplement.Rmd` on your local machine
+3. Run the R code in `main.qmd` and `supplement.qmd` on your local machine
 
 Thanks a lot for your time and interest.
 
-[^1]: Not yet active until the paper is published
-
-![SkeideLab and MPI CBS logos](https://i.imgur.com/iPjdsfc.png)
+![SkeideLab at MPI CBS](https://i.imgur.com/iPjdsfc.png)
