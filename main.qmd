@@ -334,7 +334,9 @@ tab1 <- dat_meta %>%
     Experiment = group,
     `Sample size` = as.integer(sample_size),
     Females = as.integer(round(female_percent * sample_size)),
-    `Age ($M$ ± $SD$)` = str_c(age_mean, "±", age_sd, sep = " "),
+    `Age ($M$ ± $SD$)` = ifelse(
+      is.na(age_sd), paste(age_mean, "± n/a"), paste(age_mean, "±", age_sd)
+    ),
     Task = as.character(task),
     `Stimulus type` = str_to_sentence(stimuli_presentation),
     `Stimulus dimensions` = str_c(as.integer(stimuli_dimensions), "D")
