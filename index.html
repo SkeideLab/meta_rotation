@@ -179,10 +179,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome">Welcome</a>
-  <ul class="collapse">
-  <li><a href="#acknowledgments" id="toc-acknowledgments" class="nav-link" data-scroll-target="#acknowledgments">Acknowledgments</a></li>
-  </ul></li>
+  <li><a href="#welcome" id="toc-welcome" class="nav-link active" data-scroll-target="#welcome">Welcome</a></li>
   </ul>
 </nav>
     </div>
@@ -222,19 +219,28 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="welcome" class="level1 unnumbered">
 <h1 class="unnumbered">Welcome</h1>
-<p>This webpage contains the code and results for the following paper:</p>
+<p><a href="https://mybinder.org/v2/gh/SkeideLab/meta_rotation.git/HEAD?urlpath=rstudio"><img src="https://mybinder.org/badge_logo.svg" class="img-fluid" alt="Binder"></a> <a href="https://www.r-project.org"><img src="https://img.shields.io/badge/R%20version-4.1.2-blue" class="img-fluid" alt="R version 4.1.2"></a> <a href="https://github.com/SkeideLab/meta_rotation/actions/workflows/docker-publish.yml"><img src="https://img.shields.io/github/actions/workflow/status/SkeideLab/meta_rotation/docker-publish.yml" class="img-fluid" alt="GitHub workflow"></a> <a href="https://github.com/SkeideLab/meta_semantics/blob/main/LICENSE"><img src="https://img.shields.io/github/license/SkeideLab/meta_rotation.png" class="img-fluid" alt="License"></a></p>
+<p>This webpage contains the code, data, and results for the following paper:</p>
 <blockquote class="blockquote">
-<p>Enge, A., Kapoor, S., Kieslinger, A.-S., &amp; Skeide, M. A. (<em>under review</em>). A meta-analysis of mental rotation in the first years of life</p>
+<p>Enge, A., Kapoor, S., Kieslinger, A.-S., &amp; Skeide, M. A. (forthcoming). A meta-analysis of mental rotation in the first years of life. <em>Developmental Science</em>.</p>
 </blockquote>
-<section id="acknowledgments" class="level2">
-<h2 class="anchored" data-anchor-id="acknowledgments">Acknowledgments</h2>
-<p>M.A.S. was supported by the German Research Foundation (DFG Grants 433715509 and 433758790), the European Research Council (ERC Starting Grant 850752), and a Jacobs Foundation Research Scholarship. A.E. was supported by a PhD scholarship from the German Academic Scholarship Foundation (Studienstiftung des deutschen Volkes).</p>
-<p>The authors declare that they have no conflicts of interest to disclose.</p>
+<p>BibTeX citation:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">@article</span>{<span class="ot">enge2023</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {A Meta-Analysis of Mental Rotation in the First Years of Life},</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {Enge, Alexander and Kapoor, Shreya and Kieslinger, Anne-Sophie and Skeide, Michael A.},</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {forthcoming},</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">journal</span> = {Developmental Science}</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://i.imgur.com/iPjdsfc.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">SkeideLab at MPI CBS</figcaption><p></p>
+</figure>
+</div>
 
 
 <!-- -->
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -395,18 +401,29 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Welcome {.unnumbered}</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>This webpage contains the code and results for the following paper:</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Enge, A., Kapoor, S., Kieslinger, A.-S., &amp; Skeide, M. A. (*under review*). A meta-analysis of mental rotation in the first years of life</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Acknowledgments</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>M.A.S. was supported by the German Research Foundation (DFG Grants 433715509 and 433758790), the European Research Council (ERC Starting Grant 850752), and a Jacobs Foundation Research Scholarship.</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>A.E. was supported by a PhD scholarship from the German Academic Scholarship Foundation (Studienstiftung des deutschen Volkes).</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>The authors declare that they have no conflicts of interest to disclose.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Welcome {.unnumbered}</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="al">![Binder](https://mybinder.org/badge_logo.svg)</span><span class="co">](https://mybinder.org/v2/gh/SkeideLab/meta_rotation.git/HEAD?urlpath=rstudio)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="al">![R version 4.1.2](https://img.shields.io/badge/R%20version-4.1.2-blue)</span><span class="co">](https://www.r-project.org)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="al">![GitHub workflow](https://img.shields.io/github/actions/workflow/status/SkeideLab/meta_rotation/docker-publish.yml)</span><span class="co">](https://github.com/SkeideLab/meta_rotation/actions/workflows/docker-publish.yml)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="al">![License](https://img.shields.io/github/license/SkeideLab/meta_rotation)</span><span class="co">](https://github.com/SkeideLab/meta_semantics/blob/main/LICENSE)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>This webpage contains the code, data, and results for the following paper:</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Enge, A., Kapoor, S., Kieslinger, A.-S., &amp; Skeide, M. A. (forthcoming). A meta-analysis of mental rotation in the first years of life. *Developmental Science*.</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>BibTeX citation:</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="in">```bibtex</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="in">@article{enge2023,</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="in">  title = {A Meta-Analysis of Mental Rotation in the First Years of Life},</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="in">  author = {Enge, Alexander and Kapoor, Shreya and Kieslinger, Anne-Sophie and Skeide, Michael A.},</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="in">  year = {forthcoming},</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="in">  journal = {Developmental Science}</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="al">![SkeideLab at MPI CBS](https://i.imgur.com/iPjdsfc.png)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 
