@@ -1,19 +1,25 @@
 FROM rocker/binder:4.1.2
 
+ENV NB_USER=rstudio
+ENV PROJECT_NAME=meta_rotation
 ENV HOME=/home/$NB_USER
-ENV PROJECT_DIR=$HOME/project
-ENV RETICULATE_MINICONDA_ENABLED=FALSE
+ENV PROJECT_DIR=$HOME/$PROJECT_NAME
+ENV CMDSTANR_DIR=$HOME/.cmdstanr
 
-COPY data/ $PROJECT_DIR
-COPY misc/ $PROJECT_DIR
-COPY _quarto.yml $PROJECT_DIR
-COPY .gitignore $PROJECT_DIR
-COPY LICENSE $PROJECT_DIR
-COPY Makefile $PROJECT_DIR
-COPY README.md $PROJECT_DIR
-COPY index.qmd $PROJECT_DIR
-COPY main.qmd $PROJECT_DIR
-COPY supplement.qmd $PROJECT_DIR
+RUN mkdir $PROJECT_DIR
+WORKDIR $PROJECT_DIR
+
+COPY data/ data/
+COPY misc/ misc/
+COPY _quarto.yml .
+COPY .gitignore .
+COPY LICENSE .
+COPY Makefile .
+COPY README.md .
+COPY index.qmd .
+COPY main.qmd .
+COPY meta_rotation.Rproj .
+COPY supplement.qmd .
 
 USER root
 
@@ -46,16 +52,14 @@ RUN \
     crsh/papaja@2572124 \
     stan-dev/cmdstanr@a2a97d9 \
     # Build CmdStanR
-    && mkdir -p "$HOME/.cmdstanr" \
-    && Rscript -e "cmdstanr::install_cmdstan(dir = '$HOME/.cmdstanr')" \
+    && mkdir -p "$CMDSTANR_DIR" \
+    && Rscript -e "cmdstanr::install_cmdstan(dir = '$CMDSTANR_DIR')" \
     # Install Python packages
     && pip3 install --no-cache-dir \
     radian \
     # Set working directory for R sessions
-    && echo "setwd($PROJECT_DIR)" > $HOME/.Rprofile \
+    && echo "setwd('$PROJECT_DIR')" > $HOME/.Rprofile \
     # Add default user permissions
     && chown -R $NB_USER $HOME
 
-USER rstudio
-
-WORKDIR $PROJECT_DIR
+USER $NB_USER

@@ -16,7 +16,7 @@ PROJECT_NAME := $(notdir $(CURDIR))
 IMAGE_TAG := $(DOCKER_USER)/$(IMAGE_NAME)
 IMAGE_URL := docker://$(IMAGE_TAG):$(IMAGE_VERSION)
 IMAGE_FILE := $(PROJECT_DIR)/$(IMAGE_NAME)_$(IMAGE_VERSION).sif
-REMOTE_DIR := /home/rstudio/project
+REMOTE_DIR := /home/rstudio/$(PROJECT_NAME)
 
 # Render locally
 all:

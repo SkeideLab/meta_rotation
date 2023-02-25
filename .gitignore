@@ -25,3 +25,4 @@ slurm-*
 /data/articles/
 /results/
 /submission/
+.Rproj.user
